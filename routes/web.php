@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -19,3 +20,6 @@ Route::get('/', function () {
         'name' => 'Arza'
     ]);
 });
+
+// Login authentication
+Route::get('/login', [LoginController::class, 'index']);
