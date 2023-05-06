@@ -1,0 +1,15 @@
+:root {
+    font-size: 14px;
+
+    --color-1: #00273e;
+    --color-2: #00a3ff;
+    --color-3: #00000080;
+    --color-4: #0000001a;
+    --color-5: #fff;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    max-width: 1440px;
+    margin-inline: auto;
+}
