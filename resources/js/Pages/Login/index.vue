@@ -1,10 +1,26 @@
+<script setup>
+import { ref } from "vue";
+import { router } from "@inertiajs/vue3";
+
+const loginFormData = ref({
+    username: "",
+    password: "",
+});
+
+defineProps({ errors: Object });
+
+const authenticate = () => {
+    router.post("/login", loginFormData.value);
+};
+</script>
+
 <template>
     <div class="login">
         <div class="login__left">
             <img class="login__image" src="assets/images/login.jpg" alt="" />
         </div>
         <div class="login__right">
-            <form class="form">
+            <form class="form" @submit.prevent="authenticate">
                 <div class="form__header">
                     <h1 class="form__title">Login</h1>
                     <h2 class="form__subtitle">Please login to continue</h2>
@@ -44,8 +60,12 @@
                                 id="username"
                                 placeholder="Username"
                                 autofocus
+                                v-model="loginFormData.username"
                             />
                         </div>
+                        <small class="input__invalid" v-if="errors.username">{{
+                            errors.username
+                        }}</small>
                     </div>
 
                     <div class="form__items">
@@ -54,7 +74,7 @@
                         >
                         <div class="input">
                             <svg
-                                class="input__icon"
+                                class="inputpassword__icon"
                                 width="24px"
                                 height="24px"
                                 stroke-width="1.5"
@@ -81,10 +101,19 @@
                                 name="password"
                                 id="password"
                                 placeholder="Password"
+                                v-model="loginFormData.password"
                             />
                         </div>
+                        <small class="input__invalid" v-if="errors.password">{{
+                            errors.password
+                        }}</small>
                     </div>
 
+                    <small
+                        class="input__invalid"
+                        v-if="$page.props.flash.login_invalid"
+                        >{{ $page.props.flash.login_invalid }}</small
+                    >
                     <button class="button button--blue" type="submit">
                         Login
                     </button>
@@ -99,7 +128,7 @@
     display: flex;
 
     &__left {
-        height: 100vh;
+        max-height: 100vh;
         overflow: hidden;
     }
 
@@ -176,6 +205,10 @@
         &::placeholder {
             color: var(--color-3);
         }
+    }
+
+    &__invalid {
+        color: red;
     }
 }
 
