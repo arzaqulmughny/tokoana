@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\LoginController;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +18,8 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('index', [
-        'name' => 'Arza'
+        'name' => 'Arza',
+        'user' => Auth::user()
     ]);
 })->middleware('auth');
 

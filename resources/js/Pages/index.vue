@@ -1,7 +1,25 @@
 <script setup>
 import Sidebar from '../Components/Sidebar.vue'
-
+import Topbar from '../Components/Topbar.vue'
 </script>
 <template>
-    <Sidebar />
-</template>
+    <div class="layout">
+        <div class="layout__left">
+            <Sidebar />
+        </div>
+
+        <div class="layout__right">
+            <Topbar />
+        </div>
+    </div>
+    </template>
+
+<style lang="scss" scoped>
+    .layout {
+        display: flex;
+
+        &__right {
+            width: 100%;
+        }
+    }
+</style>

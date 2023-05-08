@@ -34,7 +34,7 @@ const transactionRoutes = ref([
 
 </script>
 <template>
-    <nav class="sidebar">
+    <nav class="sidebar" ref="sidebar">
         <div class="brand">
             <img
                 src="assets/images/logo.svg"
@@ -43,6 +43,9 @@ const transactionRoutes = ref([
             />
             <span class="brand__name">TOKOANA</span>
         </div>
+￼
+￼
+
 
         <div class="sidebar__links">
             <SidebarLink
@@ -99,10 +102,14 @@ const transactionRoutes = ref([
 <style lang="scss" scoped>
 .sidebar {
     width: 20rem;
-    display: flex;
+    display: none;
     flex-direction: column;
     border-right: 1px solid var(--color-4);
     min-height: 100vh;
+
+    &--active {
+        display: block;
+    }
 }
 
 .brand {
