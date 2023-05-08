@@ -5,15 +5,15 @@ import SidebarLink from "./SidebarLink.vue";
 const productRoutes = ref([
     {
         name: 'List',
-        href: '/products/list'
+        href: '/product/list'
     },
     {
         name: 'Categories',
-        href: '/products/list'
+        href: '/product/categories'
     },
     {
         name: 'Units',
-        href: '/products/list'
+        href: '/product/units'
     },
 ])
 
@@ -34,7 +34,7 @@ const transactionRoutes = ref([
 
 </script>
 <template>
-    <nav class="sidebar" ref="sidebar">
+    <nav class="sidebar sidebar--active" ref="sidebar">
         <div class="brand">
             <img
                 src="assets/images/logo.svg"
@@ -43,9 +43,6 @@ const transactionRoutes = ref([
             />
             <span class="brand__name">TOKOANA</span>
         </div>
-￼
-￼
-
 
         <div class="sidebar__links">
             <SidebarLink
@@ -59,17 +56,17 @@ const transactionRoutes = ref([
             <SidebarLink
                 :class="{'link--active' : $page.url === '/suppliers'}"
                 :name="'Suppliers'"
-                :href="'/'"
+                :href="'/suppliers'"
                 :icon="'iconoir-truck'"
                 :type="'normal'"
             />
 
             <SidebarLink
                 :name="'Products'"
-                :href="'/'"
                 :icon="'iconoir-box-iso'"
                 :type="'accordion'"
                 :routes="productRoutes"
+                :url="'/product'"
             />
 
             <SidebarLink

@@ -8,7 +8,8 @@ const props = defineProps({
     href: String,
     type: String,
     routes: Array,
-    class: String
+    class: String,
+    url: String,
 });
 
 const children = ref(null);
@@ -60,12 +61,13 @@ const showChildren = () => {
                         ></path>
                     </svg>
                 </div>
-                <div class="children" ref="children">
+                <div class="children" ref="children" :class="{ 'children--active': $page.url.startsWith( props.url ) }">
                     <Link
                     class="link"
                         v-for="route in props.routes"
-                        href="/"
+                        :href="route.href"
                         as="a"
+                        :class="{ 'link--active': $page.url === route.href}"
                     >
                         <div class="link__label">
                             <div class="link__icon"></div>
