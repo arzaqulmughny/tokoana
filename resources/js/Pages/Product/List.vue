@@ -6,13 +6,15 @@
 </script>
 
 <template>
-        <main class="dashboard">
-            Content
+    <MainLayout>
+        <main class="suppliers">
+            Product List
         </main>
+    </MainLayout>
 </template>
 
 <style lang="scss" scoped>
-    .dashboard {
+    .suppliers {
         width: 100%;
     }
 </style>
