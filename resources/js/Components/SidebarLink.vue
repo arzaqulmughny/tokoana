@@ -1,6 +1,6 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
-import { ref } from "vue"
+import { onUnmounted, ref } from "vue";
 
 const props = defineProps({
     name: String,
@@ -11,12 +11,11 @@ const props = defineProps({
     class: String,
     url: String,
 });
+const active = ref(false);
 
-const children = ref(null);
-
-const showChildren = () => {
-    children.value.classList.toggle("children--active");
-};
+onUnmounted(() => {
+    console.log('unmounted');
+})
 
 </script>
 
@@ -34,7 +33,7 @@ const showChildren = () => {
         </div>
     </Link>
 
-    <button class="link" @click="showChildren" v-if="props.type === 'accordion'">
+    <button class="link" @click="active = !active" v-if="props.type === 'accordion'">
                 <div class="link__label">
                     <i :class="props.icon"></i>
                     <span class="link__name">{{ props.name }}</span>
@@ -61,13 +60,14 @@ const showChildren = () => {
                         ></path>
                     </svg>
                 </div>
-                <div class="children" ref="children" :class="{ 'children--active': $page.url.startsWith( props.url ) }">
+                <div class="children" :class="{ 'children--active': active }">
                     <Link
-                    class="link"
-                        v-for="route in props.routes"
+                        class="link"
+                        :class="{ 'link--active': $page.url === route.href}"
                         :href="route.href"
                         as="a"
-                        :class="{ 'link--active': $page.url === route.href}"
+                        v-for="route in props.routes"
+                        @click="active = !active"
                     >
                         <div class="link__label">
                             <div class="link__icon"></div>
