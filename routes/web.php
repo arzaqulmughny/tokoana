@@ -24,6 +24,7 @@ Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
 // Login authentication
 Route::get('/login', [LoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('/login', [LoginController::class, 'authenticate']);
+Route::get('/logout', [LoginController::class, 'logout']);
 
 Route::resource('/suppliers', SupplierController::class)->middleware('auth');
 Route::get('/product', function () {
