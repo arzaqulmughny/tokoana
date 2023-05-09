@@ -16,6 +16,7 @@ class SupplierController extends Controller
     {
         return Inertia::render('Suppliers', [
             'user' => Auth::user(),
+            'data' => Supplier::all(),
         ]);
     }
 

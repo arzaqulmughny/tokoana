@@ -6,13 +6,5 @@
 </script>
 
 <template>
-        <main class="dashboard">
-            Content
-        </main>
+        <h1 class="main__title">Dashboard</h1>
 </template>
-
-<style lang="scss" scoped>
-    .dashboard {
-        width: 100%;
-    }
-</style>

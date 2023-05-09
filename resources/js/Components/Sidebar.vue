@@ -102,7 +102,14 @@ const transactionRoutes = ref([
     display: none;
     flex-direction: column;
     border-right: 1px solid var(--color-4);
-    min-height: 100vh;
+    height: 100%;
+    position: sticky;
+    top: 0;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 
     &--active {
         display: block;

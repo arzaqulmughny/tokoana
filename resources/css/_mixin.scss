@@ -1,0 +1,33 @@
+@mixin table {
+        outline: 1px solid var(--color-4);
+        text-align: left;
+        border-radius: 4px;
+        overflow: hidden;
+        color: var(--color-1);
+
+        &__row {
+            &:hover {
+                background-color: var(--color-4) !important;
+            }
+        }
+
+        &__row:nth-child(even) {
+            background-color: var(--color-5);
+        }
+
+        &__head {
+            background-color: var(--color-5);
+        }
+
+        &__cell {
+            padding: 1.2rem;
+            width: fit-content;
+            max-width: 20em;
+            line-height: 1.5rem;
+            vertical-align: top;
+        }
+
+        &__icon {
+            color: var(--color-3);
+        }
+}
