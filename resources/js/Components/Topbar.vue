@@ -40,6 +40,8 @@ const toggleSidebar = () => {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        background-color: var(--color-5);
+        z-index: 99;
 
         &__toggle {
             all: unset;

@@ -7,14 +7,6 @@
 
 <template>
     <MainLayout>
-        <main class="suppliers">
-            Product List
-        </main>
+            <h1 class="main__title">Product List</h1>
     </MainLayout>
 </template>
-
-<style lang="scss" scoped>
-    .suppliers {
-        width: 100%;
-    }
-</style>

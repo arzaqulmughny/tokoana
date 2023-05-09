@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -21,17 +23,12 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         User::create([
-            'name' => "Arzaqul Mughny Al Fawwaz",
+            'name' => "Bos Dermawan",
             'username' => "admin",
-            'password' => bcrypt('1'),
+            'password' => bcrypt('admin123'),
             'user_level' => '1',
         ]);
 
-        // User::create([
-        //     'name' => "Samsudin",
-        //     'username' => "user",
-        //     'password' => bcrypt('user123'),
-        //     'user_level' => '0',
-        // ]);
+        Supplier::factory(10)->create();
     }
 }
