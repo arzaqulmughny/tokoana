@@ -16,5 +16,6 @@
   </head>
   <body>
     @inertia
+    <div id="modals"></div>
   </body>
 </html>

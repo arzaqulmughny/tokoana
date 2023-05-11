@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { router } from "@inertiajs/vue3";
+import Input from "../../Components/Input.vue";
 
 const loginFormData = ref({
     username: "",
@@ -26,88 +27,31 @@ const authenticate = () => {
                     <h2 class="form__subtitle">Please login to continue</h2>
                 </div>
                 <div class="form__main">
-                    <div class="form__items">
-                        <label class="form__label" for="username"
-                            >Username</label
-                        >
-                        <div class="input">
-                            <svg
-                                class="input__icon"
-                                width="24px"
-                                height="24px"
-                                stroke-width="1.5"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                color="#000000"
-                                data-darkreader-inline-color=""
-                                style="--darkreader-inline-color: #e8e6e3"
-                            >
-                                <path
-                                    d="M5 20v-1a7 7 0 017-7v0a7 7 0 017 7v1M12 12a4 4 0 100-8 4 4 0 000 8z"
-                                    stroke="#000000"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    data-darkreader-inline-stroke=""
-                                    style="--darkreader-inline-stroke: #000000"
-                                ></path>
-                            </svg>
-                            <input
-                                class="input__text"
-                                type="text"
-                                name="username"
-                                id="username"
-                                placeholder="Username"
-                                autofocus
-                                v-model="loginFormData.username"
-                            />
-                        </div>
-                        <small class="input__invalid" v-if="errors.username">{{
-                            errors.username
-                        }}</small>
-                    </div>
+                    <Input
+                        :name="username"
+                        :displayName="'Username'"
+                        :icon="'iconoir-user'"
+                        :type="'text'"
+                        :placeholder="'Username'"
+                        :value="loginFormData.username"
+                        @update="
+                            (newValue) => (loginFormData.username = newValue)
+                        "
+                        :error="errors.username"
+                    />
 
-                    <div class="form__items">
-                        <label class="form__label" for="password"
-                            >Password</label
-                        >
-                        <div class="input">
-                            <svg
-                                class="inputpassword__icon"
-                                width="24px"
-                                height="24px"
-                                stroke-width="1.5"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                color="#000000"
-                                data-darkreader-inline-color=""
-                                style="--darkreader-inline-color: #e8e6e3"
-                            >
-                                <path
-                                    d="M16 12h1.4a.6.6 0 01.6.6v6.8a.6.6 0 01-.6.6H6.6a.6.6 0 01-.6-.6v-6.8a.6.6 0 01.6-.6H8m8 0V8c0-1.333-.8-4-4-4S8 6.667 8 8v4m8 0H8"
-                                    stroke="#000000"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    data-darkreader-inline-stroke=""
-                                    style="--darkreader-inline-stroke: #000000"
-                                ></path>
-                            </svg>
-                            <input
-                                class="input__text"
-                                type="password"
-                                name="password"
-                                id="password"
-                                placeholder="Password"
-                                v-model="loginFormData.password"
-                            />
-                        </div>
-                        <small class="input__invalid" v-if="errors.password">{{
-                            errors.password
-                        }}</small>
-                    </div>
+                    <Input
+                        :name="password"
+                        :displayName="'Password'"
+                        :icon="'iconoir-lock'"
+                        :type="'password'"
+                        :placeholder="'Password'"
+                        :value="loginFormData.password"
+                        @update="
+                            (newValue) => (loginFormData.password = newValue)
+                        "
+                        :error="errors.password"
+                    />
 
                     <small
                         class="input__invalid"
@@ -158,16 +102,6 @@ const authenticate = () => {
         color: var(--color-1);
     }
 
-    &__items {
-        display: flex;
-        flex-direction: column;
-        row-gap: 1rem;
-    }
-
-    &__label {
-        color: var(--color-1);
-    }
-
     &__subtitle {
         color: var(--color-3);
     }
@@ -180,35 +114,6 @@ const authenticate = () => {
         > *:last-child {
             margin-left: auto;
         }
-    }
-}
-
-.input {
-    border-radius: 4px;
-    border: 1px solid var(--color-4);
-    display: flex;
-    padding: 10px 25px;
-    column-gap: 25px;
-
-    &__icon {
-        min-width: 24px;
-
-        path {
-            stroke: var(--color-1);
-        }
-    }
-
-    &__text {
-        all: unset;
-        width: 100%;
-
-        &::placeholder {
-            color: var(--color-3);
-        }
-    }
-
-    &__invalid {
-        color: red;
     }
 }
 
