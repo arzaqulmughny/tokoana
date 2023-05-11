@@ -29,7 +29,12 @@ const props = defineProps({
     padding: 1rem;
 
     &__icon {
+        pointer-events: none;
         font-size: 1.2rem;
+    }
+
+    &--clear {
+        border: none;
     }
 
     &--primary {

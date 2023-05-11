@@ -1,9 +1,9 @@
 <script setup>
-    import Sidebar from '../Components/Sidebar.vue';
-    import Topbar from '../Components/Topbar.vue'
+import Sidebar from "../Components/Sidebar.vue";
+import Topbar from "../Components/Topbar.vue";
 </script>
 <template>
-  <div class="layout">
+    <div class="layout">
         <div class="layout__left">
             <Sidebar />
         </div>
@@ -13,7 +13,7 @@
             <main class="main">
                 <slot />
             </main>
-            </div>
+        </div>
     </div>
 </template>
 
@@ -35,6 +35,7 @@
 .main {
     background-color: var(--color-bg);
     padding: 2rem;
+    padding-bottom: 15rem;
     width: 100%;
     display: flex;
     flex-direction: column;

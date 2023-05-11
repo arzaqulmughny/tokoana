@@ -72,6 +72,6 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier)
     {
-        //
+        Supplier::destroy($supplier->id);
     }
 }
