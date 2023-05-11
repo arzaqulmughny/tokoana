@@ -2,11 +2,21 @@
     import MainLayout from '@/Layouts/MainLayout.vue';
     import Search from '@/Components/Search.vue';
     import Button from '@/Components/Button.vue';
+    import AddNewSupplierModalVue from '../Components/AddNewSupplierModal.vue';
+
     export default {
         layout: MainLayout,
         components: {
             Search,
-            Button
+            Button,
+            AddNewSupplierModalVue
+        },
+        data() {
+            return {
+               modal: {
+                 addNewSupplierModalVue: false
+               }
+            }
         }
     }
 </script>
@@ -25,7 +35,7 @@
                     <Button :text="'Remove selected (1)'" :icon="'iconoir-cancel'" :variant="'secondary'"/>
                 </div>
                 <div class="actions__right">
-                    <Button :text="'Add new item'" :icon="'iconoir-plus'" :variant="'primary'"/>
+                    <Button :text="'Add new supplier'" :icon="'iconoir-plus'" :variant="'primary'" @click="this.modal.addNewSupplierModalVue = true"/>
                 </div>
             </div>
             <table class="table">
@@ -49,6 +59,7 @@
             </table>
         </div>
     </MainLayout>
+    <AddNewSupplierModalVue :show="this.modal.addNewSupplierModalVue" @close="this.modal.addNewSupplierModalVue = false"/>
 </template>
 
 <style lang="scss" scoped>

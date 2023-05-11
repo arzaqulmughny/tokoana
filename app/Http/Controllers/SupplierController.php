@@ -33,7 +33,14 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       $validated = $request->validate([
+            'name' => 'required',
+            'phone' => 'required',
+            'description' => ''
+        ]);
+
+        Supplier::create($validated);
+        return redirect()->back()->with('add-supplier-success', "New supplier has been added");
     }
 
     /**
