@@ -33,8 +33,17 @@ export default {
                 "item-action__list--active"
             );
         },
-        removeItem(id) {
+        removeItem(event, id) {
+            event.target.parentElement.parentElement.children[1].checked = false;
             router.delete(`/suppliers/${id}`);
+        },
+        blur(event) {
+            if (
+                event.relatedTarget === null ||
+                !event.relatedTarget.className.includes("item-action__link")
+            ) {
+                event.target.checked = false;
+            }
         },
     },
 };
@@ -95,9 +104,11 @@ export default {
                         <td class="table__cell">{{ item.description }}</td>
                         <td class="table__cell">
                             <div class="item-action">
-                                <Button
-                                    :icon="'iconoir-nav-arrow-down'"
-                                    @click="toggleItemAction"
+                                <Button :icon="'iconoir-nav-arrow-down'" />
+                                <input
+                                    type="checkbox"
+                                    class="item-action__checkbox"
+                                    @blur="blur"
                                 />
                                 <div class="item-action__list">
                                     <Button
@@ -114,7 +125,10 @@ export default {
                                         :text="'Remove'"
                                         :variant="'clear'"
                                         class="item-action__link"
-                                        @click="removeItem(item.id)"
+                                        @click="
+                                            (event) =>
+                                                removeItem(event, item.id)
+                                        "
                                     />
                                 </div>
                             </div>
@@ -171,6 +185,22 @@ export default {
     position: relative;
     width: fit-content;
 
+    &__checkbox {
+        all: unset;
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+    }
+
+    &__checkbox:checked {
+        ~ .item-action__list {
+            display: flex;
+        }
+    }
+
     &__list {
         border-radius: 4px;
         position: absolute;
@@ -180,10 +210,10 @@ export default {
         background-color: var(--color-5);
         z-index: 9;
         border: 1px solid var(--color-4);
+        flex-direction: column;
 
         &--active {
             display: flex;
-            flex-direction: column;
         }
     }
 }

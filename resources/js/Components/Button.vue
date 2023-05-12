@@ -4,6 +4,10 @@ const props = defineProps({
     text: String,
     variant: String,
 });
+
+const blur = () => {
+    console.log("blur");
+};
 </script>
 
 <template>
@@ -31,6 +35,10 @@ const props = defineProps({
     &__icon {
         pointer-events: none;
         font-size: 1.2rem;
+    }
+
+    &__text {
+        pointer-events: none;
     }
 
     &--clear {
