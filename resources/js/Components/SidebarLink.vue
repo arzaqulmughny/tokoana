@@ -12,11 +12,6 @@ const props = defineProps({
     url: String,
 });
 const active = ref(false);
-
-onUnmounted(() => {
-    console.log('unmounted');
-})
-
 </script>
 
 <template>
@@ -33,49 +28,53 @@ onUnmounted(() => {
         </div>
     </Link>
 
-    <button class="link" @click="active = !active" v-if="props.type === 'accordion'">
+    <button
+        class="link"
+        @click="active = !active"
+        v-if="props.type === 'accordion'"
+    >
+        <div class="link__label">
+            <i :class="props.icon"></i>
+            <span class="link__name">{{ props.name }}</span>
+            <svg
+                class="link__arrow"
+                width="24px"
+                height="24px"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                color="#000000"
+                data-darkreader-inline-color=""
+                style="--darkreader-inline-color: #e8e6e3"
+            >
+                <path
+                    d="M6 9l6 6 6-6"
+                    stroke="#000000"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    data-darkreader-inline-stroke=""
+                    style="--darkreader-inline-stroke: #000000"
+                ></path>
+            </svg>
+        </div>
+        <div class="children" :class="{ 'children--active': active }">
+            <Link
+                class="link"
+                :class="{ 'link--active': $page.url === route.href }"
+                :href="route.href"
+                as="a"
+                v-for="route in props.routes"
+                @click="active = !active"
+            >
                 <div class="link__label">
-                    <i :class="props.icon"></i>
-                    <span class="link__name">{{ props.name }}</span>
-                    <svg
-                        class="link__arrow"
-                        width="24px"
-                        height="24px"
-                        stroke-width="1.5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        color="#000000"
-                        data-darkreader-inline-color=""
-                        style="--darkreader-inline-color: #e8e6e3"
-                    >
-                        <path
-                            d="M6 9l6 6 6-6"
-                            stroke="#000000"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            data-darkreader-inline-stroke=""
-                            style="--darkreader-inline-stroke: #000000"
-                        ></path>
-                    </svg>
+                    <div class="link__icon"></div>
+                    <span class="link__name">{{ route.name }}</span>
                 </div>
-                <div class="children" :class="{ 'children--active': active }">
-                    <Link
-                        class="link"
-                        :class="{ 'link--active': $page.url === route.href}"
-                        :href="route.href"
-                        as="a"
-                        v-for="route in props.routes"
-                        @click="active = !active"
-                    >
-                        <div class="link__label">
-                            <div class="link__icon"></div>
-                            <span class="link__name">{{ route.name }}</span>
-                        </div>
-                    </Link>
-                </div>
-            </button>
+            </Link>
+        </div>
+    </button>
 </template>
 
 <style lang="scss" scoped>
