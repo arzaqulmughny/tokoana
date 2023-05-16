@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class SupplierController extends Controller
@@ -12,11 +13,17 @@ class SupplierController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $data = DB::table('suppliers')
+        ->when($request->string('search'), function($query, string $searchQuery) {
+            $query->where('name', 'LIKE', '%' . $searchQuery . '%');
+        })
+        ->get();
+
         return Inertia::render('Suppliers', [
             'user' => Auth::user(),
-            'data' => Supplier::all(),
+            'data' => $data,
         ]);
     }
 
