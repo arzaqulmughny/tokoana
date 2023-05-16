@@ -99,21 +99,21 @@ export default {
             </div>
             <div class="actions">
                 <div class="actions__left">
-                    <Button
+                    <!-- <Button
                         :text="'Sort by'"
                         :icon="'iconoir-sort'"
                         :variant="'secondary'"
-                    />
+                    /> -->
                     <!-- <Button
                         :text="'Filter'"
                         :icon="'iconoir-filter'"
                         :variant="'secondary'"
                     /> -->
-                    <Button
+                    <!-- <Button
                         :text="'Remove selected (1)'"
                         :icon="'iconoir-cancel'"
                         :variant="'secondary'"
-                    />
+                    /> -->
                 </div>
                 <div class="actions__right">
                     <Button

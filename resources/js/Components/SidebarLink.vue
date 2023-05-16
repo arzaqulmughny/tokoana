@@ -62,7 +62,7 @@ const active = ref(false);
         <div class="children" :class="{ 'children--active': active }">
             <Link
                 class="link"
-                :class="{ 'link--active': $page.url === route.href }"
+                :class="{ 'link--active': $page.url.startsWith(route.href) }"
                 :href="route.href"
                 as="a"
                 v-for="route in props.routes"

@@ -53,7 +53,7 @@ const transactionRoutes = ref([
             />
 
             <SidebarLink
-                :class="{ 'link--active': $page.url === '/suppliers' }"
+                :class="{ 'link--active': $page.url.startsWith('/suppliers') }"
                 :name="'Suppliers'"
                 :href="'/suppliers'"
                 :icon="'iconoir-truck'"
