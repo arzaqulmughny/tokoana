@@ -16,7 +16,7 @@ class SupplierController extends Controller
     public function index(Request $request)
     {
         $data = DB::table('suppliers')
-        ->when($request->string('search'), function($query, string $searchQuery) {
+        ->when($request->search, function ($query, string $searchQuery) {
             $query->where('name', 'LIKE', '%' . $searchQuery . '%');
         })
         ->get();
