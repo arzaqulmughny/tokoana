@@ -1,21 +1,29 @@
 <script>
+import { router } from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
 import Search from "@/Components/Search.vue";
 import Button from "@/Components/Button.vue";
-import { router } from "@inertiajs/vue3";
-import AddNewSupplierModalVue from "../Components/AddNewSupplierModal.vue";
+import AddNewSupplierModal from "../Components/AddNewSupplierModal.vue";
+import ViewSupplierModal from "../Components/ViewSupplierModal.vue";
+import axios from "axios";
 
 export default {
     layout: MainLayout,
     components: {
         Search,
         Button,
-        AddNewSupplierModalVue,
+        AddNewSupplierModal,
+        ViewSupplierModal,
     },
     data() {
         return {
             modal: {
-                addNewSupplierModalVue: false,
+                addNewSupplierModal: false,
+                viewSupplierModal: {
+                    show: false,
+                    id: null,
+                    data: {},
+                },
             },
         };
     },
@@ -43,6 +51,19 @@ export default {
                 !event.relatedTarget.className.includes("item-action__link")
             ) {
                 event.target.checked = false;
+            }
+        },
+    },
+    watch: {
+        "modal.viewSupplierModal.id": async function () {
+            if (this.modal.viewSupplierModal.id !== null) {
+                const { data } = await axios.get(
+                    `/suppliers/${this.modal.viewSupplierModal.id}`
+                );
+                this.modal.viewSupplierModal.data = data;
+                this.modal.viewSupplierModal.show = true;
+            } else {
+                this.modal.viewSupplierModal.show = false;
             }
         },
     },
@@ -79,7 +100,7 @@ export default {
                         :text="'Add new supplier'"
                         :icon="'iconoir-plus'"
                         :variant="'primary'"
-                        @click="this.modal.addNewSupplierModalVue = true"
+                        @click="this.modal.addNewSupplierModal = true"
                     />
                 </div>
             </div>
@@ -115,6 +136,10 @@ export default {
                                         :text="'View'"
                                         :variant="'clear'"
                                         class="item-action__link"
+                                        @click="
+                                            this.modal.viewSupplierModal.id =
+                                                item.id
+                                        "
                                     />
                                     <Button
                                         :text="'Edit'"
@@ -138,9 +163,14 @@ export default {
             </table>
         </div>
     </MainLayout>
-    <AddNewSupplierModalVue
-        :show="this.modal.addNewSupplierModalVue"
-        @close="this.modal.addNewSupplierModalVue = false"
+    <AddNewSupplierModal
+        :show="this.modal.addNewSupplierModal"
+        @close="this.modal.addNewSupplierModal = false"
+    />
+    <ViewSupplierModal
+        :show="this.modal.viewSupplierModal.show"
+        :data="this.modal.viewSupplierModal.data"
+        @close="this.modal.viewSupplierModal.id = null"
     />
 </template>
 

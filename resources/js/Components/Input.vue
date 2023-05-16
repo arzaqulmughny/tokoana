@@ -7,6 +7,7 @@ const props = defineProps([
     "placeholder",
     "value",
     "error",
+    "disabled",
 ]);
 
 const emits = defineEmits(["update"]);
@@ -28,6 +29,7 @@ const emits = defineEmits(["update"]);
                 :value="props.value"
                 @input="emits('update', $event.target.value)"
                 autocomplete="off"
+                :disabled="props.disabled || false"
             />
         </div>
         <small class="input__invalid" v-if="props.error">{{

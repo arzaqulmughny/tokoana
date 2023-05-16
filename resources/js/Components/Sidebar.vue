@@ -1,43 +1,42 @@
 <script setup>
-import { ref } from "vue"
+import { ref } from "vue";
 import SidebarLink from "./SidebarLink.vue";
 
 const productRoutes = ref([
     {
-        name: 'List',
-        href: '/product/list'
+        name: "List",
+        href: "/product/list",
     },
     {
-        name: 'Categories',
-        href: '/product/categories'
+        name: "Categories",
+        href: "/product/categories",
     },
     {
-        name: 'Units',
-        href: '/product/units'
+        name: "Units",
+        href: "/product/units",
     },
-])
+]);
 
 const transactionRoutes = ref([
     {
-        name: 'Sales',
-        href: '/products/list'
+        name: "Sales",
+        href: "/products/list",
     },
     {
-        name: 'Stock in',
-        href: '/products/list'
+        name: "Stock in",
+        href: "/products/list",
     },
     {
-        name: 'Stock out',
-        href: '/products/list'
+        name: "Stock out",
+        href: "/products/list",
     },
-])
-
+]);
 </script>
 <template>
     <nav class="sidebar sidebar--active" ref="sidebar">
         <div class="brand">
             <img
-                src="assets/images/logo.svg"
+                src="/assets/images/logo.svg"
                 alt="brand icon"
                 class="brand__icon"
             />
@@ -46,7 +45,7 @@ const transactionRoutes = ref([
 
         <div class="sidebar__links">
             <SidebarLink
-                :class="{'link--active' : $page.url === '/'}"
+                :class="{ 'link--active': $page.url === '/' }"
                 :name="'Dashboard'"
                 :href="'/'"
                 :icon="'iconoir-view-grid'"
@@ -54,7 +53,7 @@ const transactionRoutes = ref([
             />
 
             <SidebarLink
-                :class="{'link--active' : $page.url === '/suppliers'}"
+                :class="{ 'link--active': $page.url === '/suppliers' }"
                 :name="'Suppliers'"
                 :href="'/suppliers'"
                 :icon="'iconoir-truck'"
@@ -78,7 +77,7 @@ const transactionRoutes = ref([
             />
 
             <SidebarLink
-                :class="{'link--active' : $page.url === '/history'}"
+                :class="{ 'link--active': $page.url === '/history' }"
                 :name="'History'"
                 :href="'/'"
                 :icon="'iconoir-clock-rotate-right'"
@@ -86,7 +85,7 @@ const transactionRoutes = ref([
             />
 
             <SidebarLink
-                :class="{'link--active' : $page.url === '/employee'}"
+                :class="{ 'link--active': $page.url === '/employee' }"
                 :name="'Employee'"
                 :href="'/'"
                 :icon="'iconoir-group'"
@@ -137,5 +136,4 @@ const transactionRoutes = ref([
         font-size: 1.2rem;
     }
 }
-
 </style>
