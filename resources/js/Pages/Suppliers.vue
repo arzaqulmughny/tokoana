@@ -1,7 +1,6 @@
 <script>
 import { router } from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
-import Search from "@/Components/Search.vue";
 import Button from "@/Components/Button.vue";
 import AddNewSupplierModal from "../Components/AddNewSupplierModal.vue";
 import ViewSupplierModal from "../Components/ViewSupplierModal.vue";
@@ -10,7 +9,6 @@ import axios from "axios";
 export default {
     layout: MainLayout,
     components: {
-        Search,
         Button,
         AddNewSupplierModal,
         ViewSupplierModal,
@@ -25,6 +23,7 @@ export default {
                     data: {},
                 },
             },
+            searchQuery: "",
         };
     },
     methods: {
@@ -53,6 +52,12 @@ export default {
                 event.target.checked = false;
             }
         },
+        search() {
+            router.visit(`/suppliers?search=${this.searchQuery}`, {
+                only: ["data"],
+                preserveState: true,
+            });
+        },
     },
     watch: {
         "modal.viewSupplierModal.id": async function () {
@@ -75,7 +80,22 @@ export default {
         <div class="content">
             <div class="content__row content__row--between">
                 <h1 class="content__title">Suppliers</h1>
-                <Search />
+                <form class="search" @submit.prevent="search">
+                    <input
+                        type="text"
+                        class="search__input"
+                        name="search"
+                        placeholder="Search..."
+                        autocomplete="off"
+                        v-model="this.searchQuery"
+                        @keyup="this.search"
+                    />
+                    <Button
+                        :type="'submit'"
+                        :icon="'iconoir-search'"
+                        :variant="'primary'"
+                    />
+                </form>
             </div>
             <div class="actions">
                 <div class="actions__left">
@@ -84,11 +104,11 @@ export default {
                         :icon="'iconoir-sort'"
                         :variant="'secondary'"
                     />
-                    <Button
+                    <!-- <Button
                         :text="'Filter'"
                         :icon="'iconoir-filter'"
                         :variant="'secondary'"
-                    />
+                    /> -->
                     <Button
                         :text="'Remove selected (1)'"
                         :icon="'iconoir-cancel'"
@@ -245,6 +265,22 @@ export default {
         &--active {
             display: flex;
         }
+    }
+}
+
+.search {
+    display: flex;
+    align-items: stretch;
+    column-gap: 1rem;
+    color: var(--color-1);
+
+    &__input {
+        all: unset;
+        border: 1px solid var(--color-4);
+        border-radius: 4px;
+        background-color: var(--color-5);
+        min-width: 20rem;
+        padding: 1rem 1.5rem;
     }
 }
 </style>

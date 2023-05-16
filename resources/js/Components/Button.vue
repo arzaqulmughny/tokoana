@@ -3,6 +3,7 @@ const props = defineProps({
     icon: String,
     text: String,
     variant: String,
+    type: String,
 });
 
 const blur = () => {
