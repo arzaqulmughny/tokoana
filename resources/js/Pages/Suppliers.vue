@@ -106,16 +106,11 @@ export default {
                         :icon="'iconoir-sort'"
                         :variant="'secondary'"
                     />
-                    <Button
-                        :text="'Filter'"
-                        :icon="'iconoir-filter'"
-                        :variant="'secondary'"
-                    />
-                    <Button
+                    <!-- <Button
                         :text="'Remove selected (1)'"
                         :icon="'iconoir-cancel'"
                         :variant="'secondary'"
-                    />
+                    /> -->
                 </div>
                 <div class="actions__right">
                     <Button
@@ -287,6 +282,7 @@ export default {
 
 .item-action {
     display: flex;
+    visibility: hidden;
     position: relative;
     width: fit-content;
 
