@@ -1,10 +1,11 @@
 <script>
-import { router } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
 import Button from "@/Components/Button.vue";
 import AddNewSupplierModal from "../Components/AddNewSupplierModal.vue";
 import ViewSupplierModal from "../Components/ViewSupplierModal.vue";
 import axios from "axios";
+import { onMounted } from "vue";
 
 export default {
     layout: MainLayout,
@@ -12,6 +13,7 @@ export default {
         Button,
         AddNewSupplierModal,
         ViewSupplierModal,
+        Link,
     },
     data() {
         return {
@@ -99,21 +101,21 @@ export default {
             </div>
             <div class="actions">
                 <div class="actions__left">
-                    <!-- <Button
+                    <Button
                         :text="'Sort by'"
                         :icon="'iconoir-sort'"
                         :variant="'secondary'"
-                    /> -->
-                    <!-- <Button
+                    />
+                    <Button
                         :text="'Filter'"
                         :icon="'iconoir-filter'"
                         :variant="'secondary'"
-                    /> -->
-                    <!-- <Button
+                    />
+                    <Button
                         :text="'Remove selected (1)'"
                         :icon="'iconoir-cancel'"
                         :variant="'secondary'"
-                    /> -->
+                    />
                 </div>
                 <div class="actions__right">
                     <Button
@@ -136,7 +138,10 @@ export default {
                 </thead>
 
                 <tbody class="table__body">
-                    <tr class="table__row" v-for="item in $page.props.data">
+                    <tr
+                        class="table__row"
+                        v-for="item in $page.props.data.data"
+                    >
                         <td class="table__cell" :key="item.id">
                             <input type="checkbox" name="" id="" />
                         </td>
@@ -181,6 +186,56 @@ export default {
                     </tr>
                 </tbody>
             </table>
+            <span class="total"
+                >{{ $page.props.data.total }} total items available</span
+            >
+            <div class="pagination">
+                <Link
+                    :href="$page.props.data.prev_page_url"
+                    class="pagination__navigation iconoir-nav-arrow-left"
+                />
+                <div class="pagination__number">
+                    <Link
+                        class="pagination__count"
+                        :href="$page.props.data.first_page_url"
+                        >1</Link
+                    >
+                    <Link
+                        class="pagination__count"
+                        :href="
+                            '/suppliers?page=' +
+                            ($page.props.data.current_page + 1)
+                        "
+                        >{{ $page.props.data.current_page + 1 }}</Link
+                    >
+                    <Link
+                        class="pagination__count"
+                        :href="
+                            '/suppliers?page=' +
+                            ($page.props.data.current_page + 2)
+                        "
+                        >{{ $page.props.data.current_page + 2 }}</Link
+                    >
+                    <Link
+                        class="pagination__count"
+                        :href="
+                            '/suppliers?page=' +
+                            ($page.props.data.current_page + 3)
+                        "
+                        >{{ $page.props.data.current_page + 3 }}</Link
+                    >
+                    <div class="pagination__count">...</div>
+                    <Link
+                        class="pagination__count"
+                        :href="'/suppliers?page=' + $page.props.data.last_page"
+                        >{{ $page.props.data.last_page }}</Link
+                    >
+                </div>
+                <Link
+                    :href="$page.props.data.next_page_url"
+                    class="pagination__navigation pagination__navigation--primary iconoir-nav-arrow-right"
+                />
+            </div>
         </div>
     </MainLayout>
     <AddNewSupplierModal
@@ -281,6 +336,42 @@ export default {
         background-color: var(--color-5);
         min-width: 20rem;
         padding: 1rem 1.5rem;
+    }
+}
+
+.total {
+    color: var(--color-3);
+}
+
+.pagination {
+    display: flex;
+    column-gap: 0.5rem;
+
+    &__navigation {
+        padding: 1rem;
+        background-color: var(--color-5);
+        border-radius: 4px;
+        border: 1px solid var(--color-4);
+        font-size: 1.2rem;
+        color: var(--color-1);
+
+        &--primary {
+            background-color: var(--color-2);
+            color: var(--color-5);
+        }
+    }
+
+    &__number {
+        display: flex;
+        background-color: var(--color-5);
+        border: 1px solid var(--color-4);
+        border-radius: 4px;
+    }
+
+    &__count {
+        padding: 1rem;
+        color: var(--color-1);
+        text-decoration: none;
     }
 }
 </style>

@@ -15,15 +15,15 @@ class SupplierController extends Controller
      */
     public function index(Request $request)
     {
+        $currentPage = $request->page ?? 1;
         $data = DB::table('suppliers')
         ->when($request->search, function ($query, string $searchQuery) {
             $query->where('name', 'LIKE', '%' . $searchQuery . '%');
-        })
-        ->get();
+        });
 
         return Inertia::render('Suppliers', [
             'user' => Auth::user(),
-            'data' => $data,
+            'data' => $data->paginate(5),
         ]);
     }
 
