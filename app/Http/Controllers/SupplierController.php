@@ -15,11 +15,10 @@ class SupplierController extends Controller
      */
     public function index(Request $request)
     {
-        $currentPage = $request->page ?? 1;
         $data = DB::table('suppliers')
         ->when($request->search, function ($query, string $searchQuery) {
             $query->where('name', 'LIKE', '%' . $searchQuery . '%');
-        });
+        })->orderBy('created_at',);
 
         return Inertia::render('Suppliers', [
             'user' => Auth::user(),
