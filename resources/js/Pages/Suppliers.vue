@@ -5,7 +5,6 @@ import Button from "@/Components/Button.vue";
 import AddNewSupplierModal from "../Components/AddNewSupplierModal.vue";
 import ViewSupplierModal from "../Components/ViewSupplierModal.vue";
 import axios from "axios";
-import { onMounted } from "vue";
 
 export default {
     layout: MainLayout,
@@ -17,6 +16,14 @@ export default {
     },
     data() {
         return {
+            params: {
+                page: 1,
+                search: "",
+                order: {
+                    column: "name",
+                    direction: "asc",
+                },
+            },
             modal: {
                 addNewSupplierModal: false,
                 viewSupplierModal: {
@@ -25,7 +32,6 @@ export default {
                     data: {},
                 },
             },
-            searchQuery: "",
         };
     },
     methods: {
@@ -54,12 +60,6 @@ export default {
                 event.target.checked = false;
             }
         },
-        search() {
-            router.visit(`/suppliers?search=${this.searchQuery}`, {
-                only: ["data"],
-                preserveState: true,
-            });
-        },
     },
     watch: {
         "modal.viewSupplierModal.id": async function () {
@@ -73,6 +73,25 @@ export default {
                 this.modal.viewSupplierModal.show = false;
             }
         },
+        params: {
+            handler() {
+                router.visit(
+                    `/suppliers?page=${this.params.page}&search=${this.params.search}`,
+                    {
+                        only: ["data"],
+                        preserveState: true,
+                    }
+                );
+            },
+            deep: true,
+        },
+    },
+    created() {
+        let url = window.location.href;
+        url = new URL(url);
+
+        this.params.page = url.searchParams.get("page") || 1;
+        this.params.search = url.searchParams.get("seach") || "";
     },
 };
 </script>
@@ -89,8 +108,7 @@ export default {
                         name="search"
                         placeholder="Search..."
                         autocomplete="off"
-                        v-model="this.searchQuery"
-                        @keyup="this.search"
+                        v-model="this.params.search"
                     />
                     <Button
                         :type="'submit'"
@@ -185,50 +203,71 @@ export default {
                 >{{ $page.props.data.total }} total items available</span
             >
             <div class="pagination">
-                <Link
-                    :href="$page.props.data.prev_page_url"
-                    class="pagination__navigation iconoir-nav-arrow-left"
+                <Button
+                    :icon="'iconoir-nav-arrow-left'"
+                    :variant="'secondary'"
+                    @click="
+                        this.params.page > 1
+                            ? (this.params.page = this.params.page - 1)
+                            : null
+                    "
                 />
+
                 <div class="pagination__number">
-                    <Link
-                        class="pagination__count"
-                        :href="$page.props.data.first_page_url"
-                        >1</Link
-                    >
-                    <Link
-                        class="pagination__count"
-                        :href="
-                            '/suppliers?page=' +
-                            ($page.props.data.current_page + 1)
+                    <Button
+                        :text="1"
+                        :variant="
+                            1 == $page.props.data.current_page
+                                ? 'primary'
+                                : 'clear'
                         "
-                        >{{ $page.props.data.current_page + 1 }}</Link
-                    >
-                    <Link
-                        class="pagination__count"
-                        :href="
-                            '/suppliers?page=' +
-                            ($page.props.data.current_page + 2)
+                        @click="this.params.page = 1"
+                    />
+                    <Button
+                        v-if="$page.props.data.current_page != 1"
+                        :text="$page.props.data.current_page"
+                        :variant="'primary'"
+                    />
+                    <Button
+                        :text="$page.props.data.current_page + 1"
+                        @click="
+                            this.params.page = $page.props.data.current_page + 1
                         "
-                        >{{ $page.props.data.current_page + 2 }}</Link
-                    >
-                    <Link
-                        class="pagination__count"
-                        :href="
-                            '/suppliers?page=' +
-                            ($page.props.data.current_page + 3)
+                        v-if="
+                            $page.props.data.last_page >=
+                            $page.props.data.current_page + 1
                         "
-                        >{{ $page.props.data.current_page + 3 }}</Link
-                    >
-                    <div class="pagination__count">...</div>
-                    <Link
-                        class="pagination__count"
-                        :href="'/suppliers?page=' + $page.props.data.last_page"
-                        >{{ $page.props.data.last_page }}</Link
-                    >
+                        :variant="'clear'"
+                    />
+                    <Button
+                        :text="$page.props.data.current_page + 2"
+                        @click="
+                            this.params.page = $page.props.data.current_page + 2
+                        "
+                        v-if="
+                            $page.props.data.last_page >=
+                            $page.props.data.current_page + 2
+                        "
+                        :variant="'clear'"
+                    />
+                    <Button
+                        :text="$page.props.data.last_page"
+                        @click="this.params.page = $page.props.data.last_page"
+                        v-if="
+                            $page.props.data.last_page >=
+                            $page.props.data.current_page + 2
+                        "
+                        :variant="'clear'"
+                    />
                 </div>
-                <Link
-                    :href="$page.props.data.next_page_url"
-                    class="pagination__navigation pagination__navigation--primary iconoir-nav-arrow-right"
+                <Button
+                    :icon="'iconoir-nav-arrow-right'"
+                    :variant="'primary'"
+                    @click="
+                        this.params.page < $page.props.data.last_page
+                            ? (this.params.page = this.params.page + 1)
+                            : null
+                    "
                 />
             </div>
         </div>
@@ -279,7 +318,6 @@ export default {
         column-gap: 1rem;
     }
 }
-
 .item-action {
     display: flex;
     visibility: hidden;
@@ -343,31 +381,11 @@ export default {
     display: flex;
     column-gap: 0.5rem;
 
-    &__navigation {
-        padding: 1rem;
-        background-color: var(--color-5);
-        border-radius: 4px;
-        border: 1px solid var(--color-4);
-        font-size: 1.2rem;
-        color: var(--color-1);
-
-        &--primary {
-            background-color: var(--color-2);
-            color: var(--color-5);
-        }
-    }
-
     &__number {
         display: flex;
         background-color: var(--color-5);
-        border: 1px solid var(--color-4);
         border-radius: 4px;
-    }
-
-    &__count {
-        padding: 1rem;
-        color: var(--color-1);
-        text-decoration: none;
+        border: 1px solid var(--color-4);
     }
 }
 </style>
