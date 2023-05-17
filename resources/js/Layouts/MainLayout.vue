@@ -8,7 +8,7 @@ import Topbar from "../Components/Topbar.vue";
             <Sidebar />
         </div>
 
-        <div class="layout__right">
+        <div class="layout__right" scroll-region>
             <Topbar />
             <main class="main">
                 <slot />
