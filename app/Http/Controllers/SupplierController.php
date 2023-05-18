@@ -70,7 +70,13 @@ class SupplierController extends Controller
      */
     public function update(Request $request, Supplier $supplier)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required',
+            'phone' => 'required',
+            'description' => ''
+        ]);
+
+        $supplier->update($validated);
     }
 
     /**

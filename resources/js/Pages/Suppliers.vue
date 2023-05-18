@@ -1,10 +1,11 @@
 <script>
 import { Link, router } from "@inertiajs/vue3";
+import axios from "axios";
 import MainLayout from "@/Layouts/MainLayout.vue";
 import Button from "@/Components/Button.vue";
 import AddNewSupplierModal from "../Components/AddNewSupplierModal.vue";
 import ViewSupplierModal from "../Components/ViewSupplierModal.vue";
-import axios from "axios";
+import EditSupplierModal from "../Components/EditSupplierModal.vue";
 
 export default {
     layout: MainLayout,
@@ -13,6 +14,7 @@ export default {
         AddNewSupplierModal,
         ViewSupplierModal,
         Link,
+        EditSupplierModal,
     },
     data() {
         return {
@@ -27,6 +29,11 @@ export default {
             modal: {
                 addNewSupplierModal: false,
                 viewSupplierModal: {
+                    show: false,
+                    id: null,
+                    data: {},
+                },
+                editSupplierModal: {
                     show: false,
                     id: null,
                     data: {},
@@ -73,6 +80,17 @@ export default {
                 this.modal.viewSupplierModal.show = false;
             }
         },
+        "modal.editSupplierModal.id": async function () {
+            if (this.modal.editSupplierModal.id !== null) {
+                const { data } = await axios.get(
+                    `/suppliers/${this.modal.editSupplierModal.id}`
+                );
+                this.modal.editSupplierModal.data = data;
+                this.modal.editSupplierModal.show = true;
+            } else {
+                this.modal.editSupplierModal.show = false;
+            }
+        },
         params: {
             handler() {
                 router.visit(
@@ -91,7 +109,7 @@ export default {
         url = new URL(url);
 
         this.params.page = url.searchParams.get("page") || 1;
-        this.params.search = url.searchParams.get("seach") || "";
+        this.params.search = url.searchParams.get("search") || "";
     },
 };
 </script>
@@ -183,6 +201,10 @@ export default {
                                         :text="'Edit'"
                                         :variant="'clear'"
                                         class="item-action__link"
+                                        @click="
+                                            this.modal.editSupplierModal.id =
+                                                item.id
+                                        "
                                     />
                                     <Button
                                         :text="'Remove'"
@@ -280,6 +302,11 @@ export default {
         :show="this.modal.viewSupplierModal.show"
         :data="this.modal.viewSupplierModal.data"
         @close="this.modal.viewSupplierModal.id = null"
+    />
+    <EditSupplierModal
+        :show="this.modal.editSupplierModal.show"
+        :data="this.modal.editSupplierModal.data"
+        @close="this.modal.editSupplierModal.id = null"
     />
 </template>
 
