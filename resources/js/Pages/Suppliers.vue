@@ -39,6 +39,8 @@ export default {
                     data: {},
                 },
             },
+            selectAll: false,
+            selected: [],
         };
     },
     methods: {
@@ -66,6 +68,13 @@ export default {
             ) {
                 event.target.checked = false;
             }
+        },
+        deleteSelected() {
+            this.selected.forEach((id) => {
+                router.delete(`/suppliers/${id}`);
+                this.selected = [];
+                this.selectAll = false;
+            });
         },
     },
     watch: {
@@ -102,6 +111,15 @@ export default {
                 );
             },
             deep: true,
+        },
+        selectAll() {
+            if (this.selectAll) {
+                this.$page.props.data.data.forEach((item) => {
+                    this.selected.push(item.id);
+                });
+            } else {
+                this.selected = [];
+            }
         },
     },
     created() {
@@ -142,11 +160,13 @@ export default {
                         :icon="'iconoir-sort'"
                         :variant="'secondary'"
                     />
-                    <!-- <Button
-                        :text="'Remove selected (1)'"
+                    <Button
+                        :text="'Remove selected (' + this.selected.length + ')'"
+                        v-if="this.selected.length !== 0"
                         :icon="'iconoir-cancel'"
                         :variant="'secondary'"
-                    /> -->
+                        @click="this.deleteSelected"
+                    />
                 </div>
                 <div class="actions__right">
                     <Button
@@ -160,7 +180,7 @@ export default {
             <table class="table">
                 <thead class="table__head table__row">
                     <th class="table__cell">
-                        <input type="checkbox" name="" id="" />
+                        <input type="checkbox" v-model="this.selectAll" />
                     </th>
                     <th class="table__cell">NAME</th>
                     <th class="table__cell">PHONE</th>
@@ -174,7 +194,11 @@ export default {
                         v-for="item in $page.props.data.data"
                     >
                         <td class="table__cell" :key="item.id">
-                            <input type="checkbox" name="" id="" />
+                            <input
+                                type="checkbox"
+                                :value="item.id"
+                                v-model="this.selected"
+                            />
                         </td>
                         <td class="table__cell">{{ item.name }}</td>
                         <td class="table__cell">{{ item.phone }}</td>
