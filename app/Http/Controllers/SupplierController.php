@@ -18,7 +18,25 @@ class SupplierController extends Controller
         $data = DB::table('suppliers')
         ->when($request->search, function ($query, string $searchQuery) {
             $query->where('name', 'LIKE', '%' . $searchQuery . '%');
-        })->orderBy('created_at',);
+        })
+        ->when(!$request->sort, function ($query, string $sortQuery) {
+            $query->orderBy('name');
+        })
+        ->when($request->sort, function ($query, string $sortQuery) {
+            switch ($sortQuery) {
+                case "name":
+                    $query->orderBy('name');
+                    break;
+                case "latest":
+                    $query->latest();
+                    break;
+                case "oldest":
+                    $query->oldest();
+                    break;
+                default:
+                    $query->orderBy('name');
+            }
+        });
 
         return Inertia::render('Suppliers', [
             'user' => Auth::user(),

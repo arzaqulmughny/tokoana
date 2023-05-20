@@ -21,10 +21,7 @@ export default {
             params: {
                 page: 1,
                 search: "",
-                order: {
-                    column: "name",
-                    direction: "asc",
-                },
+                sortBy: "name",
             },
             modal: {
                 addNewSupplierModal: false,
@@ -103,7 +100,7 @@ export default {
         params: {
             handler() {
                 router.visit(
-                    `/suppliers?page=${this.params.page}&search=${this.params.search}`,
+                    `/suppliers?page=${this.params.page}&search=${this.params.search}&sort=${this.params.sortBy}`,
                     {
                         only: ["data"],
                         preserveState: true,
@@ -126,8 +123,15 @@ export default {
         let url = window.location.href;
         url = new URL(url);
 
-        this.params.page = url.searchParams.get("page") || 1;
-        this.params.search = url.searchParams.get("search") || "";
+        url.searchParams.get("page")
+            ? (this.params.page = url.searchParams.get("page"))
+            : null;
+        url.searchParams.get("search")
+            ? (this.params.search = url.searchParams.get("search"))
+            : null;
+        url.searchParams.get("sort")
+            ? (this.params.sort = url.searchParams.get("sort"))
+            : null;
     },
 };
 </script>
@@ -155,11 +159,17 @@ export default {
             </div>
             <div class="actions">
                 <div class="actions__left">
-                    <Button
-                        :text="'Sort by'"
-                        :icon="'iconoir-sort'"
-                        :variant="'secondary'"
-                    />
+                    <div class="select">
+                        <i class="iconoir-sort select__icon"></i>
+                        <select
+                            class="select__menu"
+                            v-model="this.params.sortBy"
+                        >
+                            <option value="name">Name</option>
+                            <option value="latest">Latest</option>
+                            <option value="oldest">Oldest</option>
+                        </select>
+                    </div>
                     <Button
                         :text="'Remove selected (' + this.selected.length + ')'"
                         v-if="this.selected.length !== 0"
@@ -437,6 +447,30 @@ export default {
         background-color: var(--color-5);
         border-radius: 4px;
         border: 1px solid var(--color-4);
+    }
+}
+
+.select {
+    border-radius: 4px;
+    border: 1px solid var(--color-4);
+    background-color: var(--color-5);
+    cursor: pointer;
+    color: var(--color-1);
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    &__icon {
+        padding: 1rem;
+        font-size: 1.2rem;
+        position: absolute;
+        pointer-events: none;
+    }
+
+    &__menu {
+        all: unset;
+        padding: 1rem;
+        padding-left: 3rem;
     }
 }
 </style>
