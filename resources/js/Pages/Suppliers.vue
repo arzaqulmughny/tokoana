@@ -56,7 +56,9 @@ export default {
         },
         removeItem(event, id) {
             event.target.parentElement.parentElement.children[1].checked = false;
-            router.delete(`/suppliers/${id}`);
+            if (confirm("Delete this item?")) {
+                router.delete(`/suppliers/${id}`);
+            }
         },
         blur(event) {
             if (
@@ -67,11 +69,13 @@ export default {
             }
         },
         deleteSelected() {
-            this.selected.forEach((id) => {
-                router.delete(`/suppliers/${id}`);
-                this.selected = [];
-                this.selectAll = false;
-            });
+            if (confirm("Delete selected item?")) {
+                this.selected.forEach((id) => {
+                    router.delete(`/suppliers/${id}`);
+                    this.selected = [];
+                    this.selectAll = false;
+                });
+            }
         },
     },
     watch: {

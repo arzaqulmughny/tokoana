@@ -30,16 +30,18 @@ watch(
     }
 );
 const submit = () => {
-    router.put(`/suppliers/${props.data.id}`, formData.value, {
-        onSuccess: () => {
-            close();
-            formData.value = {
-                name: "",
-                phone: "",
-                description: "",
-            };
-        },
-    });
+    if (confirm("Save changes?")) {
+        router.put(`/suppliers/${props.data.id}`, formData.value, {
+            onSuccess: () => {
+                close();
+                formData.value = {
+                    name: "",
+                    phone: "",
+                    description: "",
+                };
+            },
+        });
+    }
 };
 </script>
 <template>
