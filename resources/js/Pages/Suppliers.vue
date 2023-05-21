@@ -118,6 +118,14 @@ export default {
                 this.selected = [];
             }
         },
+        searchAndSort() {
+            this.params.page = 1;
+        },
+    },
+    computed: {
+        searchAndSort() {
+            return `${this.params.search}|${this.params.sortBy}`;
+        },
     },
     created() {
         let url = window.location.href;
@@ -130,7 +138,7 @@ export default {
             ? (this.params.search = url.searchParams.get("search"))
             : null;
         url.searchParams.get("sort")
-            ? (this.params.sort = url.searchParams.get("sort"))
+            ? (this.params.sortBy = url.searchParams.get("sort"))
             : null;
     },
 };
