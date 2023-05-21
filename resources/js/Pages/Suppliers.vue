@@ -103,13 +103,18 @@ export default {
         },
         params: {
             handler() {
-                router.visit(
-                    `/suppliers?page=${this.params.page}&search=${this.params.search}&sort=${this.params.sortBy}`,
-                    {
-                        only: ["data"],
-                        preserveState: true,
-                    }
-                );
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                }
+                this.timer = setTimeout(() => {
+                    router.visit(
+                        `/suppliers?page=${this.params.page}&search=${this.params.search}&sort=${this.params.sortBy}`,
+                        {
+                            only: ["data"],
+                            preserveState: true,
+                        }
+                    );
+                }, 1000);
             },
             deep: true,
         },
@@ -509,7 +514,6 @@ export default {
 
     &__icon {
         padding: 1rem;
-        font-size: 1.2rem;
         position: absolute;
         pointer-events: none;
     }
