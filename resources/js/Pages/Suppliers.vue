@@ -142,14 +142,23 @@ export default {
             <div class="content__row content__row--between">
                 <h1 class="content__title">Suppliers</h1>
                 <form class="search" @submit.prevent="search">
-                    <input
-                        type="text"
-                        class="search__input"
-                        name="search"
-                        placeholder="Search..."
-                        autocomplete="off"
-                        v-model="this.params.search"
-                    />
+                    <div class="search__main">
+                        <input
+                            type="text"
+                            class="search__input"
+                            name="search"
+                            placeholder="Search..."
+                            autocomplete="off"
+                            v-model="this.params.search"
+                        />
+                        <button
+                            class="search__clear"
+                            v-if="this.params.search"
+                            @click="this.params.search = ''"
+                        >
+                            <i class="iconoir-cancel search__clear-icon"></i>
+                        </button>
+                    </div>
                     <Button
                         :type="'submit'"
                         :icon="'iconoir-search'"
@@ -176,6 +185,12 @@ export default {
                         :icon="'iconoir-cancel'"
                         :variant="'secondary'"
                         @click="this.deleteSelected"
+                    />
+                    <Button
+                        :text="'Search: ' + this.params.search"
+                        :icon="'iconoir-cancel'"
+                        v-if="this.params.search"
+                        @click="this.params.search = ''"
                     />
                 </div>
                 <div class="actions__right">
@@ -424,13 +439,33 @@ export default {
     column-gap: 1rem;
     color: var(--color-1);
 
-    &__input {
-        all: unset;
+    &__main {
         border: 1px solid var(--color-4);
         border-radius: 4px;
         background-color: var(--color-5);
         min-width: 20rem;
         padding: 1rem 1.5rem;
+        position: relative;
+    }
+
+    &__input {
+        all: unset;
+    }
+
+    &__clear {
+        all: unset;
+        cursor: pointer;
+        top: 0;
+        right: 0;
+        position: absolute;
+        height: 100%;
+        padding-inline: 1rem;
+        display: flex;
+        align-items: center;
+    }
+
+    &__clear-icon {
+        font-size: 1.2rem;
     }
 }
 
