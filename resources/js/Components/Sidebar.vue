@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import SidebarLink from "./SidebarLink.vue";
+import Button from "./Button.vue";
 
 const productRoutes = ref([
     {
@@ -31,9 +32,19 @@ const transactionRoutes = ref([
         href: "/products/list",
     },
 ]);
+
+const toggleSidebar = () => {
+    document.querySelector(".sidebar").classList.toggle("sidebar--active");
+};
 </script>
 <template>
-    <nav class="sidebar sidebar--active" ref="sidebar">
+    <nav class="sidebar" ref="sidebar">
+        <Button
+            :icon="'iconoir-cancel'"
+            :variant="'clear'"
+            :class="'sidebar__close'"
+            @click="toggleSidebar"
+        />
         <div class="brand">
             <img
                 src="/assets/images/logo.svg"
@@ -96,22 +107,49 @@ const transactionRoutes = ref([
 </template>
 
 <style lang="scss" scoped>
+@use "./../../css/app.scss";
+
 .sidebar {
-    width: 20rem;
-    display: none;
+    width: 100%;
     flex-direction: column;
     border-right: 1px solid var(--color-4);
     height: 100%;
-    position: sticky;
+    position: absolute;
+    z-index: 999;
     top: 0;
+    left: -9999px;
     overflow-y: scroll;
+    background-color: var(--color-5);
+    transition: all 0.3s ease-in-out;
+
+    @include app.screen(md) {
+        width: 20rem;
+        position: sticky;
+        margin-left: 0px;
+    }
 
     &::-webkit-scrollbar {
         display: none;
     }
 
+    &__close {
+        position: absolute;
+        right: 0.5rem;
+        top: 0.5rem;
+        z-index: 999999;
+
+        @include app.screen(md) {
+            display: none;
+        }
+    }
+
     &--active {
-        display: block;
+        left: 0px;
+        transition: all 0.3s ease-in-out;
+
+        @include app.screen(md) {
+            margin-left: -9999px;
+        }
     }
 }
 

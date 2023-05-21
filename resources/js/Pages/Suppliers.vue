@@ -6,6 +6,7 @@ import Button from "@/Components/Button.vue";
 import AddNewSupplierModal from "../Components/AddNewSupplierModal.vue";
 import ViewSupplierModal from "../Components/ViewSupplierModal.vue";
 import EditSupplierModal from "../Components/EditSupplierModal.vue";
+import { Head } from "@inertiajs/vue3";
 
 export default {
     layout: MainLayout,
@@ -15,6 +16,7 @@ export default {
         ViewSupplierModal,
         Link,
         EditSupplierModal,
+        Head,
     },
     data() {
         return {
@@ -154,9 +156,12 @@ export default {
 </script>
 
 <template>
+    <Head>
+        <title>Supplier List</title>
+    </Head>
     <MainLayout>
         <div class="content">
-            <div class="content__row content__row--between">
+            <div class="content__header">
                 <h1 class="content__title">Suppliers</h1>
                 <form class="search" @submit.prevent="search">
                     <div class="search__main">
@@ -204,7 +209,7 @@ export default {
                         @click="this.deleteSelected"
                     />
                     <Button
-                        :text="'Search: ' + this.params.search"
+                        :text="this.params.search"
                         :icon="'iconoir-cancel'"
                         v-if="this.params.search"
                         @click="this.params.search = ''"
@@ -219,74 +224,89 @@ export default {
                     />
                 </div>
             </div>
-            <table class="table">
-                <thead class="table__head table__row">
-                    <th class="table__cell">
-                        <input type="checkbox" v-model="this.selectAll" />
-                    </th>
-                    <th class="table__cell">NAME</th>
-                    <th class="table__cell">PHONE</th>
-                    <th class="table__cell">DESCRIPTION</th>
-                    <th class="table__cell">ACTIONS</th>
-                </thead>
-
-                <tbody class="table__body">
-                    <tr
-                        class="table__row"
-                        v-for="item in $page.props.data.data"
-                    >
-                        <td class="table__cell" :key="item.id">
+            <div class="table-container">
+                <table class="table">
+                    <thead class="table__head table__row">
+                        <th class="table__cell">
                             <input
                                 type="checkbox"
-                                :value="item.id"
-                                v-model="this.selected"
+                                v-model="this.selectAll"
+                                class="table__select"
                             />
-                        </td>
-                        <td class="table__cell">{{ item.name }}</td>
-                        <td class="table__cell">{{ item.phone }}</td>
-                        <td class="table__cell">{{ item.description }}</td>
-                        <td class="table__cell">
-                            <div class="item-action">
-                                <Button :icon="'iconoir-nav-arrow-down'" />
+                        </th>
+                        <th class="table__cell">NAME</th>
+                        <th class="table__cell">PHONE</th>
+                        <th class="table__cell">DESCRIPTION</th>
+                        <th class="table__cell">ACTIONS</th>
+                    </thead>
+
+                    <tbody class="table__body">
+                        <tr
+                            class="table__row table__empty"
+                            v-if="$page.props.data.data.length == 0"
+                        >
+                            <td class="table__cell" colspan="5">
+                                No items available
+                            </td>
+                        </tr>
+                        <tr
+                            class="table__row"
+                            v-for="item in $page.props.data.data"
+                        >
+                            <td class="table__cell" :key="item.id">
                                 <input
                                     type="checkbox"
-                                    class="item-action__checkbox"
-                                    @blur="blur"
+                                    :value="item.id"
+                                    v-model="this.selected"
+                                    class="table__select"
                                 />
-                                <div class="item-action__list">
-                                    <Button
-                                        :text="'View'"
-                                        :variant="'clear'"
-                                        class="item-action__link"
-                                        @click="
-                                            this.modal.viewSupplierModal.id =
-                                                item.id
-                                        "
+                            </td>
+                            <td class="table__cell">{{ item.name }}</td>
+                            <td class="table__cell">{{ item.phone }}</td>
+                            <td class="table__cell">{{ item.description }}</td>
+                            <td class="table__cell">
+                                <div class="item-action">
+                                    <Button :icon="'iconoir-nav-arrow-down'" />
+                                    <input
+                                        type="checkbox"
+                                        class="item-action__checkbox"
+                                        @blur="blur"
                                     />
-                                    <Button
-                                        :text="'Edit'"
-                                        :variant="'clear'"
-                                        class="item-action__link"
-                                        @click="
-                                            this.modal.editSupplierModal.id =
-                                                item.id
-                                        "
-                                    />
-                                    <Button
-                                        :text="'Remove'"
-                                        :variant="'clear'"
-                                        class="item-action__link"
-                                        @click="
-                                            (event) =>
-                                                removeItem(event, item.id)
-                                        "
-                                    />
+                                    <div class="item-action__list">
+                                        <Button
+                                            :text="'View'"
+                                            :variant="'clear'"
+                                            class="item-action__link"
+                                            @click="
+                                                this.modal.viewSupplierModal.id =
+                                                    item.id
+                                            "
+                                        />
+                                        <Button
+                                            :text="'Edit'"
+                                            :variant="'clear'"
+                                            class="item-action__link"
+                                            @click="
+                                                this.modal.editSupplierModal.id =
+                                                    item.id
+                                            "
+                                        />
+                                        <Button
+                                            :text="'Remove'"
+                                            :variant="'clear'"
+                                            class="item-action__link"
+                                            @click="
+                                                (event) =>
+                                                    removeItem(event, item.id)
+                                            "
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <span class="total"
                 >{{ $page.props.data.total }} total items available</span
             >
@@ -383,12 +403,12 @@ export default {
     flex-direction: column;
     row-gap: 1rem;
 
-    &__row {
+    &__header {
         display: flex;
-
-        &--between {
-            justify-content: space-between;
-        }
+        justify-content: space-between;
+        flex-wrap: wrap;
+        row-gap: 2rem;
+        column-gap: 5rem;
     }
 
     &__title {
@@ -397,6 +417,12 @@ export default {
         color: var(--color-1);
     }
 }
+
+.table-container {
+    overflow-y: scroll;
+    border: 1px solid var(--color-4);
+    border-radius: 5px;
+}
 .table {
     @include app.table;
 }
@@ -404,7 +430,10 @@ export default {
 .actions {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: stretch;
+    flex-wrap: wrap;
+    row-gap: 1rem;
+    column-gap: 5rem;
 
     &__left {
         display: flex;
@@ -455,14 +484,23 @@ export default {
     align-items: stretch;
     column-gap: 1rem;
     color: var(--color-1);
+    width: 100%;
+
+    @include app.screen(sm) {
+        width: fit-content;
+    }
 
     &__main {
         border: 1px solid var(--color-4);
         border-radius: 4px;
         background-color: var(--color-5);
-        min-width: 20rem;
+        width: 100%;
         padding: 1rem 1.5rem;
         position: relative;
+
+        @include app.screen(sm) {
+            max-width: 20rem;
+        }
     }
 
     &__input {
@@ -511,6 +549,7 @@ export default {
     position: relative;
     display: flex;
     align-items: center;
+    height: 100%;
 
     &__icon {
         padding: 1rem;

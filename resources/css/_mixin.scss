@@ -1,8 +1,9 @@
 @mixin table {
     outline: 1px solid var(--color-4);
     text-align: left;
-    border-radius: 4px;
     color: var(--color-1);
+    width: 100%;
+    border-radius: 4px;
 
     &__row {
         &:hover {
@@ -32,5 +33,44 @@
 
     &__icon {
         color: var(--color-3);
+    }
+
+    &__select {
+        cursor: pointer;
+    }
+
+    &__empty {
+        text-align: center;
+    }
+}
+@mixin screen($screen) {
+    @if ($screen == sm) {
+        @media screen and (min-width: 640px) {
+            @content;
+        }
+    }
+
+    @if ($screen == md) {
+        @media screen and (min-width: 768px) {
+            @content;
+        }
+    }
+
+    @if ($screen == lg) {
+        @media screen and (min-width: 1024px) {
+            @content;
+        }
+    }
+
+    @if ($screen == xl) {
+        @media screen and (min-width: 1280px) {
+            @content;
+        }
+    }
+
+    @if ($screen == 2xl) {
+        @media screen and (min-width: 1536px) {
+            @content;
+        }
     }
 }
