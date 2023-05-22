@@ -1,12 +1,13 @@
 <script>
 import { Link, router } from "@inertiajs/vue3";
 import axios from "axios";
+import { Head } from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
 import Button from "@/Components/Button.vue";
 import AddNewSupplierModal from "../Components/AddNewSupplierModal.vue";
 import ViewSupplierModal from "../Components/ViewSupplierModal.vue";
 import EditSupplierModal from "../Components/EditSupplierModal.vue";
-import { Head } from "@inertiajs/vue3";
+import Table from "@/Components/Table.vue";
 
 export default {
     layout: MainLayout,
@@ -17,6 +18,7 @@ export default {
         Link,
         EditSupplierModal,
         Head,
+        Table,
     },
     data() {
         return {
@@ -114,6 +116,7 @@ export default {
                         {
                             only: ["data"],
                             preserveState: true,
+                            preserveScroll: true,
                         }
                     );
                 }, 1000);
@@ -224,89 +227,82 @@ export default {
                     />
                 </div>
             </div>
-            <div class="table-container">
-                <table class="table">
-                    <thead class="table__head table__row">
-                        <th class="table__cell">
+            <Table>
+                <template #head>
+                    <tr>
+                        <td>
                             <input
                                 type="checkbox"
                                 v-model="this.selectAll"
                                 class="table__select"
                             />
-                        </th>
-                        <th class="table__cell">NAME</th>
-                        <th class="table__cell">PHONE</th>
-                        <th class="table__cell">DESCRIPTION</th>
-                        <th class="table__cell">ACTIONS</th>
-                    </thead>
-
-                    <tbody class="table__body">
-                        <tr
-                            class="table__row table__empty"
-                            v-if="$page.props.data.data.length == 0"
-                        >
-                            <td class="table__cell" colspan="5">
-                                No items available
-                            </td>
-                        </tr>
-                        <tr
-                            class="table__row"
-                            v-for="item in $page.props.data.data"
-                        >
-                            <td class="table__cell" :key="item.id">
+                        </td>
+                        <td>NAME</td>
+                        <td>PHONE</td>
+                        <td>DESCRIPTION</td>
+                        <td>ACTIONS</td>
+                    </tr>
+                </template>
+                <template #body>
+                    <tr
+                        data-empty="true"
+                        v-if="$page.props.data.data.length == 0"
+                    >
+                        <td colspan="5">No items available</td>
+                    </tr>
+                    <tr v-for="item in $page.props.data.data">
+                        <td :key="item.id">
+                            <input
+                                type="checkbox"
+                                :value="item.id"
+                                v-model="this.selected"
+                            />
+                        </td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.phone }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>
+                            <div class="item-action">
+                                <Button :icon="'iconoir-nav-arrow-down'" />
                                 <input
                                     type="checkbox"
-                                    :value="item.id"
-                                    v-model="this.selected"
-                                    class="table__select"
+                                    class="item-action__checkbox"
+                                    @blur="blur"
                                 />
-                            </td>
-                            <td class="table__cell">{{ item.name }}</td>
-                            <td class="table__cell">{{ item.phone }}</td>
-                            <td class="table__cell">{{ item.description }}</td>
-                            <td class="table__cell">
-                                <div class="item-action">
-                                    <Button :icon="'iconoir-nav-arrow-down'" />
-                                    <input
-                                        type="checkbox"
-                                        class="item-action__checkbox"
-                                        @blur="blur"
+                                <div class="item-action__list">
+                                    <Button
+                                        :text="'View'"
+                                        :variant="'clear'"
+                                        class="item-action__link"
+                                        @click="
+                                            this.modal.viewSupplierModal.id =
+                                                item.id
+                                        "
                                     />
-                                    <div class="item-action__list">
-                                        <Button
-                                            :text="'View'"
-                                            :variant="'clear'"
-                                            class="item-action__link"
-                                            @click="
-                                                this.modal.viewSupplierModal.id =
-                                                    item.id
-                                            "
-                                        />
-                                        <Button
-                                            :text="'Edit'"
-                                            :variant="'clear'"
-                                            class="item-action__link"
-                                            @click="
-                                                this.modal.editSupplierModal.id =
-                                                    item.id
-                                            "
-                                        />
-                                        <Button
-                                            :text="'Remove'"
-                                            :variant="'clear'"
-                                            class="item-action__link"
-                                            @click="
-                                                (event) =>
-                                                    removeItem(event, item.id)
-                                            "
-                                        />
-                                    </div>
+                                    <Button
+                                        :text="'Edit'"
+                                        :variant="'clear'"
+                                        class="item-action__link"
+                                        @click="
+                                            this.modal.editSupplierModal.id =
+                                                item.id
+                                        "
+                                    />
+                                    <Button
+                                        :text="'Remove'"
+                                        :variant="'clear'"
+                                        class="item-action__link"
+                                        @click="
+                                            (event) =>
+                                                removeItem(event, item.id)
+                                        "
+                                    />
                                 </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+            </Table>
             <span class="total"
                 >{{ $page.props.data.total }} total items available</span
             >
@@ -416,15 +412,6 @@ export default {
         font-weight: 500;
         color: var(--color-1);
     }
-}
-
-.table-container {
-    overflow-y: scroll;
-    border: 1px solid var(--color-4);
-    border-radius: 5px;
-}
-.table {
-    @include app.table;
 }
 
 .actions {
