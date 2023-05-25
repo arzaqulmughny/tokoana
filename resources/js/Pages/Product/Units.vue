@@ -4,19 +4,19 @@ import axios from "axios";
 import { Head } from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
 import Button from "@/Components/Button.vue";
-import AddNewSupplierModal from "@/Components/AddNewSupplierModal.vue";
-import ViewSupplierModal from "@/Components/ViewSupplierModal.vue";
-import EditSupplierModal from "@/Components/EditSupplierModal.vue";
+import AddNewProductUnitModal from "../../Components/AddNewProductUnitModal.vue";
+import ViewProductUnitModal from "../../Components/ViewProductUnitModal.vue";
+import EditProductUnitModal from "../../Components/EditProductUnitModal.vue";
 import Table from "@/Components/Table.vue";
 
 export default {
     layout: MainLayout,
     components: {
         Button,
-        AddNewSupplierModal,
-        ViewSupplierModal,
+        AddNewProductUnitModal,
+        ViewProductUnitModal,
         Link,
-        EditSupplierModal,
+        EditProductUnitModal,
         Head,
         Table,
     },
@@ -28,13 +28,13 @@ export default {
                 sortBy: "name",
             },
             modal: {
-                addNewSupplierModal: false,
-                viewSupplierModal: {
+                addNewProductUnitModal: false,
+                viewProductUnitModal: {
                     show: false,
                     id: null,
                     data: {},
                 },
-                editSupplierModal: {
+                editProductUnitModal: {
                     show: false,
                     id: null,
                     data: {},
@@ -83,26 +83,26 @@ export default {
         },
     },
     watch: {
-        "modal.viewSupplierModal.id": async function () {
-            if (this.modal.viewSupplierModal.id !== null) {
+        "modal.viewProductUnitModal.id": async function () {
+            if (this.modal.viewProductUnitModal.id !== null) {
                 const { data } = await axios.get(
-                    `/suppliers/${this.modal.viewSupplierModal.id}`
+                    `/product/units/${this.modal.viewProductUnitModal.id}`
                 );
-                this.modal.viewSupplierModal.data = data;
-                this.modal.viewSupplierModal.show = true;
+                this.modal.viewProductUnitModal.data = data;
+                this.modal.viewProductUnitModal.show = true;
             } else {
-                this.modal.viewSupplierModal.show = false;
+                this.modal.viewProductUnitModal.show = false;
             }
         },
-        "modal.editSupplierModal.id": async function () {
-            if (this.modal.editSupplierModal.id !== null) {
+        "modal.editProductUnitModal.id": async function () {
+            if (this.modal.editProductUnitModal.id !== null) {
                 const { data } = await axios.get(
-                    `/suppliers/${this.modal.editSupplierModal.id}`
+                    `/product/units/${this.modal.editProductUnitModal.id}`
                 );
-                this.modal.editSupplie2rModal.data = data;
-                this.modal.editSupplierModal.show = true;
+                this.modal.editProductUnitModal.data = data;
+                this.modal.editProductUnitModal.show = true;
             } else {
-                this.modal.editSupplierModal.show = false;
+                this.modal.editProductUnitModal.show = false;
             }
         },
         params: {
@@ -160,12 +160,12 @@ export default {
 
 <template>
     <Head>
-        <title>Supplier List</title>
+        <title>Product Units</title>
     </Head>
     <MainLayout>
         <div class="content">
             <div class="content__header">
-                <h1 class="content__title">Suppliers</h1>
+                <h1 class="content__title">Product Units</h1>
                 <form class="search" @submit.prevent="search">
                     <div class="search__main">
                         <input
@@ -220,10 +220,10 @@ export default {
                 </div>
                 <div class="actions__right">
                     <Button
-                        :text="'Add new supplier'"
+                        :text="'Add new product unit'"
                         :icon="'iconoir-plus'"
                         :variant="'primary'"
-                        @click="this.modal.addNewSupplierModal = true"
+                        @click="this.modal.addNewProductUnitModal = true"
                     />
                 </div>
             </div>
@@ -238,8 +238,6 @@ export default {
                             />
                         </td>
                         <td>NAME</td>
-                        <td>PHONE</td>
-                        <td>DESCRIPTION</td>
                         <td>ACTIONS</td>
                     </tr>
                 </template>
@@ -259,8 +257,6 @@ export default {
                             />
                         </td>
                         <td>{{ item.name }}</td>
-                        <td>{{ item.phone }}</td>
-                        <td>{{ item.description }}</td>
                         <td>
                             <div class="item-action">
                                 <Button :icon="'iconoir-nav-arrow-down'" />
@@ -275,7 +271,7 @@ export default {
                                         :variant="'clear'"
                                         class="item-action__link"
                                         @click="
-                                            this.modal.viewSupplierModal.id =
+                                            this.modal.viewProductUnitModal.id =
                                                 item.id
                                         "
                                     />
@@ -284,7 +280,7 @@ export default {
                                         :variant="'clear'"
                                         class="item-action__link"
                                         @click="
-                                            this.modal.editSupplierModal.id =
+                                            this.modal.editProductUnitModal.id =
                                                 item.id
                                         "
                                     />
@@ -376,24 +372,24 @@ export default {
             </div>
         </div>
     </MainLayout>
-    <AddNewSupplierModal
-        :show="this.modal.addNewSupplierModal"
-        @close="this.modal.addNewSupplierModal = false"
+    <AddNewProductUnitModal
+        :show="this.modal.addNewProductUnitModal"
+        @close="this.modal.addNewProductUnitModal = false"
     />
-    <ViewSupplierModal
-        :show="this.modal.viewSupplierModal.show"
-        :data="this.modal.viewSupplierModal.data"
-        @close="this.modal.viewSupplierModal.id = null"
+    <ViewProductUnitModal
+        :show="this.modal.viewProductUnitModal.show"
+        :data="this.modal.viewProductUnitModal.data"
+        @close="this.modal.viewProductUnitModal.id = null"
     />
-    <EditSupplierModal
-        :show="this.modal.editSupplierModal.show"
-        :data="this.modal.editSupplierModal.data"
-        @close="this.modal.editSupplierModal.id = null"
+    <EditProductUnitModal
+        :show="this.modal.editProductUnitModal.show"
+        :data="this.modal.editProductUnitModal.data"
+        @close="this.modal.editProductUnitModal.id = null"
     />
 </template>
 
 <style lang="scss" scoped>
-@use "./../../css/app";
+@use "./../../../css/app.scss";
 .content {
     display: flex;
     flex-direction: column;
