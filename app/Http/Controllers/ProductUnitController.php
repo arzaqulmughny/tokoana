@@ -98,8 +98,8 @@ class ProductUnitController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ProductUnit $productUnit)
+    public function destroy($id)
     {
-        //
+        ProductUnit::destroy($id);
     }
 }
