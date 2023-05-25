@@ -58,7 +58,7 @@ class ProductUnitController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required'
+            'name' => 'required|unique:product_units'
         ]);
 
         ProductUnit::create($validated);
