@@ -5,6 +5,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductListController;
 use App\Http\Controllers\ProductUnitController;
 use App\Http\Controllers\SupplierController;
@@ -37,3 +38,4 @@ Route::get('/product', function () {
 });
 Route::resource('/product/units', ProductUnitController::class)->middleware('auth');
 Route::resource('/product/list', ProductListController::class)->middleware('auth');
+Route::resource('/product/categories', ProductCategoryController::class)->middleware('auth');

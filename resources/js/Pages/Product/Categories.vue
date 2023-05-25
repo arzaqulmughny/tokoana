@@ -112,7 +112,7 @@ export default {
                 }
                 this.timer = setTimeout(() => {
                     router.visit(
-                        `/product/units?page=${this.params.page}&search=${this.params.search}&sort=${this.params.sortBy}`,
+                        `/suppliers?page=${this.params.page}&search=${this.params.search}&sort=${this.params.sortBy}`,
                         {
                             only: ["data"],
                             preserveState: true,
@@ -165,7 +165,7 @@ export default {
     <MainLayout>
         <div class="content">
             <div class="content__header">
-                <h1 class="content__title">Product Units</h1>
+                <h1 class="content__title">Product Categories</h1>
                 <form class="search" @submit.prevent="search">
                     <div class="search__main">
                         <input
