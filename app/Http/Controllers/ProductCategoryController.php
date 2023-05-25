@@ -15,7 +15,7 @@ class ProductCategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $data = DB::table('product_units')
+        $data = DB::table('product_categories')
         ->when($request->search, function ($query, string $searchQuery) {
             $query->where('name', 'LIKE', '%' . $searchQuery . '%');
         })
@@ -62,7 +62,7 @@ class ProductCategoryController extends Controller
         ]);
 
         ProductCategory::create($validated);
-        return redirect()->back()->with('add-product-unit-success', "New product unit has been added");
+        return redirect()->back()->with('add-product-category-success', "New product category has been added");
     }
 
     /**
@@ -70,7 +70,7 @@ class ProductCategoryController extends Controller
      */
     public function show($id)
     {
-        $data = DB::table('product_units')->find($id);
+        $data = DB::table('product_categories')->find($id);
         return response()->json($data);
     }
 

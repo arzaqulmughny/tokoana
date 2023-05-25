@@ -4,19 +4,19 @@ import axios from "axios";
 import { Head } from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
 import Button from "@/Components/Button.vue";
-import AddNewProductUnitModal from "../../Components/AddNewProductUnitModal.vue";
-import ViewProductUnitModal from "../../Components/ViewProductUnitModal.vue";
-import EditProductUnitModal from "../../Components/EditProductUnitModal.vue";
+import AddNewProductCategoryModal from "../../Components/AddNewProductCategoryModal.vue";
+import ViewProductCategoryModal from "../../Components/ViewProductCategoryModal.vue";
+import EditProductCategoryModal from "../../Components/EditProductCategoryModal.vue";
 import Table from "@/Components/Table.vue";
 
 export default {
     layout: MainLayout,
     components: {
         Button,
-        AddNewProductUnitModal,
-        ViewProductUnitModal,
+        AddNewProductCategoryModal,
+        ViewProductCategoryModal,
         Link,
-        EditProductUnitModal,
+        EditProductCategoryModal,
         Head,
         Table,
     },
@@ -28,13 +28,13 @@ export default {
                 sortBy: "name",
             },
             modal: {
-                addNewProductUnitModal: false,
-                viewProductUnitModal: {
+                addNewProductCategoryModal: false,
+                viewProductCategoryModal: {
                     show: false,
                     id: null,
                     data: {},
                 },
-                editProductUnitModal: {
+                editProductCategoryModal: {
                     show: false,
                     id: null,
                     data: {},
@@ -61,7 +61,7 @@ export default {
         removeItem(event, id) {
             event.target.parentElement.parentElement.children[1].checked = false;
             if (confirm("Delete this item?")) {
-                router.delete(`/product/units/${id}`);
+                router.delete(`/product/categories/${id}`);
             }
         },
         blur(event) {
@@ -75,7 +75,7 @@ export default {
         deleteSelected() {
             if (confirm("Delete selected item?")) {
                 this.selected.forEach((id) => {
-                    router.delete(`/product/units/${id}`);
+                    router.delete(`/product/categories/${id}`);
                     this.selected = [];
                     this.selectAll = false;
                 });
@@ -83,26 +83,26 @@ export default {
         },
     },
     watch: {
-        "modal.viewProductUnitModal.id": async function () {
-            if (this.modal.viewProductUnitModal.id !== null) {
+        "modal.viewProductCategoryModal.id": async function () {
+            if (this.modal.viewProductCategoryModal.id !== null) {
                 const { data } = await axios.get(
-                    `/product/units/${this.modal.viewProductUnitModal.id}`
+                    `/product/categories/${this.modal.viewProductCategoryModal.id}`
                 );
-                this.modal.viewProductUnitModal.data = data;
-                this.modal.viewProductUnitModal.show = true;
+                this.modal.viewProductCategoryModal.data = data;
+                this.modal.viewProductCategoryModal.show = true;
             } else {
-                this.modal.viewProductUnitModal.show = false;
+                this.modal.viewProductCategoryModal.show = false;
             }
         },
-        "modal.editProductUnitModal.id": async function () {
-            if (this.modal.editProductUnitModal.id !== null) {
+        "modal.editProductCategoryModal.id": async function () {
+            if (this.modal.editProductCategoryModal.id !== null) {
                 const { data } = await axios.get(
-                    `/product/units/${this.modal.editProductUnitModal.id}`
+                    `/product/categories/${this.modal.editProductCategoryModal.id}`
                 );
-                this.modal.editProductUnitModal.data = data;
-                this.modal.editProductUnitModal.show = true;
+                this.modal.editProductCategoryModal.data = data;
+                this.modal.editProductCategoryModal.show = true;
             } else {
-                this.modal.editProductUnitModal.show = false;
+                this.modal.editProductCategoryModal.show = false;
             }
         },
         params: {
@@ -112,7 +112,7 @@ export default {
                 }
                 this.timer = setTimeout(() => {
                     router.visit(
-                        `/suppliers?page=${this.params.page}&search=${this.params.search}&sort=${this.params.sortBy}`,
+                        `/product/categories?page=${this.params.page}&search=${this.params.search}&sort=${this.params.sortBy}`,
                         {
                             only: ["data"],
                             preserveState: true,
@@ -223,7 +223,7 @@ export default {
                         :text="'Add new product unit'"
                         :icon="'iconoir-plus'"
                         :variant="'primary'"
-                        @click="this.modal.addNewProductUnitModal = true"
+                        @click="this.modal.addNewProductCategoryModal = true"
                     />
                 </div>
             </div>
@@ -271,7 +271,7 @@ export default {
                                         :variant="'clear'"
                                         class="item-action__link"
                                         @click="
-                                            this.modal.viewProductUnitModal.id =
+                                            this.modal.viewProductCategoryModal.id =
                                                 item.id
                                         "
                                     />
@@ -280,7 +280,7 @@ export default {
                                         :variant="'clear'"
                                         class="item-action__link"
                                         @click="
-                                            this.modal.editProductUnitModal.id =
+                                            this.modal.editProductCategoryModal.id =
                                                 item.id
                                         "
                                     />
@@ -372,19 +372,19 @@ export default {
             </div>
         </div>
     </MainLayout>
-    <AddNewProductUnitModal
-        :show="this.modal.addNewProductUnitModal"
-        @close="this.modal.addNewProductUnitModal = false"
+    <AddNewProductCategoryModal
+        :show="this.modal.addNewProductCategoryModal"
+        @close="this.modal.addNewProductCategoryModal = false"
     />
-    <ViewProductUnitModal
-        :show="this.modal.viewProductUnitModal.show"
-        :data="this.modal.viewProductUnitModal.data"
-        @close="this.modal.viewProductUnitModal.id = null"
+    <ViewProductCategoryModal
+        :show="this.modal.viewProductCategoryModal.show"
+        :data="this.modal.viewProductCategoryModal.data"
+        @close="this.modal.viewProductCategoryModal.id = null"
     />
-    <EditProductUnitModal
-        :show="this.modal.editProductUnitModal.show"
-        :data="this.modal.editProductUnitModal.data"
-        @close="this.modal.editProductUnitModal.id = null"
+    <EditProductCategoryModal
+        :show="this.modal.editProductCategoryModal.show"
+        :data="this.modal.editProductCategoryModal.data"
+        @close="this.modal.editProductCategoryModal.id = null"
     />
 </template>
 
