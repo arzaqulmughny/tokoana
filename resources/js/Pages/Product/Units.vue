@@ -61,7 +61,7 @@ export default {
         removeItem(event, id) {
             event.target.parentElement.parentElement.children[1].checked = false;
             if (confirm("Delete this item?")) {
-                router.delete(`/suppliers/${id}`);
+                router.delete(`/product/units/${id}`);
             }
         },
         blur(event) {
@@ -75,7 +75,7 @@ export default {
         deleteSelected() {
             if (confirm("Delete selected item?")) {
                 this.selected.forEach((id) => {
-                    router.delete(`/suppliers/${id}`);
+                    router.delete(`/product/units/${id}`);
                     this.selected = [];
                     this.selectAll = false;
                 });
