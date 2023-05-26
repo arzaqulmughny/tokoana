@@ -19,7 +19,7 @@ const emits = defineEmits(["update"]);
         }}</label>
 
         <div class="input">
-            <i class="input__icon" :class="props.icon"></i>
+            <i class="input__icon" :class="props.icon" v-if="props.icon"></i>
             <input
                 class="input__text"
                 :type="props.type"

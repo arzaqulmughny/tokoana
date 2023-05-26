@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('product_lists', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->unique();
+            $table->foreignId('unit_id');
+            $table->foreignId('category_id');
+            $table->string('barcode')->unique();
+            $table->integer('price');
+            $table->integer('stock')->default(0);
             $table->timestamps();
         });
     }
