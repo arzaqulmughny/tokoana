@@ -16,10 +16,11 @@
 .table {
     overflow-x: auto;
     outline: 1px solid var(--color-4);
-    border-radius: 5px;
+    border-radius: 4px;
 
     &__main {
         width: 100%;
+        background-color: var(--color-5);
     }
 
     tr {
@@ -45,11 +46,11 @@
     }
 
     tr:nth-child(even) {
-        background-color: var(--color-5);
+        background-color: var(--color-bg);
     }
 
     thead {
-        background-color: var(--color-5);
+        background-color: var(--color-bg);
     }
 
     [data-empty="true"] {

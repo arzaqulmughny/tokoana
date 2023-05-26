@@ -59,7 +59,12 @@ const active = ref(false);
                 ></path>
             </svg>
         </div>
-        <div class="children" :class="{ 'children--active': active }">
+        <div
+            class="children"
+            :class="{
+                'children--active': $page.url.startsWith(props.url) || active,
+            }"
+        >
             <Link
                 class="link"
                 :class="{ 'link--active': $page.url.startsWith(route.href) }"

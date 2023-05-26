@@ -99,7 +99,7 @@ export default {
                 const { data } = await axios.get(
                     `/suppliers/${this.modal.editSupplierModal.id}`
                 );
-                this.modal.editSupplie2rModal.data = data;
+                this.modal.editSupplierModal.data = data;
                 this.modal.editSupplierModal.show = true;
             } else {
                 this.modal.editSupplierModal.show = false;
