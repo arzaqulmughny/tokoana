@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
 
         Supplier::factory(10)->create();
 
-        $units = ['kg', 'L', 'pcs', 'g', 'ons', 'cm'];
+        $units = ['3kg', 'L', 'pcs', 'g', 'ons', 'cm', 'kg'];
         foreach ($units as $unit) {
             ProductUnit::create([
                 'name' => $unit

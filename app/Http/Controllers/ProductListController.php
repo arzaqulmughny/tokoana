@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductCategory;
 use Inertia\Inertia;
 use App\Models\ProductList;
+use App\Models\ProductUnit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class ProductListController extends Controller
@@ -12,10 +15,35 @@ class ProductListController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $data = ProductList::with('category', 'unit')->when($request->search, function ($query, string $searchQuery) {
+            $query->where('name', 'LIKE', '%' . $searchQuery . '%');
+        })
+        ->when(!$request->sort, function ($query, string $sortQuery) {
+            $query->orderBy('name');
+        })
+        ->when($request->sort, function ($query, string $sortQuery) {
+            switch ($sortQuery) {
+                case "name":
+                    $query->orderBy('name');
+                    break;
+                case "latest":
+                    $query->latest();
+                    break;
+                case "oldest":
+                    $query->oldest();
+                    break;
+                default:
+                    $query->orderBy('name');
+            }
+        });
+
         return Inertia::render('Product/List', [
             'user' => Auth::user(),
+            'data' => $data->paginate(5),
+            'product_categories' => ProductCategory::all(),
+            'product_units' => ProductUnit::all()
         ]);
     }
 
@@ -32,21 +60,32 @@ class ProductListController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|unique:product_lists',
+            'unit_id' => 'required',
+            'category_id' => 'required',
+            'barcode' => 'required|unique:product_lists',
+            'price' => 'required'
+        ]);
+
+        ProductList::create($validated);
+        return redirect()->back()->with('add-product-success', "New product unit has been added");
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(ProductList $productList)
+    public function show($id)
     {
-        //
+
+        $data = ProductList::all()->find($id)->load('category', 'unit');
+        return response()->json($data);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ProductList $productList)
+    public function edit(ProductList $productCategory)
     {
         //
     }
@@ -54,16 +93,21 @@ class ProductListController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ProductList $productList)
+    public function update($id, Request $request)
     {
-        //
+
+        $validated = $request->validate([
+            'name' => 'required'
+        ]);
+
+        ProductList::find($id)->update($validated);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ProductList $productList)
+    public function destroy($id)
     {
-        //
+        ProductList::destroy($id);
     }
 }
