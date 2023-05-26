@@ -1,7 +1,7 @@
 <script setup>
 const props = defineProps({
     icon: String,
-    text: String,
+    text: String | Number,
     variant: String,
     type: String,
 });
