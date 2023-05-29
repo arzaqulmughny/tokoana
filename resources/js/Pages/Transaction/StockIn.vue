@@ -4,12 +4,14 @@ import Mainlayout from "@/Layouts/MainLayout.vue";
 import Button from "@/Components/Button.vue";
 import Table from "@/Components/Table.vue";
 import axios from "axios";
+import { Head } from "@inertiajs/vue3";
 
 export default {
     layout: Mainlayout,
     components: {
         Button,
         Table,
+        Head,
     },
     data() {
         return {
@@ -190,6 +192,9 @@ export default {
 </script>
 
 <template>
+    <Head>
+        <title>Stock In</title>
+    </Head>
     <MainLayout>
         <div class="main">
             <div class="main__left">
