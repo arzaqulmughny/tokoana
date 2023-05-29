@@ -364,7 +364,7 @@ export default {
                         :text="$page.props.data.last_page"
                         @click="this.params.page = $page.props.data.last_page"
                         v-if="
-                            $page.props.data.last_page >=
+                            $page.props.data.last_page >
                             $page.props.data.current_page + 2
                         "
                         :variant="'clear'"
