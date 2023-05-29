@@ -74,40 +74,68 @@ export default {
                     return;
             }
         },
-        submit() {
+        async submit() {
             if (!confirm("Submit this data?")) {
                 return;
             }
-            const data = {
-                ...this.formData,
-                user_id: this.$page.props.user.id,
-            };
+            try {
+                const postStockInHistoryResponse =
+                    await this.postStockInHistory({
+                        ...this.formData,
+                        user_id: this.$page.props.user.id,
+                    });
 
-            axios.post("/transaction/in", data).then((response) => {
-                this.addedProduct.data.forEach((product) => {
-                    const { barcode, id, unit_id, quantity } = product;
-                    const productData = {
-                        barcode,
-                        product_id: id,
-                        unit_id,
-                        quantity,
-                        history_id: response.data.id,
-                    };
-                    axios
-                        .post("/transaction/in/items", productData)
-                        .then(() => {
-                            axios
-                                .put(`/product/list/${id}`, {
-                                    stock: product.stock + quantity,
-                                })
-                                .then(() => {
-                                    alert("Successfully added data!");
-                                    this.clearData();
-                                });
-                        })
-                        .catch((err) => console.log(err));
-                });
-            });
+                const main = async (postStockInHistoryResponseId) => {
+                    try {
+                        this.addedProduct.data.forEach(async (product) => {
+                            await this.postStockInItem({
+                                product_id: product.id,
+                                history_id: postStockInHistoryResponse.id,
+                                ...product,
+                            });
+                            await this.putProductListStock({
+                                id: product.id,
+                                quantity: product.quantity,
+                            });
+                        });
+                        alert("Successfully added data!");
+                        this.clearData();
+                    } catch (error) {
+                        await this.deleteStockInHistory(
+                            postStockInHistoryResponseId
+                        );
+                        alert("Failed to add data!");
+                    }
+                };
+                main(postStockInHistoryResponse.history_id);
+            } catch (error) {
+                alert("Failed to add data!");
+            }
+            // axios.post("/transaction/in", data).then((response) => {
+            //     this.addedProduct.data.forEach((product) => {
+            //         const { barcode, id, unit_id, quantity } = product;
+            //         const productData = {
+            //             barcode,
+            //             product_id: id,
+            //             unit_id,
+            //             quantity,
+            //             history_id: response.data.id,
+            //         };
+            //         axios
+            //             .post("/transaction/in/items", productData)
+            //             .then(() => {
+            //                 axios
+            //                     .put(`/product/list/${id}`, {
+            //                         stock: product.stock + quantity,
+            //                     })
+            //                     .then(() => {
+            //                         alert("Successfully added data!");
+            //                         this.clearData();
+            //                     });
+            //             })
+            //             .catch((err) => console.log(err));
+            //     });
+            // });
         },
         clearData(showConfirm = false) {
             if (showConfirm === "yes") {
@@ -130,6 +158,46 @@ export default {
                 data: [],
                 sortBy: "oldest",
             };
+        },
+        async postStockInHistory({ supplier_id, note, user_id }) {
+            const { data } = await axios.post("/transaction/in/", {
+                supplier_id,
+                note,
+                user_id,
+            });
+            return data;
+        },
+        async postStockInItem({
+            product_id,
+            barcode,
+            unit_id,
+            quantity,
+            history_id,
+        }) {
+            const { data } = await axios.post("/transaction/in/items", {
+                product_id,
+                barcode,
+                unit_id,
+                quantity,
+                history_id,
+            });
+            return data;
+        },
+        async putProductListStock({ id, quantity }) {
+            const getCurrentProductStockResponse =
+                await this.getCurrentProductStock(id);
+            const { data } = await axios.put(`/product/list/${id}`, {
+                stock: getCurrentProductStockResponse + quantity,
+            });
+            return data;
+        },
+        async getCurrentProductStock(id) {
+            const { data } = await axios.get(`/product/list/${id}`);
+            return data.stock;
+        },
+        async deleteStockInHistory(id) {
+            const { data } = await axios.delete(`/product/list/${id}`);
+            return data;
         },
     },
     computed: {

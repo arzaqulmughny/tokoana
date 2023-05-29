@@ -43,7 +43,8 @@ class StockInController extends Controller
 
         $rules = [
             'user_id' => 'required',
-            'supplier_id' => 'nullable'
+            'supplier_id' => 'nullable',
+            'note' => 'nullable'
         ];
 
         if (!$request->input('supplier_id')) {
@@ -82,8 +83,8 @@ class StockInController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(StockIn $stockIn)
+    public function destroy($id)
     {
-        //
+        StockIn::destroy($id);
     }
 }
