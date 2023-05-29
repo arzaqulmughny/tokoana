@@ -45,12 +45,14 @@
         }
     }
 
-    tr:nth-child(even) {
-        background-color: var(--color-bg);
+    thead {
+        background-color: var(--color-5) !important;
     }
 
-    thead {
-        background-color: var(--color-bg);
+    tbody {
+        tr:nth-child(odd) {
+            background-color: var(--color-bg);
+        }
     }
 
     [data-empty="true"] {

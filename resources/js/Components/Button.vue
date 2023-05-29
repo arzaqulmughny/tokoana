@@ -4,17 +4,17 @@ const props = defineProps({
     text: String | Number,
     variant: String,
     type: String,
+    size: String,
 });
-
-const blur = () => {
-    console.log("blur");
-};
 </script>
 
 <template>
     <button
         class="button"
-        :class="'button--' + props.variant"
+        :class="[
+            [props.variant && `button--${props.variant}`],
+            [props.size && `button--${props.size}`],
+        ]"
         :type="props.type || 'button'"
     >
         <i class="button__icon" :class="props.icon" v-if="props.icon"></i>
@@ -54,6 +54,10 @@ const blur = () => {
     &--secondary {
         background-color: var(--color-5);
         color: var(--color-1);
+    }
+
+    &--small {
+        padding: 1px 5px;
     }
 }
 </style>
