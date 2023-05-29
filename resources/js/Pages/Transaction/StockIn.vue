@@ -533,19 +533,21 @@ export default {
     display: flex;
     flex-direction: row;
     column-gap: 2rem;
+    flex-wrap: wrap;
 
     &__left {
         display: flex;
         flex-direction: column;
         row-gap: 2rem;
-        width: 60%;
+        width: 100%;
+        max-width: fit-content;
     }
 
     &__right {
         display: flex;
         flex-direction: column;
         row-gap: 2rem;
-        width: 40%;
+        max-width: 26rem;
     }
 }
 
@@ -562,7 +564,8 @@ export default {
 
     &__actions {
         display: flex;
-        column-gap: 1rem;
+        gap: 1rem;
+        flex-wrap: wrap;
     }
 }
 
