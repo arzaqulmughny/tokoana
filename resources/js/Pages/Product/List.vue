@@ -261,11 +261,11 @@ export default {
                                 v-model="this.selected"
                             />
                         </td>
-                        <td>{{ item.barcode }}</td>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.category.name }}</td>
-                        <td>{{ item.unit.name }}</td>
-                        <td>{{ item.price }}</td>
+                        <td>{{ item.barcode || "" }}</td>
+                        <td>{{ item.name || "" }}</td>
+                        <td>{{ item.category.name || "" }}</td>
+                        <td>{{ item.unit.name || "" }}</td>
+                        <td>{{ item.price || "" }}</td>
                         <td>{{ item.stock }}</td>
                         <td>
                             <div class="item-action">

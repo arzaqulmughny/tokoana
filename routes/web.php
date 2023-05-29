@@ -8,6 +8,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductListController;
 use App\Http\Controllers\ProductUnitController;
+use App\Http\Controllers\StockInController;
+use App\Http\Controllers\StockInItemController;
 use App\Http\Controllers\SupplierController;
 
 /*
@@ -32,10 +34,13 @@ Route::get('/logout', [LoginController::class, 'logout']);
 Route::resource('/suppliers', SupplierController::class)->middleware('auth');
 
 // Product
-// Unit
 Route::get('/product', function () {
     return redirect('/product/list');
 });
 Route::resource('/product/units', ProductUnitController::class)->middleware('auth');
 Route::resource('/product/list', ProductListController::class)->middleware('auth');
 Route::resource('/product/categories', ProductCategoryController::class)->middleware('auth');
+
+// Transactions
+Route::resource('/transaction/in', StockInController::class)->middleware('auth');
+Route::resource('/transaction/in/items', StockInItemController::class)->middleware('auth');

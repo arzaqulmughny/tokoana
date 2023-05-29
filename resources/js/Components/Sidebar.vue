@@ -25,7 +25,7 @@ const transactionRoutes = ref([
     },
     {
         name: "Stock in",
-        href: "/products/list",
+        href: "/transaction/in",
     },
     {
         name: "Stock out",
@@ -85,6 +85,7 @@ const toggleSidebar = () => {
                 :icon="'iconoir-data-transfer-both'"
                 :type="'accordion'"
                 :routes="transactionRoutes"
+                :url="'/transaction'"
             />
 
             <SidebarLink

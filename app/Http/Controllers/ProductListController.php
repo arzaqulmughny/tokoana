@@ -95,12 +95,7 @@ class ProductListController extends Controller
      */
     public function update($id, Request $request)
     {
-
-        $validated = $request->validate([
-            'name' => 'required'
-        ]);
-
-        ProductList::find($id)->update($validated);
+        ProductList::find($id)->update($request->all());
     }
 
     /**
