@@ -111,31 +111,6 @@ export default {
             } catch (error) {
                 alert("Failed to add data!");
             }
-            // axios.post("/transaction/in", data).then((response) => {
-            //     this.addedProduct.data.forEach((product) => {
-            //         const { barcode, id, unit_id, quantity } = product;
-            //         const productData = {
-            //             barcode,
-            //             product_id: id,
-            //             unit_id,
-            //             quantity,
-            //             history_id: response.data.id,
-            //         };
-            //         axios
-            //             .post("/transaction/in/items", productData)
-            //             .then(() => {
-            //                 axios
-            //                     .put(`/product/list/${id}`, {
-            //                         stock: product.stock + quantity,
-            //                     })
-            //                     .then(() => {
-            //                         alert("Successfully added data!");
-            //                         this.clearData();
-            //                     });
-            //             })
-            //             .catch((err) => console.log(err));
-            //     });
-            // });
         },
         clearData(showConfirm = false) {
             if (showConfirm === "yes") {
@@ -196,7 +171,7 @@ export default {
             return data.stock;
         },
         async deleteStockInHistory(id) {
-            const { data } = await axios.delete(`/product/list/${id}`);
+            const { data } = await axios.delete(`/transaction/in/${id}`);
             return data;
         },
     },
