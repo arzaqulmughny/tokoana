@@ -311,7 +311,7 @@ export default {
                                         $page.props.data.current_page + 2
                                 "
                                 v-if="
-                                    $page.props.data.last_page >=
+                                    $page.props.data.last_page >
                                     $page.props.data.current_page + 2
                                 "
                                 :variant="'clear'"
