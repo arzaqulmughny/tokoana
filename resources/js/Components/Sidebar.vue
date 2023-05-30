@@ -29,7 +29,7 @@ const transactionRoutes = ref([
     },
     {
         name: "Stock out",
-        href: "/products/list",
+        href: "/transaction/out",
     },
 ]);
 

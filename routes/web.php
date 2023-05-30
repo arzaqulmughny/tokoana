@@ -10,6 +10,8 @@ use App\Http\Controllers\ProductListController;
 use App\Http\Controllers\ProductUnitController;
 use App\Http\Controllers\StockInController;
 use App\Http\Controllers\StockInItemController;
+use App\Http\Controllers\StockOutController;
+use App\Http\Controllers\StockOutItemController;
 use App\Http\Controllers\SupplierController;
 
 /*
@@ -44,3 +46,5 @@ Route::resource('/product/categories', ProductCategoryController::class)->middle
 // Transactions
 Route::resource('/transaction/in', StockInController::class)->middleware('auth');
 Route::resource('/transaction/in/items', StockInItemController::class)->middleware('auth');
+Route::resource('/transaction/out', StockOutController::class)->middleware('auth');
+Route::resource('/transaction/out/items', StockOutItemController::class)->middleware('auth');

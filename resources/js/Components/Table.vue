@@ -33,7 +33,7 @@
         }
 
         td {
-            padding: 1.2rem;
+            padding: 1rem;
             width: fit-content;
             max-width: 20em;
             line-height: 1.5rem;

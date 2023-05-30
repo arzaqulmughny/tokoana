@@ -26,11 +26,9 @@ export default {
             selected: [],
             selectAll: false,
             formData: {
-                supplier_id: "",
                 note: "",
             },
             errors: {
-                supplier_id: "",
                 note: "",
             },
         };
@@ -64,6 +62,7 @@ export default {
             const index = this.addedProduct.data.findIndex(
                 (item) => item.id == id
             );
+
             switch (action) {
                 case "decrease":
                     this.addedProduct.data[index].quantity > 1
@@ -72,6 +71,13 @@ export default {
 
                     break;
                 case "increase":
+                    if (
+                        this.addedProduct.data[index].quantity >
+                        this.addedProduct.data[index].stock - 1
+                    ) {
+                        this.addedProduct.data[index].quantity =
+                            this.addedProduct.data[index].stock - 1;
+                    }
                     this.addedProduct.data[index].quantity += 1;
                     break;
                 default:
@@ -79,41 +85,33 @@ export default {
             }
         },
         async submit() {
-            // Form validate
-            this.errors = {
-                supplier_id: "",
-                note: "",
-            };
-
             if (this.addedProduct.data.length === 0) {
-                alert("No products to be added!");
+                alert("No product selected!");
                 return;
             }
 
-            if (
-                this.formData.supplier_id.length === 0 &&
-                this.formData.note.length === 0
-            ) {
-                this.errors.note =
-                    "Please provide a note if supplier not selected.";
+            if (this.formData.note.length === 0) {
+                this.errors.note = "Note field is required.";
+                return;
             }
 
             if (!confirm("Submit this data?")) {
                 return;
             }
+
             try {
-                const postStockInHistoryResponse =
-                    await this.postStockInHistory({
-                        ...this.formData,
+                const postStockOutHistoryResponse =
+                    await this.postStockOutHistory({
+                        note: this.formData.note,
                         user_id: this.$page.props.user.id,
                     });
 
-                const main = async (postStockInHistoryResponseId) => {
+                const main = async (postStockOutHistoryResponseId) => {
                     try {
                         this.addedProduct.data.forEach(async (product) => {
-                            await this.postStockInItem({
+                            await this.postStockOutItem({
                                 product_id: product.id,
-                                history_id: postStockInHistoryResponse.id,
+                                history_id: postStockOutHistoryResponseId,
                                 ...product,
                             });
                             await this.putProductListStock({
@@ -121,18 +119,20 @@ export default {
                                 quantity: product.quantity,
                             });
                         });
-                        alert("Successfully added data!");
-                        this.clearData();
                     } catch (error) {
                         await this.deleteStockInHistory(
-                            postStockInHistoryResponseId
+                            postStockOutHistoryResponseId
                         );
-                        alert("Failed to add data!");
+                        alert("Failed to update product stock!");
+                        return;
                     }
                 };
-                main(postStockInHistoryResponse.id);
+                main(postStockOutHistoryResponse.id);
+                alert("Update stock product success!");
+                this.clearData();
             } catch (error) {
-                alert("Failed to add data!");
+                console.log("ERROR: " + error);
+                alert("Failed to update product stock!");
             }
         },
         clearData(showConfirm = false) {
@@ -149,7 +149,6 @@ export default {
             this.selected = [];
             this.selectAll = false;
             this.formData = {
-                supplier_id: "",
                 note: "",
             };
             this.addedProduct = {
@@ -157,22 +156,21 @@ export default {
                 sortBy: "oldest",
             };
         },
-        async postStockInHistory({ supplier_id, note, user_id }) {
-            const { data } = await axios.post("/transaction/in/", {
-                supplier_id,
+        async postStockOutHistory({ note, user_id }) {
+            const { data } = await axios.post("/transaction/out/", {
                 note,
                 user_id,
             });
             return data;
         },
-        async postStockInItem({
+        async postStockOutItem({
             product_id,
             barcode,
             unit_id,
             quantity,
             history_id,
         }) {
-            const { data } = await axios.post("/transaction/in/items", {
+            const { data } = await axios.post("/transaction/out/items", {
                 product_id,
                 barcode,
                 unit_id,
@@ -185,7 +183,7 @@ export default {
             const getCurrentProductStockResponse =
                 await this.getCurrentProductStock(id);
             const { data } = await axios.put(`/product/list/${id}`, {
-                stock: getCurrentProductStockResponse + quantity,
+                stock: getCurrentProductStockResponse - quantity,
             });
             return data;
         },
@@ -194,7 +192,7 @@ export default {
             return data.stock;
         },
         async deleteStockInHistory(id) {
-            const { data } = await axios.delete(`/transaction/in/${id}`);
+            const { data } = await axios.delete(`/transaction/out/${id}`);
             return data;
         },
     },
@@ -259,13 +257,13 @@ export default {
 
 <template>
     <Head>
-        <title>Stock In</title>
+        <title>Stock Out</title>
     </Head>
     <MainLayout>
         <div class="main">
             <div class="main__left">
                 <div class="content">
-                    <h1 class="content__title">Stock In</h1>
+                    <h1 class="content__title">Available products</h1>
                     <div class="content__actions">
                         <form class="search">
                             <div class="search__main">
@@ -306,6 +304,7 @@ export default {
                                 <td>NAME</td>
                                 <td>CATEGORY</td>
                                 <td>UNIT</td>
+                                <td>STOCK</td>
                                 <td>ACTIONS</td>
                             </tr>
                         </template>
@@ -321,6 +320,7 @@ export default {
                                 <td v-html="item.name" />
                                 <td v-html="item.category.name" />
                                 <td v-html="item.unit.name" />
+                                <td v-html="item.stock" />
                                 <td>
                                     <Button
                                         @click="this.addProduct(item)"
@@ -407,7 +407,7 @@ export default {
                     </div>
                 </div>
                 <div class="content">
-                    <h1 class="content__title">Added products</h1>
+                    <h1 class="content__title">Selected products</h1>
                     <div class="content__actions">
                         <div class="select">
                             <i class="iconoir-sort select__icon"></i>
@@ -440,6 +440,7 @@ export default {
                                 <td>BARCODE</td>
                                 <td>NAME</td>
                                 <td>QUANTITY</td>
+                                <td>AFTER</td>
                                 <td>UNIT</td>
                                 <td>ACTIONS</td>
                             </tr>
@@ -474,7 +475,14 @@ export default {
                                             :variant="'secondary'"
                                             :size="'small'"
                                         />
-                                        <span v-html="item.quantity" />
+                                        <span
+                                            class="quantity__value"
+                                            v-html="
+                                                item.quantity +
+                                                ' of ' +
+                                                item.stock
+                                            "
+                                        />
                                         <Button
                                             @click="
                                                 this.adjustProductQuantity(
@@ -488,6 +496,7 @@ export default {
                                         />
                                     </div>
                                 </td>
+                                <td v-html="item.stock - item.quantity" />
                                 <td v-html="item.unit.name" />
                                 <td @click="removeProduct(item.id)">
                                     <Button
@@ -527,34 +536,6 @@ export default {
                 </div>
 
                 <div class="description">
-                    <div class="select-supplier">
-                        <label for="supplier" class="select-supplier__label"
-                            >Supplier</label
-                        >
-                        <div class="select-supplier__container">
-                            <i class="select-supplier__icon iconoir-truck" />
-                            <select
-                                name="supplier_id"
-                                class="select-supplier__main"
-                                v-model="this.formData.supplier_id"
-                            >
-                                <option
-                                    value=""
-                                    disable
-                                    v-html="'Select supplier'"
-                                />
-                                <option
-                                    v-for="item in $page.props.suppliers"
-                                    :value="item.id"
-                                    v-html="item.name"
-                                />
-                            </select>
-                            <i
-                                class="select-supplier__icon iconoir-nav-arrow-down"
-                            ></i>
-                        </div>
-                    </div>
-
                     <div class="note">
                         <label for="note" class="note__title">Note</label>
                         <textarea
@@ -603,15 +584,14 @@ export default {
         display: flex;
         flex-direction: column;
         row-gap: 2rem;
-        width: 100%;
-        max-width: fit-content;
+        max-width: 45rem;
     }
 
     &__right {
         display: flex;
         flex-direction: column;
         row-gap: 2rem;
-        max-width: 26rem;
+        max-width: 25rem;
     }
 }
 
@@ -841,6 +821,26 @@ export default {
 
 .quantity {
     display: flex;
-    column-gap: 1rem;
+    column-gap: 0.5rem;
+    align-items: center;
+
+    &__input {
+        all: unset;
+        -moz-appearance: textfield;
+        width: 1rem;
+        background-color: var(--color-5);
+        border: 1px solid var(--color-4);
+        text-align: center;
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
+
+    &__value {
+        white-space: nowrap;
+    }
 }
 </style>
