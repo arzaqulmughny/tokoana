@@ -29,6 +29,10 @@ export default {
                 supplier_id: "",
                 note: "",
             },
+            errors: {
+                supplier_id: "",
+                note: "",
+            },
         };
     },
     methods: {
@@ -75,6 +79,20 @@ export default {
             }
         },
         async submit() {
+            // Form validate
+            this.errors = {
+                supplier_id: "",
+                note: "",
+            };
+
+            if (
+                this.formData.supplier_id.length === 0 &&
+                this.formData.note.length === 0
+            ) {
+                this.errors.note =
+                    "Please provide a note if supplier not selected.";
+            }
+
             if (!confirm("Submit this data?")) {
                 return;
             }
@@ -544,10 +562,8 @@ export default {
                         ></textarea>
                         <small
                             class="note__invalid"
-                            v-if="$page.props.errors.note"
-                            v-html="
-                                'Please provide a note if you do not choose a supplier.'
-                            "
+                            v-if="this.errors.note"
+                            v-html="this.errors.note"
                         />
                     </div>
                 </div>
