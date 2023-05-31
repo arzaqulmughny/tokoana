@@ -605,7 +605,6 @@ export default {
         display: flex;
         flex-direction: column;
         row-gap: 2rem;
-        max-width: 45rem;
     }
 
     &__right {

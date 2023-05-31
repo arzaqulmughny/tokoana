@@ -265,7 +265,7 @@ export default {
         <div class="main">
             <div class="main__left">
                 <div class="content">
-                    <h1 class="content__title">Stock In</h1>
+                    <h1 class="content__title">Product List</h1>
                     <div class="content__actions">
                         <form class="search">
                             <div class="search__main">
@@ -596,22 +596,21 @@ export default {
 .main {
     display: flex;
     flex-direction: row;
-    column-gap: 2rem;
+    gap: 2rem;
     flex-wrap: wrap;
+    justify-content: space-between;
 
     &__left {
         display: flex;
         flex-direction: column;
         row-gap: 2rem;
-        width: 100%;
-        max-width: fit-content;
     }
 
     &__right {
         display: flex;
         flex-direction: column;
         row-gap: 2rem;
-        max-width: 26rem;
+        max-width: 25rem;
     }
 }
 
