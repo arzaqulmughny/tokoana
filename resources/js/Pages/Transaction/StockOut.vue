@@ -577,8 +577,9 @@ export default {
 .main {
     display: flex;
     flex-direction: row;
-    column-gap: 2rem;
+    gap: 2rem;
     flex-wrap: wrap;
+    justify-content: space-between;
 
     &__left {
         display: flex;
