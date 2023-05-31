@@ -231,7 +231,7 @@ export default {
                 }
                 this.timer = setTimeout(() => {
                     router.visit(
-                        `/transaction/in?page=${this.params.page}&search=${this.params.search}`,
+                        `/transaction/out?page=${this.params.page}&search=${this.params.search}`,
                         {
                             only: ["data"],
                             preserveState: true,
