@@ -1,18 +1,19 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\StockInController;
+use App\Http\Controllers\StockOutController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductListController;
 use App\Http\Controllers\ProductUnitController;
-use App\Http\Controllers\StockInController;
 use App\Http\Controllers\StockInItemController;
-use App\Http\Controllers\StockOutController;
 use App\Http\Controllers\StockOutItemController;
-use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SaleItemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,3 +49,5 @@ Route::resource('/transaction/in', StockInController::class)->middleware('auth')
 Route::resource('/transaction/in/items', StockInItemController::class)->middleware('auth');
 Route::resource('/transaction/out', StockOutController::class)->middleware('auth');
 Route::resource('/transaction/out/items', StockOutItemController::class)->middleware('auth');
+Route::resource('/transaction/sales', SaleController::class)->middleware('auth');
+Route::resource('/transaction/sales/items', SaleItemController::class)->middleware('auth');
