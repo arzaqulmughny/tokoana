@@ -21,7 +21,7 @@ const productRoutes = ref([
 const transactionRoutes = ref([
     {
         name: "Sales",
-        href: "/products/list",
+        href: "/transaction/sales",
     },
     {
         name: "Stock in",

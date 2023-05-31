@@ -20,7 +20,7 @@ class ProductListFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word() . random_int(1, 10),
+            'name' => fake()->word() . random_int(1, 100),
             'unit_id' => random_int(1, 5),
             'category_id' => random_int(1, 5),
             'barcode' => fake()->word() . random_int(1000, 10000),
