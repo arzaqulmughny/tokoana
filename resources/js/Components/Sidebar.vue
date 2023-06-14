@@ -33,6 +33,21 @@ const transactionRoutes = ref([
     },
 ]);
 
+const historyRoutes = ref([
+    {
+        name: "Sales",
+        href: "/history/sales",
+    },
+    {
+        name: "Stock in",
+        href: "/history/in",
+    },
+    {
+        name: "Stock out",
+        href: "/history/out",
+    },
+]);
+
 const toggleSidebar = () => {
     document.querySelector(".sidebar").classList.toggle("sidebar--active");
 };
@@ -81,7 +96,6 @@ const toggleSidebar = () => {
 
             <SidebarLink
                 :name="'Transactions'"
-                :href="'/'"
                 :icon="'iconoir-data-transfer-both'"
                 :type="'accordion'"
                 :routes="transactionRoutes"
@@ -89,11 +103,11 @@ const toggleSidebar = () => {
             />
 
             <SidebarLink
-                :class="{ 'link--active': $page.url === '/history' }"
                 :name="'History'"
-                :href="'/'"
                 :icon="'iconoir-clock-rotate-right'"
-                :type="'normal'"
+                :type="'accordion'"
+                :routes="historyRoutes"
+                :url="'/history'"
             />
 
             <SidebarLink

@@ -9,4 +9,9 @@ class SaleItem extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
+    protected $with = ['detail'];
+
+    public function detail() {
+        return $this->belongsTo(ProductList::class, 'product_id', 'id');
+    }
 }

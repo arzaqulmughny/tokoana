@@ -1,7 +1,6 @@
 <script>
-import { Link, router } from "@inertiajs/vue3";
+import { Link, router, Head } from "@inertiajs/vue3";
 import axios from "axios";
-import { Head } from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
 import Button from "@/Components/Button.vue";
 import AddNewProductModal from "../../Components/AddNewProductModal.vue";

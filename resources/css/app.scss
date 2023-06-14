@@ -1,5 +1,5 @@
-@use 'reset.scss';
-@forward 'mixin.scss';
+@use "reset.scss";
+@forward "mixin.scss";
 
 :root {
     font-size: 14px;
@@ -9,7 +9,7 @@
     --color-3: #00000080;
     --color-4: #0000001a;
     --color-5: #fff;
-    --color-bg: #F6F6F6;
+    --color-bg: #f6f6f6;
 }
 
 body {

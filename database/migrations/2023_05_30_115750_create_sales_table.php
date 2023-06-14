@@ -17,7 +17,8 @@ return new class extends Migration
             $table->integer('cash');
             $table->integer('change');
             $table->integer('user_id');
-            $table->timestamps();
+            $table->integer('created_at');
+            $table->integer('updated_at');
         });
     }
 
