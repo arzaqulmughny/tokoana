@@ -32,6 +32,7 @@ const props = defineProps({
     align-items: center;
     column-gap: 1rem;
     padding: 1rem;
+    width: fit-content;
 
     &__icon {
         pointer-events: none;
