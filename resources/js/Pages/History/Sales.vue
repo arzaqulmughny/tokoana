@@ -2,32 +2,18 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-import MainLayout from "@/Layouts/MainLayout.vue";
-import Table from "@/Components/Table.vue";
-import Button from "@/Components/Button.vue";
-import { Head, router } from "@inertiajs/vue3";
-import Input from "@/Components/Input.vue";
-import ViewSaleHistoryModal from "@/Components/ViewSaleHistoryModal.vue";
 
 export default {
     layout: MainLayout,
-    components: {
-        Table,
-        Head,
-        Button,
-        Input,
-        ViewSaleHistoryModal
-    },
     data() {
         return {
             params: {
-                sort: "",
                 cashier: "",
+                sort: "",
                 page: "",
                 from: "",
                 to: ""
             },
-            print: "",
             tempRange: {
                 from: "",
                 to: ""
@@ -42,11 +28,6 @@ export default {
         };
     },
     methods: {
-        getPreviousDay(relativeDate = new Date(), days = 1) {
-            const previous = new Date(relativeDate.getTime());
-            previous.setDate(previous.getDate() - days);
-            return previous.getTime();
-        },
         async getDetailData(id) {
             const { data } = await axios.get(`/history/sales/${id}`);
             this.modal.viewSaleHistory = data;
@@ -75,7 +56,7 @@ export default {
                         text: "-------------------------------------------------------------------------"
                     },
                     { text: `#${data.id}` },
-                    { text: this.dateFormatter(data.created_at) },
+                    { text: dateFormatter(data.created_at) },
                     {
                         columns: [{ text: "CASHIER" }, { text: data.user.name, alignment: "right" }]
                     },
@@ -144,22 +125,9 @@ export default {
                 return;
             }
 
-            function formatter(time) {
-                const date = new Date(time);
-                const result = `${date.getFullYear()}/${date.getMonth()}/${date.getDate()}`;
-                return result;
-            }
-
             let earned = 0;
             data.forEach(item => (earned += item.amount));
-            let items = data.map(sale => [
-                sale.id,
-                sale.user.name,
-                sale.amount,
-                sale.cash,
-                sale.change,
-                this.dateFormatter(sale.created_at)
-            ]);
+            let items = data.map(sale => [sale.id, sale.user.name, sale.amount, sale.cash, sale.change, dateFormatter(sale.created_at)]);
 
             const docDefinition = {
                 pageSize: "A4",
@@ -201,8 +169,14 @@ export default {
                                     headerRows: 1,
                                     widths: [100, "auto"],
                                     body: [
-                                        ["Date", { text: `${formatter(from)} - ${formatter(to)}`, color: "#5D5D5D" }],
-                                        ["Printed on", { text: `${formatter(Date.now())}`, color: "#5D5D5D" }],
+                                        [
+                                            "Date",
+                                            {
+                                                text: `${dateFormatter(from, false)} - ${dateFormatter(to, false)}`,
+                                                color: "#5D5D5D"
+                                            }
+                                        ],
+                                        ["Printed on", { text: `${dateFormatter(Date.now(), false)}`, color: "#5D5D5D" }],
                                         ["Printed by", { text: this.$page.props.user.name, color: "#5D5D5D" }]
                                     ]
                                 }
@@ -292,12 +266,6 @@ export default {
             this.params.from = Math.floor(new Date().getTime() / 1000.0) - days * 24 * 60 * 60;
             this.params.to = Math.floor(new Date().getTime() / 1000.0);
         },
-        dateFormatter(time) {
-            const date = new Date(time);
-            return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} at ${date.getHours()}:${date.getMinutes()} ${
-                date.getHours() >= 12 ? "PM" : "AM"
-            }`;
-        },
         toggleItemAction(event) {
             Array.from(document.getElementsByClassName("item-action__list--active")).forEach(element => {
                 if (event.target.nextElementSibling != element) {
@@ -315,6 +283,7 @@ export default {
         resetDate() {
             this.params.from = "";
             this.params.to = "";
+            console.log("tes");
         }
     },
     computed: {
@@ -329,7 +298,6 @@ export default {
             });
 
             return URL;
-            2;
         }
     },
     watch: {
@@ -362,6 +330,18 @@ export default {
 };
 </script>
 
+<script setup>
+import { Head, router } from "@inertiajs/vue3";
+import MainLayout from "@/Layouts/MainLayout.vue";
+import SearchBar from "@/Components/SearchBar.vue";
+import Table from "@/Components/Table.vue";
+import Button from "@/Components/Button.vue";
+import Input from "@/Components/Input.vue";
+import ViewSaleHistoryModal from "@/Components/ViewSaleHistoryModal.vue";
+import dateFormatter from "@/Utils/dateFormatter";
+import SelectCustom from "@/Components/SelectCustom.vue";
+</script>
+
 <template>
     <Head>
         <title>Sales History</title>
@@ -369,15 +349,11 @@ export default {
     <div class="main">
         <div class="main__header">
             <h1 class="main__title">Sales History</h1>
-            <div class="select-custom select-custom--primary">
-                <i class="iconoir-printing-page select-custom__icon" />
-                <span class="select-custom__text">Print</span>
-                <i class="iconoir-nav-arrow-down select-custom__icon" />
-                <input type="checkbox" class="select-custom__checkbox" />
-                <div class="select-custom__menu select-custom__menu--left">
-                    <span class="select-custom__option" @click="this.printRangedData(this.getPreviousDay(undefined, 1))">Today</span>
-                    <span class="select-custom__option" @click="this.printRangedData(this.getPreviousDay(undefined, 7))">Weekly</span>
-                    <span class="select-custom__option" @click="this.printRangedData(this.getPreviousDay(undefined, 1))">Monthly</span>
+            <SelectCustom :text="'Print'" :icon="'iconoir-printing-page'" :variant="'primary'" :menuPosition="'left'">
+                <template #menu>
+                    <span class="select-custom__option" @click="this.printRangedData(getPreviousDay(undefined, 1))">Today</span>
+                    <span class="select-custom__option" @click="this.printRangedData(getPreviousDay(undefined, 7))">Weekly</span>
+                    <span class="select-custom__option" @click="this.printRangedData(getPreviousDay(undefined, 1))">Monthly</span>
                     <hr class="select-custom__divider" />
                     <form class="select-custom__form" @submit.prevent="this.printSelectedRangeData">
                         <div class="select-custom__between">
@@ -387,17 +363,13 @@ export default {
                         </div>
                         <Button :text="'Apply'" :type="'submit'" :variant="'primary'" />
                     </form>
-                </div>
-            </div>
+                </template>
+            </SelectCustom>
         </div>
         <div class="main__actions">
             <div class="main__actions-left">
-                <div class="select-custom select-custom--secondary">
-                    <i class="iconoir-clock-rotate-right select-custom__icon" />
-                    <span class="select-custom__text">Select time</span>
-                    <i class="iconoir-nav-arrow-down select-custom__icon" />
-                    <input type="checkbox" class="select-custom__checkbox" />
-                    <div class="select-custom__menu select-custom__menu--right">
+                <SelectCustom :icon="'iconoir-clock-rotate-right'" :text="'Select date'" :variant="'secondary'" :menuPosition="'right'">
+                    <template #menu>
                         <span class="select-custom__option" @click="this.showPassedDaysData(1)">Last 24 hours</span>
                         <span class="select-custom__option" @click="this.showPassedDaysData(7)">Last 7 days</span>
                         <span class="select-custom__option" @click="this.showPassedDaysData(30)">Last 30 days</span>
@@ -409,22 +381,18 @@ export default {
                                 <input type="date" class="select-custom__date" v-model="this.tempRange.to" />
                             </div>
                             <div class="select-custom__actions">
-                                <Button :text="'Reset'" :variant="'secondary'" />
+                                <Button :text="'Reset'" :variant="'secondary'" @click="this.resetDate" />
                                 <Button :text="'Apply'" :type="'submit'" :variant="'primary'" />
                             </div>
                         </form>
-                    </div>
-                </div>
-                <div class="select-custom select-custom--secondary">
-                    <i class="iconoir-sort select-custom__icon" />
-                    <span class="select-custom__text">Sort</span>
-                    <i class="iconoir-nav-arrow-down select-custom__icon" />
-                    <input type="checkbox" class="select-custom__checkbox" />
-                    <div class="select-custom__menu select-custom__menu--right">
+                    </template>
+                </SelectCustom>
+                <SelectCustom :text="'Sort'" :icon="'iconoir-sort'" :variant="'secondary'" :menuPosition="'right'">
+                    <template #menu>
                         <span class="select-custom__option" @click="this.params.sort = 'latest'">Latest</span>
                         <span class="select-custom__option" @click="this.params.sort = 'oldest'">Oldest</span>
-                    </div>
-                </div>
+                    </template>
+                </SelectCustom>
                 <Button
                     :text="'Reset date'"
                     :icon="'iconoir-cancel'"
@@ -432,33 +400,21 @@ export default {
                     @click="this.resetDate"
                 />
             </div>
-            <form class="search">
-                <form class="search" @submit.prevent="search">
-                    <div class="search__main">
-                        <input
-                            type="text"
-                            class="search__input"
-                            name="cashier"
-                            placeholder="Cashier name..."
-                            autocomplete="off"
-                            v-model="this.params.cashier"
-                        />
-                        <button class="search__clear" v-if="this.params.cashier" @click="this.params.cashier = ''">
-                            <i class="iconoir-cancel search__clear-icon"></i>
-                        </button>
-                    </div>
-                    <Button :type="'submit'" :icon="'iconoir-search'" :variant="'primary'" />
-                </form>
-            </form>
+            <SearchBar
+                :name="'cashier'"
+                :placeholder="'Cashier name...'"
+                v-model:value="this.params.cashier"
+                @submit="this.params = this.params"
+            />
         </div>
         <div class="main__body">
             <Table>
                 <template #head>
                     <tr>
-                        <td>#</td>
+                        <td>INVOICE ID</td>
                         <td>ITEMS</td>
                         <td>AMOUNT</td>
-                        <td>TIMESTAMP</td>
+                        <td>TIME</td>
                         <td>CASHIER</td>
                         <td>ACTIONS</td>
                     </tr>
@@ -471,7 +427,7 @@ export default {
                         <td v-html="item.id" />
                         <td v-html="item.items.length" />
                         <td v-html="item.amount" />
-                        <td v-html="this.dateFormatter(item.created_at)" />
+                        <td v-html="dateFormatter(item.created_at)" />
                         <td v-html="item.user.name" />
                         <td>
                             <div class="item-action">
@@ -502,7 +458,6 @@ export default {
                     :variant="'secondary'"
                     @click="this.params.page > 1 ? (this.params.page = this.params.page - 1) : null"
                 />
-
                 <div class="pagination__number">
                     <Button :text="1" :variant="1 == $page.props.data.current_page ? 'primary' : 'clear'" @click="this.params.page = 1" />
                     <Button v-if="$page.props.data.current_page != 1" :text="$page.props.data.current_page" :variant="'primary'" />
@@ -623,166 +578,6 @@ export default {
         display: flex;
         flex-direction: column;
         row-gap: 1rem;
-    }
-}
-
-.select-custom {
-    display: flex;
-    position: relative;
-    align-items: center;
-    border: 1px solid rgba($color: #000000, $alpha: 0.1);
-    border-radius: 4px;
-    padding: 1rem;
-    column-gap: 1rem;
-    cursor: pointer;
-
-    &--primary {
-        color: var(--color-5);
-        background-color: var(--color-2);
-    }
-
-    &--primary &__icon {
-        color: var(--color-5);
-        font-size: 1.2rem;
-    }
-
-    &--secondary {
-        background-color: var(--color-5);
-        color: var(--color-1);
-    }
-
-    &--secondary &__icon {
-        color: var(--color-1);
-        font-size: 1.2rem;
-    }
-
-    &__menu {
-        position: absolute;
-        top: calc(100% + 1rem);
-        min-width: 100%;
-        display: flex;
-        visibility: hidden;
-        flex-direction: column;
-        background-color: var(--color-5);
-        border: 1px solid var(--color-4);
-        border-radius: 4px;
-        z-index: 1;
-
-        &--left {
-            right: -2px;
-        }
-
-        &--right {
-            left: -2px;
-        }
-    }
-
-    &__checkbox {
-        all: unset;
-        left: 0;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-
-        &:checked ~ .select-custom__menu {
-            visibility: visible;
-        }
-    }
-
-    &__option {
-        padding: 1rem;
-        text-align: center;
-        color: var(--color-1);
-
-        &:hover {
-            background-color: var(--color-bg);
-        }
-    }
-
-    &__divider {
-        width: 100%;
-        background-color: var(--color-4);
-        height: 1px;
-        border: 0;
-    }
-
-    &__date {
-        color: var(--color-1);
-        border: 1px solid var(--color-4);
-        padding: 1rem;
-        font-family: "Inter", sans-serif;
-        outline: none;
-        cursor: pointer;
-        border-radius: 4px;
-    }
-
-    &__to {
-        color: var(--color-1);
-    }
-
-    &__form {
-        display: flex;
-        flex-direction: column;
-        row-gap: 1rem;
-        padding: 1rem;
-    }
-
-    &__between {
-        display: flex;
-        column-gap: 1rem;
-        align-items: center;
-    }
-
-    &__actions {
-        display: flex;
-        justify-content: space-between;
-        column-gap: 1rem;
-    }
-}
-
-.search {
-    display: flex;
-    align-items: stretch;
-    column-gap: 1rem;
-    color: var(--color-1);
-    width: 100%;
-
-    @include app.screen(sm) {
-        width: fit-content;
-    }
-
-    &__main {
-        border: 1px solid var(--color-4);
-        border-radius: 4px;
-        background-color: var(--color-5);
-        width: 100%;
-        padding: 1rem 1.5rem;
-        position: relative;
-
-        @include app.screen(sm) {
-            max-width: 20rem;
-        }
-    }
-
-    &__input {
-        all: unset;
-    }
-
-    &__clear {
-        all: unset;
-        cursor: pointer;
-        top: 0;
-        right: 0;
-        position: absolute;
-        height: 100%;
-        padding-inline: 1rem;
-        display: flex;
-        align-items: center;
-    }
-
-    &__clear-icon {
-        font-size: 1.2rem;
     }
 }
 </style>
