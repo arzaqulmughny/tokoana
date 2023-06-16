@@ -4,17 +4,14 @@ const props = defineProps({
     text: String | Number,
     variant: String,
     type: String,
-    size: String,
+    size: String
 });
 </script>
 
 <template>
     <button
         class="button"
-        :class="[
-            [props.variant && `button--${props.variant}`],
-            [props.size && `button--${props.size}`],
-        ]"
+        :class="[[props.variant && `button--${props.variant}`], [props.size && `button--${props.size}`]]"
         :type="props.type || 'button'"
     >
         <i class="button__icon" :class="props.icon" v-if="props.icon"></i>
@@ -58,7 +55,9 @@ const props = defineProps({
     }
 
     &--small {
-        padding: 1px 5px;
+        border: none;
+        padding: 0;
+        color: var(--color-1);
     }
 }
 </style>

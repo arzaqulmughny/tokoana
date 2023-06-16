@@ -15,8 +15,8 @@ class SaleHistoryController extends Controller
     public function index(Request $request)
     {
         $data = Sale::with('items', 'user')
-            ->when($request->cashier, function ($query, string $cashierQuery) {
-                $query->whereRelation('user', 'name', 'LIKE', '%'. $cashierQuery .'%');
+            ->when($request->search, function ($query, string $searchQuery) {
+                $query->whereRelation('user', 'name', 'LIKE', '%'. $searchQuery .'%');
             })
             ->when($request->sort, function ($query, string $sortQuery) {
                 switch($sortQuery) {

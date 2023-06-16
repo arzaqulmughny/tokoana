@@ -4,37 +4,31 @@ import Input from "./Input.vue";
 import { ref } from "vue";
 import { router } from "@inertiajs/vue3";
 
-const props = defineProps({
-    show: Boolean,
-});
+defineProps(["show"]);
+defineEmits(["update:show"]);
 
-const emit = defineEmits(["close"]);
-const formData = ref({
+const form = ref({
     name: "",
     phone: "",
-    description: "",
+    description: ""
 });
 
-const close = () => {
-    emit("close");
-};
-
-const submit = () => {
-    router.post("/suppliers", formData.value, {
+const submit = close => {
+    router.post("/suppliers", form.value, {
         onSuccess: () => {
             close();
-            formData.value = {
+            form.value = {
                 name: "",
                 phone: "",
-                description: "",
+                description: ""
             };
-        },
+        }
     });
 };
 </script>
 <template>
     <Teleport to="#modals">
-        <div class="overlay" v-if="props.show === true">
+        <div class="overlay" v-if="show">
             <div class="modal">
                 <div class="modal__header">
                     <div class="modal__head-left">
@@ -43,28 +37,21 @@ const submit = () => {
                     <div class="modal__head-right">
                         <div class="modal__head-text">
                             <h1 class="modal__title">Add new supplier</h1>
-                            <h2 class="modal__subtitle">
-                                Fill the data below to add new supplier
-                            </h2>
+                            <h2 class="modal__subtitle">Fill the data below to add new supplier</h2>
                         </div>
-                        <Button
-                            class="modal__close"
-                            :icon="'iconoir-cancel'"
-                            :variant="'secondary'"
-                            @click="close"
-                        />
+                        <Button class="modal__close" :icon="'iconoir-cancel'" :variant="'secondary'" @click="$emit('update:show', false)" />
                     </div>
                 </div>
 
-                <form class="form" @submit.prevent="submit">
+                <form class="form" @submit.prevent="submit(() => $emit('update:show', false))">
                     <Input
                         :name="'name'"
                         :displayName="'Supplier name'"
                         :icon="'iconoir-user'"
                         :type="'text'"
                         :placeholder="'Supplier name'"
-                        :value="formData.name"
-                        @update="(newValue) => (formData.name = newValue)"
+                        :value="form.name"
+                        @update="newValue => (form.name = newValue)"
                         :error="$page.props.errors.name"
                     />
 
@@ -74,8 +61,8 @@ const submit = () => {
                         :icon="'iconoir-phone'"
                         :type="'number'"
                         :placeholder="'Phone number'"
-                        :value="formData.phone"
-                        @update="(newValue) => (formData.phone = newValue)"
+                        :value="form.phone"
+                        @update="newValue => (form.phone = newValue)"
                         :error="$page.props.errors.phone"
                     />
 
@@ -85,25 +72,14 @@ const submit = () => {
                         :icon="'iconoir-notes'"
                         :type="'text'"
                         :placeholder="'Description'"
-                        :value="formData.description"
-                        @update="
-                            (newValue) => (formData.description = newValue)
-                        "
+                        :value="form.description"
+                        @update="newValue => (form.description = newValue)"
                         :error="$page.props.errors.description"
                     />
 
                     <div class="form__action">
-                        <Button
-                            :text="'Cancel'"
-                            :variant="'secondary'"
-                            @click="close"
-                        />
-                        <Button
-                            :text="'Add'"
-                            :variant="'primary'"
-                            :icon="'iconoir-plus'"
-                            :type="'submit'"
-                        />
+                        <Button :text="'Cancel'" :variant="'secondary'" @click="$emit('update:show', false)" />
+                        <Button :text="'Add'" :variant="'primary'" :icon="'iconoir-plus'" :type="'submit'" />
                     </div>
                 </form>
             </div>

@@ -4,49 +4,44 @@ import Input from "./Input.vue";
 import { watch, ref } from "vue";
 import { router } from "@inertiajs/vue3";
 
-const props = defineProps({
-    show: Boolean,
-    data: Object,
-});
+const props = defineProps(["data"]);
+const emits = defineEmits(["update:data"]);
 
-const emit = defineEmits(["close"]);
-
-const close = () => {
-    emit("close");
-};
-
-const formData = ref({
+const form = ref({
     name: "",
     phone: "",
-    description: "",
+    description: ""
 });
 
 watch(
     () => props.data,
     () => {
-        formData.value.name = props.data.name;
-        formData.value.phone = props.data.phone;
-        formData.value.description = props.data.description;
+        if (props.data !== false) {
+            form.value.name = props.data.name;
+            form.value.phone = props.data.phone;
+            form.value.description = props.data.description;
+        }
     }
 );
-const submit = () => {
+
+const submit = close => {
     if (confirm("Save changes?")) {
-        router.put(`/suppliers/${props.data.id}`, formData.value, {
+        router.put(`/suppliers/${props.data.id}`, form.value, {
             onSuccess: () => {
                 close();
-                formData.value = {
+                form.value = {
                     name: "",
                     phone: "",
-                    description: "",
+                    description: ""
                 };
-            },
+            }
         });
     }
 };
 </script>
 <template>
     <Teleport to="#modals">
-        <div class="overlay" v-if="props.show === true">
+        <div class="overlay" v-if="data !== false">
             <div class="modal">
                 <div class="modal__header">
                     <div class="modal__head-left">
@@ -55,26 +50,19 @@ const submit = () => {
                     <div class="modal__head-right">
                         <div class="modal__head-text">
                             <h1 class="modal__title">Edit supplier</h1>
-                            <h2 class="modal__subtitle">
-                                Edit this supplier information
-                            </h2>
+                            <h2 class="modal__subtitle">Edit this supplier information</h2>
                         </div>
-                        <Button
-                            class="modal__close"
-                            :icon="'iconoir-cancel'"
-                            :variant="'secondary'"
-                            @click="close"
-                        />
+                        <Button class="modal__close" :icon="'iconoir-cancel'" :variant="'secondary'" @click="emits('update:data', false)" />
                     </div>
                 </div>
 
-                <form class="form" @submit.prevent="submit">
+                <form class="form" @submit.prevent="submit(() => emits('update:data', false))">
                     <Input
                         :displayName="'Supplier name'"
                         :icon="'iconoir-user'"
                         :type="'text'"
-                        :value="formData.name"
-                        @update="(newValue) => (formData.name = newValue)"
+                        :value="form.name"
+                        @update="newValue => (form.name = newValue)"
                         :error="$page.props.errors.name"
                     />
 
@@ -82,8 +70,8 @@ const submit = () => {
                         :displayName="'Phone number'"
                         :icon="'iconoir-phone'"
                         :type="'text'"
-                        :value="formData.phone"
-                        @update="(newValue) => (formData.phone = newValue)"
+                        :value="form.phone"
+                        @update="newValue => (form.phone = newValue)"
                         :error="$page.props.errors.name"
                     />
 
@@ -91,24 +79,14 @@ const submit = () => {
                         :displayName="'Description'"
                         :icon="'iconoir-notes'"
                         :type="'text'"
-                        :value="formData.description"
-                        @update="
-                            (newValue) => (formData.description = newValue)
-                        "
+                        :value="form.description"
+                        @update="newValue => (form.description = newValue)"
                         :error="$page.props.errors.name"
                     />
 
                     <div class="form__action">
-                        <Button
-                            :text="'Close'"
-                            :variant="'secondary'"
-                            @click="close"
-                        />
-                        <Button
-                            :text="'Save changes'"
-                            :variant="'primary'"
-                            :type="'submit'"
-                        />
+                        <Button :text="'Close'" :variant="'secondary'" @click="emits('update:data', false)" />
+                        <Button :text="'Save changes'" :variant="'primary'" :type="'submit'" />
                     </div>
                 </form>
             </div>
