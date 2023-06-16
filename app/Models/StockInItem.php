@@ -9,4 +9,9 @@ class StockInItem extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
+    protected $with = ['details'];
+
+    public function details() {
+        return $this->belongsTo(ProductList::class, 'product_id', 'id');
+    }
 }

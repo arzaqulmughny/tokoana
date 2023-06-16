@@ -16,7 +16,8 @@ return new class extends Migration
             $table->integer('supplier_id')->nullable();
             $table->integer('user_id')->nullable();
             $table->string('note')->nullable();
-            $table->timestamps();
+            $table->integer('created_at');
+            $table->integer('updated_at');
         });
     }
 

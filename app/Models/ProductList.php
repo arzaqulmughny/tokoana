@@ -9,7 +9,7 @@ class ProductList extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    // protected $with = ['category', 'unit'];
+    protected $with = ['category', 'unit'];
 
     public function unit() {
         return $this->belongsTo(ProductUnit::class, 'unit_id', 'id');
