@@ -56,3 +56,4 @@ Route::resource('/transaction/sales/items', SaleItemController::class)->middlewa
 
 // History
 Route::resource('/history/sales', SaleHistoryController::class)->middleware('auth');
+Route::resource('/history/in', StockInHistoryController::class)->middleware('auth');

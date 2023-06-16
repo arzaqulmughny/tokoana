@@ -19,7 +19,7 @@ export default {
                 to: ""
             },
             modal: {
-                viewSaleHistory: null
+                viewStockInHistory: null
             },
             tempPrintRange: {
                 from: "",
@@ -29,105 +29,154 @@ export default {
     },
     methods: {
         async getDetailData(id) {
-            const { data } = await axios.get(`/history/sales/${id}`);
-            this.modal.viewSaleHistory = data;
+            const { data } = await axios.get(`/history/in/${id}`);
+            return data;
         },
-        async printReceipt(id) {
-            const { data } = await axios.get(`/history/sales/${id}`);
-            const items = data.items.map((item, index) => {
-                return {
-                    layout: "noBorders",
-                    table: {
-                        headerRows: 1,
-                        widths: ["auto", "auto"],
-                        body: [
-                            [`[${index + 1}]`, item.detail.name],
-                            ["", `${item.quantity} X ${item.current_price} = ${item.amount}`]
-                        ]
-                    }
-                };
-            });
+        async printSingleData(id) {
+            const { data } = await axios.get(`/history/in/${id}?mode=print`);
+            const items = data.items.map(item => [
+                item.details.barcode,
+                item.details.name,
+                item.quantity,
+                item.details.unit.name,
+                item.details.category.name
+            ]);
+
             const docDefinition = {
-                pageSize: { width: 283.46, height: "auto" },
-                content: [
-                    { text: "TOKOANA", bold: true, fontSize: 14 },
-                    { text: "POINT OF SALES APP" },
-                    {
-                        text: "-------------------------------------------------------------------------"
-                    },
-                    { text: `#${data.id}` },
-                    { text: dateFormatter(data.created_at) },
-                    {
-                        columns: [{ text: "CASHIER" }, { text: data.user.name, alignment: "right" }]
-                    },
-                    {
-                        text: "-------------------------------------------------------------------------"
-                    },
-                    ...items,
-                    {
-                        text: "-------------------------------------------------------------------------"
-                    },
-                    {
-                        columns: [
-                            { text: "SUBTOTAL", bold: true },
-                            {
-                                text: data.amount,
-                                alignment: "right",
-                                bold: true
-                            }
-                        ]
-                    },
-                    {
-                        columns: [
-                            { text: "TOTAL", bold: true },
-                            {
-                                text: data.amount,
-                                alignment: "right",
-                                bold: true
-                            }
-                        ]
-                    },
-                    {
-                        columns: [
-                            { text: "CASH", bold: true },
-                            { text: data.cash, alignment: "right", bold: true }
-                        ]
-                    },
-                    {
-                        columns: [
-                            { text: "CHANGE", bold: true },
-                            {
-                                text: data.change,
-                                alignment: "right",
-                                bold: true
-                            }
-                        ]
-                    },
-                    {
-                        text: "-------------------------------------------------------------------------"
-                    },
-                    {
-                        text: "THANK YOU FOR PURCHASING!",
-                        alignment: "center"
-                    }
-                ],
+                pageSize: "A4",
+                pageOrientation: "landscape",
+                pageMargins: [50, 50, 50, 50],
                 defaultStyle: {
-                    fontSise: 12
+                    fontSise: 12,
+                    lineHeight: 1.4
                 },
-                pageMargins: [20, 20, 20, 20]
+                images: {
+                    logo: {
+                        url: `http://${window.location.host}/assets/images/logo.png`
+                    }
+                },
+                content: [
+                    {
+                        columns: [
+                            {
+                                width: "*",
+                                columns: [
+                                    {
+                                        image: `logo`,
+                                        width: 58
+                                    },
+                                    {
+                                        layout: "noBorders",
+                                        table: {
+                                            headerRows: 1,
+                                            widths: ["auto"],
+                                            body: [[{ text: "TOKOANA", fontSize: 18, bold: true }], ["Point of Sales App"]]
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                width: "auto",
+                                layout: "noBorders",
+                                table: {
+                                    headerRows: 1,
+                                    widths: [100, "auto"],
+                                    body: [
+                                        [
+                                            "Date",
+                                            {
+                                                text: `${dateFormatter(data.created_at)}`,
+                                                color: "#5D5D5D"
+                                            }
+                                        ],
+                                        ["Printed on", { text: `${dateFormatter(Date.now())}`, color: "#5D5D5D" }],
+                                        ["Printed by", { text: this.$page.props.user.name, color: "#5D5D5D" }]
+                                    ]
+                                }
+                            }
+                        ],
+                        columnGap: 10
+                    },
+                    {
+                        canvas: [{ type: "line", x1: 0, y1: 20, x2: 730, y2: 20, lineWidth: 0.1, lineColor: "#A9A9A9" }]
+                    },
+                    {
+                        text: "\nStock In Details",
+                        fontSize: 18,
+                        bold: true
+                    },
+                    {
+                        layout: "noBorders",
+                        table: {
+                            headerRows: 1,
+                            widths: ["auto", "auto"],
+                            body: [
+                                ["Supplier", { text: data.supplier !== null ? data.supplier.name : "-", color: "#5D5D5D" }],
+                                ["Receiver", { text: data.user.name, color: "#5D5D5D" }],
+                                ["Total items", { text: data.items.length, color: "#5D5D5D" }],
+                                ["Note", { text: data.note, color: "#5D5D5D" }]
+                            ]
+                        }
+                    },
+                    {
+                        text: "\n"
+                    },
+                    {
+                        layout: "custom1",
+                        table: {
+                            headerRows: 1,
+                            widths: ["*", "*", "*", "*", "*"],
+                            body: [["BARCODE", "NAME", "QUANTITY", "UNIT", "CATEGORY"], ...items]
+                        }
+                    }
+                ]
             };
-            pdfMake.createPdf(docDefinition, null).open();
+
+            const tableLayouts = {
+                custom1: {
+                    hLineWidth: function () {
+                        return 1;
+                    },
+                    vLineWidth: function () {
+                        return 1;
+                    },
+                    hLineColor: function () {
+                        return "#A9A9A9";
+                    },
+                    vLineColor: function () {
+                        return "#A9A9A9";
+                    },
+                    paddingLeft: function () {
+                        return 5;
+                    },
+                    paddingRight: function () {
+                        return 5;
+                    },
+                    paddingTop: function () {
+                        return 5;
+                    },
+                    paddingBottom: function () {
+                        return 5;
+                    }
+                }
+            };
+            pdfMake.createPdf(docDefinition, tableLayouts).open();
         },
         async printRangedData(from, to = Date.now()) {
-            const { data } = await axios.get(`/history/sales?from=${Math.floor(from / 1000)}&to=${Math.floor(to / 1000)}&mode=print`);
+            console.log(from);
+            const { data } = await axios.get(`/history/in?from=${Math.floor(from / 1000)}&to=${Math.floor(to / 1000)}&mode=print`);
             if (data.length === 0) {
                 alert("No data found in this date!");
                 return;
             }
 
-            let earned = 0;
-            data.forEach(item => (earned += item.amount));
-            let items = data.map(sale => [sale.id, sale.user.name, sale.amount, sale.cash, sale.change, dateFormatter(sale.created_at)]);
+            let items = data.map(item => [
+                item.supplier !== null ? item.supplier.name : "-",
+                data.length,
+                item.user.name,
+                dateFormatter(item.created_at),
+                item.note
+            ]);
 
             const docDefinition = {
                 pageSize: "A4",
@@ -176,7 +225,7 @@ export default {
                                                 color: "#5D5D5D"
                                             }
                                         ],
-                                        ["Printed on", { text: `${dateFormatter(Date.now(), false)}`, color: "#5D5D5D" }],
+                                        ["Printed on", { text: `${dateFormatter(Date.now())}`, color: "#5D5D5D" }],
                                         ["Printed by", { text: this.$page.props.user.name, color: "#5D5D5D" }]
                                     ]
                                 }
@@ -188,7 +237,7 @@ export default {
                         canvas: [{ type: "line", x1: 0, y1: 20, x2: 730, y2: 20, lineWidth: 0.1, lineColor: "#A9A9A9" }]
                     },
                     {
-                        text: "\nSales History Report",
+                        text: "\nStock In History Report",
                         fontSize: 18,
                         bold: true
                     },
@@ -197,10 +246,7 @@ export default {
                         table: {
                             headerRows: 1,
                             widths: ["auto", "auto"],
-                            body: [
-                                ["Total sales", { text: data.length, color: "#5D5D5D" }],
-                                ["Total earned", { text: earned, color: "#5D5D5D" }]
-                            ]
+                            body: [["Total transaction", { text: data.length, color: "#5D5D5D" }]]
                         }
                     },
                     {
@@ -210,8 +256,8 @@ export default {
                         layout: "custom1",
                         table: {
                             headerRows: 1,
-                            widths: ["auto", "*", "*", "*", "*", "*"],
-                            body: [["INVOICE ID", "CASHIER", "AMOUNT", "CASH", "CHANGE", "TIME"], ...items]
+                            widths: ["*", "*", "*", "*", "*"],
+                            body: [["SUPPLIER", "ITEMS", "RECEIVER", "TIME", "NOTE"], ...items]
                         }
                     }
                 ]
@@ -322,7 +368,7 @@ import SearchBar from "@/Components/SearchBar.vue";
 import Table from "@/Components/Table.vue";
 import Button from "@/Components/Button.vue";
 import Input from "@/Components/Input.vue";
-import ViewSaleHistoryModal from "@/Components/ViewSaleHistoryModal.vue";
+import ViewStockInHistoryModal from "@/Components/ViewStockInHistoryModal.vue";
 import dateFormatter from "@/Utils/dateFormatter";
 import SelectCustom from "@/Components/SelectCustom.vue";
 import RowMenu from "@/Components/RowMenu.vue";
@@ -335,7 +381,7 @@ import getPreviousTime from "@/Utils/getPreviousTime";
     </Head>
     <div class="main">
         <div class="main__header">
-            <h1 class="main__title">Sales History</h1>
+            <h1 class="main__title">Stock In History</h1>
             <SelectCustom :text="'Print'" :icon="'iconoir-printing-page'" :variant="'primary'" :menuPosition="'left'">
                 <span class="select-custom__option" @click="this.printRangedData(getPreviousTime(undefined, 1))">Today</span>
                 <span class="select-custom__option" @click="this.printRangedData(getPreviousTime(undefined, 7))">Weekly</span>
@@ -381,17 +427,17 @@ import getPreviousTime from "@/Utils/getPreviousTime";
                     @click="this.resetDate"
                 />
             </div>
-            <SearchBar :name="'search'" :placeholder="'Search by cashier name...'" v-model:value="this.params.search" />
+            <SearchBar :name="'search'" :placeholder="'Supplier name or note...'" v-model:value="this.params.search" />
         </div>
         <div class="main__body">
             <Table>
                 <template #head>
                     <tr>
-                        <td>INVOICE ID</td>
+                        <td>SUPPLIER</td>
                         <td>ITEMS</td>
-                        <td>AMOUNT</td>
+                        <td>RECEIVER</td>
                         <td>TIME</td>
-                        <td>CASHIER</td>
+                        <td>NOTE</td>
                         <td>ACTIONS</td>
                     </tr>
                 </template>
@@ -400,19 +446,24 @@ import getPreviousTime from "@/Utils/getPreviousTime";
                         <td colspan="100">No items available</td>
                     </tr>
                     <tr v-for="item in this.$page.props.data.data">
-                        <td v-html="item.id" />
+                        <td v-html="item.supplier !== null ? item.supplier.name : '-'" />
                         <td v-html="item.items.length" />
-                        <td v-html="item.amount" />
-                        <td v-html="dateFormatter(item.created_at)" />
                         <td v-html="item.user.name" />
+                        <td v-html="dateFormatter(item.created_at)" />
+                        <td v-html="item.note !== null ? item.note : '-'" />
                         <td>
                             <RowMenu>
-                                <Button :text="'View'" class="item-action__link" :variant="'clear'" @click="this.getDetailData(item.id)" />
                                 <Button
-                                    :text="'Print Receipt'"
+                                    :text="'View'"
                                     class="item-action__link"
                                     :variant="'clear'"
-                                    @click="this.printReceipt(item.id)"
+                                    @click="async () => (this.modal.viewStockInHistory = await this.getDetailData(item.id))"
+                                />
+                                <Button
+                                    :text="'Print Data'"
+                                    class="item-action__link"
+                                    :variant="'clear'"
+                                    @click="this.printSingleData(item.id)"
                                 />
                             </RowMenu>
                         </td>
@@ -456,11 +507,7 @@ import getPreviousTime from "@/Utils/getPreviousTime";
             </div>
         </div>
     </div>
-    <ViewSaleHistoryModal
-        :data="this.modal.viewSaleHistory"
-        @close="this.modal.viewSaleHistory = null"
-        @print="this.printReceipt(this.modal.viewSaleHistory.id)"
-    />
+    <ViewStockInHistoryModal v-model:data="this.modal.viewStockInHistory" @print="this.printSingleData" />
 </template>
 
 <style lang="scss" scoped>
