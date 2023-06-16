@@ -1,22 +1,13 @@
 <script setup>
 import Button from "@/Components/Button.vue";
 import Input from "./Input.vue";
-import { router } from "@inertiajs/vue3";
 
-const props = defineProps({
-    show: Boolean,
-    data: Object,
-});
-
-const emit = defineEmits(["close"]);
-
-const close = () => {
-    emit("close");
-};
+defineProps(["data"]);
+defineEmits(["update:data"]);
 </script>
 <template>
     <Teleport to="#modals">
-        <div class="overlay" v-if="props.show === true">
+        <div class="overlay" v-if="data !== false">
             <div class="modal">
                 <div class="modal__header">
                     <div class="modal__head-left">
@@ -25,50 +16,21 @@ const close = () => {
                     <div class="modal__head-right">
                         <div class="modal__head-text">
                             <h1 class="modal__title">Supplier detail</h1>
-                            <h2 class="modal__subtitle">
-                                Detail information about this supplier
-                            </h2>
+                            <h2 class="modal__subtitle">Detail information about this supplier</h2>
                         </div>
-                        <Button
-                            class="modal__close"
-                            :icon="'iconoir-cancel'"
-                            :variant="'secondary'"
-                            @click="close"
-                        />
+                        <Button class="modal__close" :icon="'iconoir-cancel'" :variant="'secondary'" @click="$emit('update:data', false)" />
                     </div>
                 </div>
 
                 <div class="form">
-                    <Input
-                        :displayName="'Supplier name'"
-                        :icon="'iconoir-user'"
-                        :type="'text'"
-                        :value="props.data.name"
-                        :disabled="true"
-                    />
+                    <Input :displayName="'Supplier name'" :icon="'iconoir-user'" :type="'text'" :value="data.name" :disabled="true" />
 
-                    <Input
-                        :displayName="'Phone number'"
-                        :icon="'iconoir-phone'"
-                        :type="'text'"
-                        :value="props.data.phone"
-                        :disabled="true"
-                    />
+                    <Input :displayName="'Phone number'" :icon="'iconoir-phone'" :type="'text'" :value="data.phone" :disabled="true" />
 
-                    <Input
-                        :displayName="'Description'"
-                        :icon="'iconoir-notes'"
-                        :type="'text'"
-                        :value="props.data.description"
-                        :disabled="true"
-                    />
+                    <Input :displayName="'Description'" :icon="'iconoir-notes'" :type="'text'" :value="data.description" :disabled="true" />
 
                     <div class="form__action">
-                        <Button
-                            :text="'Close'"
-                            :variant="'secondary'"
-                            @click="close"
-                        />
+                        <Button :text="'Close'" :variant="'secondary'" @click="$emit('update:data', false)" />
                     </div>
                 </div>
             </div>

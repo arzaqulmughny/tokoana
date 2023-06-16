@@ -8,7 +8,7 @@ export default {
     data() {
         return {
             params: {
-                cashier: "",
+                search: "",
                 sort: "",
                 page: "",
                 from: "",
@@ -266,29 +266,14 @@ export default {
             this.params.from = Math.floor(new Date().getTime() / 1000.0) - days * 24 * 60 * 60;
             this.params.to = Math.floor(new Date().getTime() / 1000.0);
         },
-        toggleItemAction(event) {
-            Array.from(document.getElementsByClassName("item-action__list--active")).forEach(element => {
-                if (event.target.nextElementSibling != element) {
-                    element.classList.toggle("item-action__list--active");
-                }
-            });
-
-            event.target.nextElementSibling.classList.toggle("item-action__list--active");
-        },
-        blur(event) {
-            if (event.relatedTarget === null || !event.relatedTarget.className.includes("item-action__link")) {
-                event.target.checked = false;
-            }
-        },
         resetDate() {
             this.params.from = "";
             this.params.to = "";
-            console.log("tes");
         }
     },
     computed: {
         getUrlWithParams() {
-            let URL = "/history/sales?";
+            let URL = `${window.location.pathname}?`;
             const params = Object.keys(this.params);
 
             params.forEach(param => {
@@ -340,6 +325,8 @@ import Input from "@/Components/Input.vue";
 import ViewSaleHistoryModal from "@/Components/ViewSaleHistoryModal.vue";
 import dateFormatter from "@/Utils/dateFormatter";
 import SelectCustom from "@/Components/SelectCustom.vue";
+import RowMenu from "@/Components/RowMenu.vue";
+import getPreviousTime from "@/Utils/getPreviousTime";
 </script>
 
 <template>
@@ -350,48 +337,42 @@ import SelectCustom from "@/Components/SelectCustom.vue";
         <div class="main__header">
             <h1 class="main__title">Sales History</h1>
             <SelectCustom :text="'Print'" :icon="'iconoir-printing-page'" :variant="'primary'" :menuPosition="'left'">
-                <template #menu>
-                    <span class="select-custom__option" @click="this.printRangedData(getPreviousDay(undefined, 1))">Today</span>
-                    <span class="select-custom__option" @click="this.printRangedData(getPreviousDay(undefined, 7))">Weekly</span>
-                    <span class="select-custom__option" @click="this.printRangedData(getPreviousDay(undefined, 1))">Monthly</span>
-                    <hr class="select-custom__divider" />
-                    <form class="select-custom__form" @submit.prevent="this.printSelectedRangeData">
-                        <div class="select-custom__between">
-                            <input type="date" class="select-custom__date" v-model="this.tempPrintRange.from" />
-                            <span class="select-custom__to">to</span>
-                            <input type="date" class="select-custom__date" v-model="this.tempPrintRange.to" />
-                        </div>
-                        <Button :text="'Apply'" :type="'submit'" :variant="'primary'" />
-                    </form>
-                </template>
+                <span class="select-custom__option" @click="this.printRangedData(getPreviousTime(undefined, 1))">Today</span>
+                <span class="select-custom__option" @click="this.printRangedData(getPreviousTime(undefined, 7))">Weekly</span>
+                <span class="select-custom__option" @click="this.printRangedData(getPreviousTime(undefined, 1))">Monthly</span>
+                <hr class="select-custom__divider" />
+                <form class="select-custom__form" @submit.prevent="this.printSelectedRangeData">
+                    <div class="select-custom__between">
+                        <input type="date" class="select-custom__date" v-model="this.tempPrintRange.from" />
+                        <span class="select-custom__to">to</span>
+                        <input type="date" class="select-custom__date" v-model="this.tempPrintRange.to" />
+                    </div>
+                    <Button :text="'Apply'" :type="'submit'" :variant="'primary'" />
+                </form>
             </SelectCustom>
         </div>
         <div class="main__actions">
             <div class="main__actions-left">
                 <SelectCustom :icon="'iconoir-clock-rotate-right'" :text="'Select date'" :variant="'secondary'" :menuPosition="'right'">
-                    <template #menu>
-                        <span class="select-custom__option" @click="this.showPassedDaysData(1)">Last 24 hours</span>
-                        <span class="select-custom__option" @click="this.showPassedDaysData(7)">Last 7 days</span>
-                        <span class="select-custom__option" @click="this.showPassedDaysData(30)">Last 30 days</span>
-                        <hr class="select-custom__divider" />
-                        <form class="select-custom__form" @submit.prevent="this.applyDateRange">
-                            <div class="select-custom__between">
-                                <input type="date" class="select-custom__date" v-model="this.tempRange.from" />
-                                <span class="select-custom__to">to</span>
-                                <input type="date" class="select-custom__date" v-model="this.tempRange.to" />
-                            </div>
-                            <div class="select-custom__actions">
-                                <Button :text="'Reset'" :variant="'secondary'" @click="this.resetDate" />
-                                <Button :text="'Apply'" :type="'submit'" :variant="'primary'" />
-                            </div>
-                        </form>
-                    </template>
+                    <span class="select-custom__option" @click="this.showPassedDaysData(1)">Last 24 hours</span>
+                    <span class="select-custom__option" @click="this.showPassedDaysData(7)">Last 7 days</span>
+                    <span class="select-custom__option" @click="this.showPassedDaysData(30)">Last 30 days</span>
+                    <hr class="select-custom__divider" />
+                    <form class="select-custom__form" @submit.prevent="this.applyDateRange">
+                        <div class="select-custom__between">
+                            <input type="date" class="select-custom__date" v-model="this.tempRange.from" />
+                            <span class="select-custom__to">to</span>
+                            <input type="date" class="select-custom__date" v-model="this.tempRange.to" />
+                        </div>
+                        <div class="select-custom__actions">
+                            <Button :text="'Reset'" :variant="'secondary'" @click="this.resetDate" />
+                            <Button :text="'Apply'" :type="'submit'" :variant="'primary'" />
+                        </div>
+                    </form>
                 </SelectCustom>
                 <SelectCustom :text="'Sort'" :icon="'iconoir-sort'" :variant="'secondary'" :menuPosition="'right'">
-                    <template #menu>
-                        <span class="select-custom__option" @click="this.params.sort = 'latest'">Latest</span>
-                        <span class="select-custom__option" @click="this.params.sort = 'oldest'">Oldest</span>
-                    </template>
+                    <span class="select-custom__option" @click="this.params.sort = 'latest'">Latest</span>
+                    <span class="select-custom__option" @click="this.params.sort = 'oldest'">Oldest</span>
                 </SelectCustom>
                 <Button
                     :text="'Reset date'"
@@ -401,10 +382,9 @@ import SelectCustom from "@/Components/SelectCustom.vue";
                 />
             </div>
             <SearchBar
-                :name="'cashier'"
-                :placeholder="'Cashier name...'"
-                v-model:value="this.params.cashier"
-                @submit="this.params = this.params"
+                :name="'search'"
+                :placeholder="'Search by cashier name...'"
+                v-model:value="this.params.search"
             />
         </div>
         <div class="main__body">
@@ -430,28 +410,20 @@ import SelectCustom from "@/Components/SelectCustom.vue";
                         <td v-html="dateFormatter(item.created_at)" />
                         <td v-html="item.user.name" />
                         <td>
-                            <div class="item-action">
-                                <Button :icon="'iconoir-nav-arrow-down'" />
-                                <input type="checkbox" class="item-action__checkbox" @blur="blur" />
-                                <div class="item-action__list">
-                                    <Button
-                                        :text="'View'"
-                                        :variant="'clear'"
-                                        class="item-action__link"
-                                        @click="this.getDetailData(item.id)"
-                                    />
-                                    <Button
-                                        :text="'Print Receipt'"
-                                        :variant="'clear'"
-                                        class="item-action__link"
-                                        @click="this.printReceipt(item.id)"
-                                    />
-                                </div>
-                            </div>
+                            <RowMenu>
+                                <Button :text="'View'" class="item-action__link" :variant="'clear'" @click="this.getDetailData(item.id)" />
+                                <Button
+                                    :text="'Print Receipt'"
+                                    class="item-action__link"
+                                    :variant="'clear'"
+                                    @click="this.printReceipt(item.id)"
+                                />
+                            </RowMenu>
                         </td>
                     </tr>
                 </template>
             </Table>
+            <span class="total">{{ $page.props.data.total }} total items available</span>
             <div class="pagination">
                 <Button
                     :icon="'iconoir-nav-arrow-left'"
@@ -509,45 +481,9 @@ import SelectCustom from "@/Components/SelectCustom.vue";
     }
 }
 
-.item-action {
-    display: flex;
-    visibility: hidden;
-    position: relative;
-    width: fit-content;
-
-    &__checkbox {
-        all: unset;
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-    }
-
-    &__checkbox:checked {
-        ~ .item-action__list {
-            display: flex;
-        }
-    }
-
-    &__list {
-        border-radius: 4px;
-        position: absolute;
-        display: none;
-        top: calc(100% + 1rem);
-        right: 0;
-        background-color: var(--color-5);
-        z-index: 9;
-        border: 1px solid var(--color-4);
-        flex-direction: column;
-
-        &--active {
-            display: flex;
-        }
-    }
+.total {
+    color: var(--color-3);
 }
-
 .main {
     padding: 0;
     &__header {

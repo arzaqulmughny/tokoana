@@ -1,15 +1,37 @@
 <script setup>
+import { onMounted, onUnmounted, ref } from "vue";
 defineProps(["icon", "text", "variant", "menuPosition"]);
+
+const show = ref(false);
+const main = ref(null);
+const menu = ref(null);
+
+const handler = event => {
+    if (event.target === main.value) {
+        show.value = !show.value;
+    }
+
+    if (!main.value.contains(event.target)) {
+        show.value = false;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener("click", handler);
+});
+
+onUnmounted(() => {
+    document.removeEventListener("click", handler);
+});
 </script>
 
 <template>
-    <div class="select-custom" :class="'select-custom--' + variant">
+    <div class="select-custom" :class="'select-custom--' + variant" ref="main">
         <i class="select-custom__icon" :class="icon" />
         <span class="select-custom__text" v-html="text" />
         <i class="iconoir-nav-arrow-down select-custom__icon" />
-        <input type="checkbox" class="select-custom__checkbox" />
-        <div class="select-custom__menu" :class="'select-custom__menu--' + menuPosition">
-            <slot name="menu" />
+        <div class="select-custom__menu" :class="'select-custom__menu--' + menuPosition" v-if="show" ref="menu">
+            <slot />
         </div>
     </div>
 </template>
@@ -19,11 +41,19 @@ defineProps(["icon", "text", "variant", "menuPosition"]);
     display: flex;
     position: relative;
     align-items: center;
-    border: 1px solid rgba($color: #000000, $alpha: 0.1);
+    border: 1px solid rgba($color: #000000, $alpha: 0.1) !important;
     border-radius: 4px;
     padding: 1rem !important;
     column-gap: 1rem;
     cursor: pointer;
+
+    &__icon {
+        pointer-events: none;
+    }
+
+    &__text {
+        pointer-events: none;
+    }
 
     &--primary {
         color: var(--color-5);
@@ -50,7 +80,6 @@ defineProps(["icon", "text", "variant", "menuPosition"]);
         top: calc(100% + 1rem);
         min-width: 100%;
         display: flex;
-        visibility: hidden;
         flex-direction: column;
         background-color: var(--color-5);
         border: 1px solid var(--color-4);
@@ -63,19 +92,6 @@ defineProps(["icon", "text", "variant", "menuPosition"]);
 
         &--right {
             left: -2px;
-        }
-    }
-
-    &__checkbox {
-        all: unset;
-        left: 0;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-
-        &:checked ~ .select-custom__menu {
-            visibility: visible;
         }
     }
 

@@ -15,6 +15,7 @@ use App\Http\Controllers\SaleHistoryController;
 use App\Http\Controllers\StockInItemController;
 use App\Http\Controllers\StockOutItemController;
 use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\StockInHistoryController;
 
 /*
 |--------------------------------------------------------------------------

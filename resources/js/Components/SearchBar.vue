@@ -6,7 +6,7 @@ defineEmits(["search", "update:value"]);
 </script>
 
 <template>
-    <form class="search" @submit.prevent="$emit('search')">
+    <form class="search" @submit.prevent="$emit('update:value', value)">
         <div class="search__main">
             <input
                 type="text"
