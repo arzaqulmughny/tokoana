@@ -11,33 +11,31 @@ export default {
     components: {
         Button,
         Table,
-        Head,
+        Head
     },
     data() {
         return {
             params: {
                 search: "",
-                page: 1,
+                page: 1
             },
             addedProduct: {
                 data: [],
-                sortBy: "oldest",
+                sortBy: "oldest"
             },
             selected: [],
             selectAll: false,
             formData: {
-                note: "",
+                note: ""
             },
             errors: {
-                note: "",
-            },
+                note: ""
+            }
         };
     },
     methods: {
         addProduct(item) {
-            const index = this.addedProduct.data.findIndex(
-                (itemInArray) => itemInArray.id == item.id
-            );
+            const index = this.addedProduct.data.findIndex(itemInArray => itemInArray.id == item.id);
             if (index > -1) {
                 this.addedProduct.data[index].quantity += 1;
             } else {
@@ -47,36 +45,24 @@ export default {
             }
         },
         removeProduct(id) {
-            this.addedProduct.data = this.addedProduct.data.filter(
-                (itemInArray) => itemInArray.id != id
-            );
+            this.addedProduct.data = this.addedProduct.data.filter(itemInArray => itemInArray.id != id);
         },
         removeSelected() {
-            this.addedProduct.data.forEach((item) =>
-                this.removeProduct(item.id)
-            );
+            this.addedProduct.data.forEach(item => this.removeProduct(item.id));
             this.selectAll = false;
             this.selected = [];
         },
         adjustProductQuantity(id, action) {
-            const index = this.addedProduct.data.findIndex(
-                (item) => item.id == id
-            );
+            const index = this.addedProduct.data.findIndex(item => item.id == id);
 
             switch (action) {
                 case "decrease":
-                    this.addedProduct.data[index].quantity > 1
-                        ? (this.addedProduct.data[index].quantity -= 1)
-                        : this.removeProduct(id);
+                    this.addedProduct.data[index].quantity > 1 ? (this.addedProduct.data[index].quantity -= 1) : this.removeProduct(id);
 
                     break;
                 case "increase":
-                    if (
-                        this.addedProduct.data[index].quantity >
-                        this.addedProduct.data[index].stock - 1
-                    ) {
-                        this.addedProduct.data[index].quantity =
-                            this.addedProduct.data[index].stock - 1;
+                    if (this.addedProduct.data[index].quantity > this.addedProduct.data[index].stock - 1) {
+                        this.addedProduct.data[index].quantity = this.addedProduct.data[index].stock - 1;
                     }
                     this.addedProduct.data[index].quantity += 1;
                     break;
@@ -100,29 +86,26 @@ export default {
             }
 
             try {
-                const postStockOutHistoryResponse =
-                    await this.postStockOutHistory({
-                        note: this.formData.note,
-                        user_id: this.$page.props.user.id,
-                    });
+                const postStockOutHistoryResponse = await this.postStockOutHistory({
+                    note: this.formData.note,
+                    user_id: this.$page.props.user.id
+                });
 
-                const main = async (postStockOutHistoryResponseId) => {
+                const main = async postStockOutHistoryResponseId => {
                     try {
-                        this.addedProduct.data.forEach(async (product) => {
+                        this.addedProduct.data.forEach(async product => {
                             await this.postStockOutItem({
                                 product_id: product.id,
                                 history_id: postStockOutHistoryResponseId,
-                                ...product,
+                                ...product
                             });
                             await this.putProductListStock({
                                 id: product.id,
-                                quantity: product.quantity,
+                                quantity: product.quantity
                             });
                         });
                     } catch (error) {
-                        await this.deleteStockInHistory(
-                            postStockOutHistoryResponseId
-                        );
+                        await this.deleteStockInHistory(postStockOutHistoryResponseId);
                         alert("Failed to update product stock!");
                         return;
                     }
@@ -144,46 +127,37 @@ export default {
 
             this.params = {
                 search: "",
-                page: 1,
+                page: 1
             };
             this.selected = [];
             this.selectAll = false;
             this.formData = {
-                note: "",
+                note: ""
             };
             this.addedProduct = {
                 data: [],
-                sortBy: "oldest",
+                sortBy: "oldest"
             };
         },
         async postStockOutHistory({ note, user_id }) {
             const { data } = await axios.post("/transaction/out/", {
                 note,
-                user_id,
+                user_id
             });
             return data;
         },
-        async postStockOutItem({
-            product_id,
-            barcode,
-            unit_id,
-            quantity,
-            history_id,
-        }) {
+        async postStockOutItem({ product_id, quantity, history_id }) {
             const { data } = await axios.post("/transaction/out/items", {
                 product_id,
-                barcode,
-                unit_id,
                 quantity,
-                history_id,
+                history_id
             });
             return data;
         },
         async putProductListStock({ id, quantity }) {
-            const getCurrentProductStockResponse =
-                await this.getCurrentProductStock(id);
+            const getCurrentProductStockResponse = await this.getCurrentProductStock(id);
             const { data } = await axios.put(`/product/list/${id}`, {
-                stock: getCurrentProductStockResponse - quantity,
+                stock: getCurrentProductStockResponse - quantity
             });
             return data;
         },
@@ -194,34 +168,28 @@ export default {
         async deleteStockInHistory(id) {
             const { data } = await axios.delete(`/transaction/out/${id}`);
             return data;
-        },
+        }
     },
     computed: {
         getAddedProduct() {
             switch (this.addedProduct.sortBy) {
                 case "name":
-                    return this.addedProduct.data.sort((a, b) =>
-                        a.name.localeCompare(b.name)
-                    );
+                    return this.addedProduct.data.sort((a, b) => a.name.localeCompare(b.name));
                 case "oldest":
-                    return this.addedProduct.data.sort(
-                        (a, b) => a.addedAt - b.addedAt
-                    );
+                    return this.addedProduct.data.sort((a, b) => a.addedAt - b.addedAt);
                 case "latest":
-                    return this.addedProduct.data.sort(
-                        (a, b) => b.addedAt - a.addedAt
-                    );
+                    return this.addedProduct.data.sort((a, b) => b.addedAt - a.addedAt);
                 default:
                     return this.addedProduct.data;
             }
         },
         getAddedProductStockTotal() {
             let total = 0;
-            this.addedProduct.data.forEach((item) => {
+            this.addedProduct.data.forEach(item => {
                 total = total + item.quantity;
             });
             return total;
-        },
+        }
     },
     watch: {
         params: {
@@ -230,28 +198,25 @@ export default {
                     clearTimeout(this.timer);
                 }
                 this.timer = setTimeout(() => {
-                    router.visit(
-                        `/transaction/out?page=${this.params.page}&search=${this.params.search}`,
-                        {
-                            only: ["data"],
-                            preserveState: true,
-                            preserveScroll: true,
-                        }
-                    );
+                    router.visit(`/transaction/out?page=${this.params.page}&search=${this.params.search}`, {
+                        only: ["data"],
+                        preserveState: true,
+                        preserveScroll: true
+                    });
                 }, 1000);
             },
-            deep: true,
+            deep: true
         },
         selectAll() {
             if (this.selectAll) {
-                this.addedProduct.data.forEach((item) => {
+                this.addedProduct.data.forEach(item => {
                     this.selected.push(item.id);
                 });
             } else {
                 this.selected = [];
             }
-        },
-    },
+        }
+    }
 };
 </script>
 
@@ -275,27 +240,13 @@ export default {
                                     autocomplete="off"
                                     v-model="this.params.search"
                                 />
-                                <button
-                                    class="search__clear"
-                                    v-if="this.params.search"
-                                    @click="this.params.search = ''"
-                                >
-                                    <i
-                                        class="iconoir-cancel search__clear-icon"
-                                    ></i>
+                                <button class="search__clear" v-if="this.params.search" @click="this.params.search = ''">
+                                    <i class="iconoir-cancel search__clear-icon"></i>
                                 </button>
                             </div>
-                            <Button
-                                :type="'submit'"
-                                :icon="'iconoir-search'"
-                                :variant="'primary'"
-                            />
+                            <Button :type="'submit'" :icon="'iconoir-search'" :variant="'primary'" />
                         </form>
-                        <Button
-                            :text="'Show all'"
-                            :variant="'secondary'"
-                            @click="this.params.search = ''"
-                        />
+                        <Button :text="'Show all'" :variant="'secondary'" @click="this.params.search = ''" />
                     </div>
                     <Table>
                         <template #head>
@@ -309,10 +260,7 @@ export default {
                             </tr>
                         </template>
                         <template #body>
-                            <tr
-                                data-empty="true"
-                                v-if="$page.props.data.data.length == 0"
-                            >
+                            <tr data-empty="true" v-if="$page.props.data.data.length == 0">
                                 <td colspan="100">No items available</td>
                             </tr>
                             <tr v-for="item in $page.props.data.data">
@@ -322,12 +270,7 @@ export default {
                                 <td v-html="item.unit.name" />
                                 <td v-html="item.stock" />
                                 <td>
-                                    <Button
-                                        @click="this.addProduct(item)"
-                                        :text="'+ Add'"
-                                        :size="'small'"
-                                        :variant="'primary'"
-                                    />
+                                    <Button @click="this.addProduct(item)" :text="'+ Add'" :size="'small'" :variant="'primary'" />
                                 </td>
                             </tr>
                         </template>
@@ -336,73 +279,39 @@ export default {
                         <Button
                             :icon="'iconoir-nav-arrow-left'"
                             :variant="'secondary'"
-                            @click="
-                                this.params.page > 1
-                                    ? (this.params.page = this.params.page - 1)
-                                    : null
-                            "
+                            @click="this.params.page > 1 ? (this.params.page = this.params.page - 1) : null"
                         />
 
                         <div class="pagination__number">
                             <Button
                                 :text="1"
-                                :variant="
-                                    1 == $page.props.data.current_page
-                                        ? 'primary'
-                                        : 'clear'
-                                "
+                                :variant="1 == $page.props.data.current_page ? 'primary' : 'clear'"
                                 @click="this.params.page = 1"
                             />
-                            <Button
-                                v-if="$page.props.data.current_page != 1"
-                                :text="$page.props.data.current_page"
-                                :variant="'primary'"
-                            />
+                            <Button v-if="$page.props.data.current_page != 1" :text="$page.props.data.current_page" :variant="'primary'" />
                             <Button
                                 :text="$page.props.data.current_page + 1"
-                                @click="
-                                    this.params.page =
-                                        $page.props.data.current_page + 1
-                                "
-                                v-if="
-                                    $page.props.data.last_page >=
-                                    $page.props.data.current_page + 1
-                                "
+                                @click="this.params.page = $page.props.data.current_page + 1"
+                                v-if="$page.props.data.last_page >= $page.props.data.current_page + 1"
                                 :variant="'clear'"
                             />
                             <Button
                                 :text="$page.props.data.current_page + 2"
-                                @click="
-                                    this.params.page =
-                                        $page.props.data.current_page + 2
-                                "
-                                v-if="
-                                    $page.props.data.last_page >
-                                    $page.props.data.current_page + 2
-                                "
+                                @click="this.params.page = $page.props.data.current_page + 2"
+                                v-if="$page.props.data.last_page > $page.props.data.current_page + 2"
                                 :variant="'clear'"
                             />
                             <Button
                                 :text="$page.props.data.last_page"
-                                @click="
-                                    this.params.page =
-                                        $page.props.data.last_page
-                                "
-                                v-if="
-                                    $page.props.data.last_page >=
-                                    $page.props.data.current_page + 2
-                                "
+                                @click="this.params.page = $page.props.data.last_page"
+                                v-if="$page.props.data.last_page >= $page.props.data.current_page + 2"
                                 :variant="'clear'"
                             />
                         </div>
                         <Button
                             :icon="'iconoir-nav-arrow-right'"
                             :variant="'primary'"
-                            @click="
-                                this.params.page < $page.props.data.last_page
-                                    ? (this.params.page = this.params.page + 1)
-                                    : null
-                            "
+                            @click="this.params.page < $page.props.data.last_page ? (this.params.page = this.params.page + 1) : null"
                         />
                     </div>
                 </div>
@@ -411,10 +320,7 @@ export default {
                     <div class="content__actions">
                         <div class="select">
                             <i class="iconoir-sort select__icon"></i>
-                            <select
-                                class="select__menu"
-                                v-model="this.addedProduct.sortBy"
-                            >
+                            <select class="select__menu" v-model="this.addedProduct.sortBy">
                                 <option value="name">Name</option>
                                 <option value="latest">Last Added</option>
                                 <option value="oldest">Added first</option>
@@ -432,10 +338,7 @@ export default {
                         <template #head>
                             <tr>
                                 <td>
-                                    <input
-                                        type="checkbox"
-                                        v-model="this.selectAll"
-                                    />
+                                    <input type="checkbox" v-model="this.selectAll" />
                                 </td>
                                 <td>BARCODE</td>
                                 <td>NAME</td>
@@ -446,50 +349,26 @@ export default {
                             </tr>
                         </template>
                         <template #body>
-                            <tr
-                                data-empty="true"
-                                v-if="this.addedProduct.data.length == 0"
-                            >
+                            <tr data-empty="true" v-if="this.addedProduct.data.length == 0">
                                 <td colspan="100">No items available</td>
                             </tr>
                             <tr v-for="item in this.getAddedProduct">
                                 <td>
-                                    <input
-                                        type="checkbox"
-                                        :value="item.id"
-                                        v-model="this.selected"
-                                    />
+                                    <input type="checkbox" :value="item.id" v-model="this.selected" />
                                 </td>
                                 <td v-html="item.barcode" />
                                 <td v-html="item.name" />
                                 <td>
                                     <div class="quantity">
                                         <Button
-                                            @click="
-                                                this.adjustProductQuantity(
-                                                    item.id,
-                                                    'decrease'
-                                                )
-                                            "
+                                            @click="this.adjustProductQuantity(item.id, 'decrease')"
                                             :icon="'iconoir-minus'"
                                             :variant="'secondary'"
                                             :size="'small'"
                                         />
-                                        <span
-                                            class="quantity__value"
-                                            v-html="
-                                                item.quantity +
-                                                ' of ' +
-                                                item.stock
-                                            "
-                                        />
+                                        <span class="quantity__value" v-html="item.quantity + ' of ' + item.stock" />
                                         <Button
-                                            @click="
-                                                this.adjustProductQuantity(
-                                                    item.id,
-                                                    'increase'
-                                                )
-                                            "
+                                            @click="this.adjustProductQuantity(item.id, 'increase')"
                                             :variant="'primary'"
                                             :icon="'iconoir-plus'"
                                             :size="'small'"
@@ -499,11 +378,7 @@ export default {
                                 <td v-html="item.stock - item.quantity" />
                                 <td v-html="item.unit.name" />
                                 <td @click="removeProduct(item.id)">
-                                    <Button
-                                        :text="'Remove'"
-                                        :variant="'secondary'"
-                                        :size="'small'"
-                                    />
+                                    <Button :text="'Remove'" :variant="'secondary'" :size="'small'" />
                                 </td>
                             </tr>
                         </template>
@@ -519,18 +394,12 @@ export default {
                     <div class="summary__body">
                         <div class="summary__property">
                             <small class="summary__key">Total products</small>
-                            <div
-                                class="small summary__value"
-                                v-html="this.addedProduct.data.length"
-                            />
+                            <div class="small summary__value" v-html="this.addedProduct.data.length" />
                         </div>
 
                         <div class="summary__property">
                             <small class="summary__key">Total stock</small>
-                            <div
-                                class="small summary__value"
-                                v-html="this.getAddedProductStockTotal"
-                            />
+                            <div class="small summary__value" v-html="this.getAddedProductStockTotal" />
                         </div>
                     </div>
                 </div>
@@ -538,33 +407,14 @@ export default {
                 <div class="description">
                     <div class="note">
                         <label for="note" class="note__title">Note</label>
-                        <textarea
-                            name="note"
-                            id="note"
-                            cols="30"
-                            rows="10"
-                            class="note__main"
-                            v-model="this.formData.note"
-                        ></textarea>
-                        <small
-                            class="note__invalid"
-                            v-if="this.errors.note"
-                            v-html="this.errors.note"
-                        />
+                        <textarea name="note" id="note" cols="30" rows="10" class="note__main" v-model="this.formData.note"></textarea>
+                        <small class="note__invalid" v-if="this.errors.note" v-html="this.errors.note" />
                     </div>
                 </div>
 
                 <div class="actions">
-                    <Button
-                        :text="'Confirm'"
-                        :variant="'primary'"
-                        :type="'submit'"
-                    />
-                    <Button
-                        :text="'Clear data'"
-                        :variant="'secondary'"
-                        @click="this.clearData('yes')"
-                    />
+                    <Button :text="'Confirm'" :variant="'primary'" :type="'submit'" />
+                    <Button :text="'Clear data'" :variant="'secondary'" @click="this.clearData('yes')" />
                 </div>
             </form>
         </div>

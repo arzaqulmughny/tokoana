@@ -16,6 +16,7 @@ use App\Http\Controllers\StockInItemController;
 use App\Http\Controllers\StockOutItemController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\StockInHistoryController;
+use App\Http\Controllers\StockOutHistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,3 +58,4 @@ Route::resource('/transaction/sales/items', SaleItemController::class)->middlewa
 // History
 Route::resource('/history/sales', SaleHistoryController::class)->middleware('auth');
 Route::resource('/history/in', StockInHistoryController::class)->middleware('auth');
+Route::resource('/history/out', StockOutHistoryController::class)->middleware('auth');
