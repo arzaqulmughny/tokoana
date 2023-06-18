@@ -29,9 +29,7 @@ class StockOutItemController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'barcode' => 'required',
             'product_id' => 'required',
-            'unit_id' => 'required',
             'quantity' => 'required',
             'history_id' => 'required'
         ];

@@ -2,7 +2,6 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-import MainLayout from "@/Layouts/MainLayout.vue";
 
 export default {
     layout: MainLayout,
@@ -20,7 +19,7 @@ export default {
                 to: ""
             },
             modal: {
-                viewStockInHistory: null
+                viewStockOutHistory: null
             },
             tempPrintRange: {
                 from: "",
@@ -30,11 +29,11 @@ export default {
     },
     methods: {
         async getDetailData(id) {
-            const { data } = await axios.get(`/history/in/${id}`);
+            const { data } = await axios.get(`/history/out/${id}`);
             return data;
         },
         async printSingleData(id) {
-            const { data } = await axios.get(`/history/in/${id}?mode=print`);
+            const { data } = await axios.get(`/history/out/${id}?mode=print`);
             const items = data.items.map(item => [
                 item.details.barcode,
                 item.details.name,
@@ -102,7 +101,7 @@ export default {
                         canvas: [{ type: "line", x1: 0, y1: 20, x2: 730, y2: 20, lineWidth: 0.1, lineColor: "#A9A9A9" }]
                     },
                     {
-                        text: "\nStock In Details",
+                        text: "\nStock Out Details",
                         fontSize: 18,
                         bold: true
                     },
@@ -112,8 +111,7 @@ export default {
                             headerRows: 1,
                             widths: ["auto", "auto"],
                             body: [
-                                ["Supplier", { text: data.supplier !== null ? data.supplier.name : "-", color: "#5D5D5D" }],
-                                ["Receiver", { text: data.user.name, color: "#5D5D5D" }],
+                                ["User", { text: data.user.name, color: "#5D5D5D" }],
                                 ["Total items", { text: data.items.length, color: "#5D5D5D" }],
                                 ["Note", { text: data.note, color: "#5D5D5D" }]
                             ]
@@ -164,20 +162,13 @@ export default {
             pdfMake.createPdf(docDefinition, tableLayouts).open();
         },
         async printRangedData(from, to = Date.now()) {
-            console.log(from);
-            const { data } = await axios.get(`/history/in?from=${Math.floor(from / 1000)}&to=${Math.floor(to / 1000)}&mode=print`);
+            const { data } = await axios.get(`/history/out?from=${Math.floor(from / 1000)}&to=${Math.floor(to / 1000)}&mode=print`);
             if (data.length === 0) {
                 alert("No data found in this date!");
                 return;
             }
 
-            let items = data.map(item => [
-                item.supplier !== null ? item.supplier.name : "-",
-                item.items.length,
-                item.user.name,
-                dateFormatter(item.created_at),
-                item.note
-            ]);
+            let items = data.map(item => [item.user.name, item.items.length, item.note, dateFormatter(item.created_at)]);
 
             const docDefinition = {
                 pageSize: "A4",
@@ -238,7 +229,7 @@ export default {
                         canvas: [{ type: "line", x1: 0, y1: 20, x2: 730, y2: 20, lineWidth: 0.1, lineColor: "#A9A9A9" }]
                     },
                     {
-                        text: "\nStock In History Report",
+                        text: "\nStock Out History Report",
                         fontSize: 18,
                         bold: true
                     },
@@ -257,8 +248,8 @@ export default {
                         layout: "custom1",
                         table: {
                             headerRows: 1,
-                            widths: ["*", "*", "*", "*", "*"],
-                            body: [["SUPPLIER", "ITEMS", "RECEIVER", "TIME", "NOTE"], ...items]
+                            widths: ["*", "*", "*", "*"],
+                            body: [["USER", "ITEMS", "NOTE", "TIME & DATE"], ...items]
                         }
                     }
                 ]
@@ -364,11 +355,12 @@ export default {
 
 <script setup>
 import { Head, router } from "@inertiajs/vue3";
+import MainLayout from "@/Layouts/MainLayout.vue";
 import SearchBar from "@/Components/SearchBar.vue";
 import Table from "@/Components/Table.vue";
 import Button from "@/Components/Button.vue";
 import Input from "@/Components/Input.vue";
-import ViewStockInHistoryModal from "@/Components/ViewStockInHistoryModal.vue";
+import ViewStockOutHistoryModal from "@/Components/ViewStockOutHistoryModal.vue";
 import dateFormatter from "@/Utils/dateFormatter";
 import SelectCustom from "@/Components/SelectCustom.vue";
 import RowMenu from "@/Components/RowMenu.vue";
@@ -377,11 +369,11 @@ import getPreviousTime from "@/Utils/getPreviousTime";
 
 <template>
     <Head>
-        <title>Stock In History</title>
+        <title>Stock Out History</title>
     </Head>
     <div class="main">
         <div class="main__header">
-            <h1 class="main__title">Stock In History</h1>
+            <h1 class="main__title">Stock Out History</h1>
             <SelectCustom :text="'Print'" :icon="'iconoir-printing-page'" :variant="'primary'" :menuPosition="'left'">
                 <span class="select-custom__option" @click="this.printRangedData(getPreviousTime(undefined, 1))">Today</span>
                 <span class="select-custom__option" @click="this.printRangedData(getPreviousTime(undefined, 7))">Weekly</span>
@@ -433,11 +425,10 @@ import getPreviousTime from "@/Utils/getPreviousTime";
             <Table>
                 <template #head>
                     <tr>
-                        <td>SUPPLIER</td>
+                        <td>USER</td>
                         <td>ITEMS</td>
-                        <td>RECEIVER</td>
-                        <td>TIME</td>
                         <td>NOTE</td>
+                        <td>DATE & TIME</td>
                         <td>ACTIONS</td>
                     </tr>
                 </template>
@@ -446,18 +437,17 @@ import getPreviousTime from "@/Utils/getPreviousTime";
                         <td colspan="100">No items available</td>
                     </tr>
                     <tr v-for="item in this.$page.props.data.data">
-                        <td v-html="item.supplier !== null ? item.supplier.name : '-'" />
-                        <td v-html="item.items.length" />
                         <td v-html="item.user.name" />
+                        <td v-html="item.items.length" />
+                        <td v-html="item.note" />
                         <td v-html="dateFormatter(item.created_at)" />
-                        <td v-html="item.note !== null ? item.note : '-'" />
                         <td>
                             <RowMenu>
                                 <Button
                                     :text="'View'"
                                     class="item-action__link"
                                     :variant="'clear'"
-                                    @click="async () => (this.modal.viewStockInHistory = await this.getDetailData(item.id))"
+                                    @click="async () => (this.modal.viewStockOutHistory = await this.getDetailData(item.id))"
                                 />
                                 <Button
                                     :text="'Print Data'"
@@ -507,7 +497,7 @@ import getPreviousTime from "@/Utils/getPreviousTime";
             </div>
         </div>
     </div>
-    <ViewStockInHistoryModal v-model:data="this.modal.viewStockInHistory" @print="this.printSingleData" />
+    <ViewStockOutHistoryModal v-model:data="this.modal.viewStockOutHistory" @print="this.printSingleData" />
 </template>
 
 <style lang="scss" scoped>
