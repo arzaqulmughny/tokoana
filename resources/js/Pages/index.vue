@@ -21,16 +21,25 @@ const categories = ref([
     getPreviousTime(undefined, 3),
     getPreviousTime(undefined, 2),
     getPreviousTime(undefined, 1),
-    getPreviousTime(undefined, 0)
+    Date.now()
 ]);
-
-onBeforeMount(async () => {
-    weeklyData.value = await getWeeklyData();
+const chartOptions = reactive({
+    chart: {
+        id: "vuechart-example"
+    },
+    xaxis: {
+        categories: [
+            dateFormatter(categories.value[0], false),
+            dateFormatter(categories.value[1], false),
+            dateFormatter(categories.value[2], false),
+            dateFormatter(categories.value[3], false),
+            dateFormatter(categories.value[4], false),
+            dateFormatter(categories.value[5], false),
+            dateFormatter(categories.value[6], false)
+        ]
+    }
 });
-
-const yaxis = {
-    show: false
-};
+const series = ref([]);
 
 const datesAreOnSameDay = (one, two) => {
     let result = false;
@@ -49,31 +58,14 @@ const datesAreOnSameDay = (one, two) => {
 
 const getWeeklyData = async () => {
     const { data } = await axios.get(
-        `/history/sales?from=${Math.floor(getPreviousTime(undefined, 7) / 1000)}&to=${Math.floor(
-            getPreviousTime(undefined, 0) / 1000
-        )}&mode=print`
+        `/history/sales?from=${Math.floor(getPreviousTime(undefined, 6) / 1000)}&to=${Math.floor(Date.now() / 1000)}&mode=print`
     );
     return data;
 };
 
-const chartOptions = reactive({
-    chart: {
-        id: "vuechart-example"
-    },
-    xaxis: {
-        categories: [
-            dateFormatter(categories.value[0], false),
-            dateFormatter(categories.value[1], false),
-            dateFormatter(categories.value[2], false),
-            dateFormatter(categories.value[3], false),
-            dateFormatter(categories.value[4], false),
-            dateFormatter(categories.value[5], false),
-            dateFormatter(categories.value[6], false)
-        ]
-    }
+onBeforeMount(async () => {
+    weeklyData.value = await getWeeklyData();
 });
-
-const series = ref([]);
 
 watch(
     () => weeklyData.value,
