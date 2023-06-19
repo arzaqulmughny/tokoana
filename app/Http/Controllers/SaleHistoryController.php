@@ -37,9 +37,14 @@ class SaleHistoryController extends Controller
             $data->whereBetween('created_at', [$request->from, $request->to]);
         };
 
-        if ($request->mode === 'print') {
-            return response()->json($data->get());
-        };
+
+        switch ($request->mode) {
+            case 'print':
+                return response()->json($data->get());
+                break;
+            default:
+                break;
+        }
 
         return Inertia::render('History/Sales', [
             'user' => Auth::user(),
