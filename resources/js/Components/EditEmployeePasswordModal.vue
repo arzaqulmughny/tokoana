@@ -8,11 +8,17 @@ const props = defineProps(["data"]);
 defineEmits(["update:data"]);
 
 const form = ref({
-    password: ""
+    password: "",
+    confirmPassword: ""
 });
 
 const submit = close => {
     if (confirm("Save changes?")) {
+        if (form.value.password !== form.value.confirmPassword) {
+            alert("Password doesn't match!");
+            return;
+        }
+
         router.put(`/employee/password/${props.data.id}`, form.value, {
             onSuccess: () => {
                 close();
@@ -46,9 +52,20 @@ const submit = close => {
                         :displayName="'New password'"
                         :icon="'iconoir-lock'"
                         :type="'password'"
+                        :placeholder="'New password'"
                         :value="form.password"
                         @update="newValue => (form.password = newValue)"
                         :error="$page.props.errors.password"
+                    />
+
+                    <Input
+                        :displayName="'Confirm password'"
+                        :icon="'iconoir-lock'"
+                        :placeholder="'Confirm password'"
+                        :type="'password'"
+                        :value="form.confirmPassword"
+                        @update="newValue => (form.confirmPassword = newValue)"
+                        :error="$page.props.errors.confirmPassword"
                     />
 
                     <div class="form__action">
