@@ -9,6 +9,7 @@ use App\Http\Controllers\SaleItemController;
 use App\Http\Controllers\StockOutController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProductListController;
 use App\Http\Controllers\ProductUnitController;
 use App\Http\Controllers\SaleHistoryController;
@@ -59,3 +60,7 @@ Route::resource('/transaction/sales/items', SaleItemController::class)->middlewa
 Route::resource('/history/sales', SaleHistoryController::class)->middleware('auth');
 Route::resource('/history/in', StockInHistoryController::class)->middleware('auth');
 Route::resource('/history/out', StockOutHistoryController::class)->middleware('auth');
+
+// User
+Route::put('/employee/password/{id}', [EmployeeController::class, 'updatePassword'])->middleware('auth');
+Route::resource('/employee', EmployeeController::class)->middleware('auth');

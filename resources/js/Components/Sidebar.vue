@@ -6,46 +6,46 @@ import Button from "./Button.vue";
 const productRoutes = ref([
     {
         name: "List",
-        href: "/product/list",
+        href: "/product/list"
     },
     {
         name: "Categories",
-        href: "/product/categories",
+        href: "/product/categories"
     },
     {
         name: "Units",
-        href: "/product/units",
-    },
+        href: "/product/units"
+    }
 ]);
 
 const transactionRoutes = ref([
     {
         name: "Sales",
-        href: "/transaction/sales",
+        href: "/transaction/sales"
     },
     {
         name: "Stock in",
-        href: "/transaction/in",
+        href: "/transaction/in"
     },
     {
         name: "Stock out",
-        href: "/transaction/out",
-    },
+        href: "/transaction/out"
+    }
 ]);
 
 const historyRoutes = ref([
     {
         name: "Sales",
-        href: "/history/sales",
+        href: "/history/sales"
     },
     {
         name: "Stock in",
-        href: "/history/in",
+        href: "/history/in"
     },
     {
         name: "Stock out",
-        href: "/history/out",
-    },
+        href: "/history/out"
+    }
 ]);
 
 const toggleSidebar = () => {
@@ -54,18 +54,9 @@ const toggleSidebar = () => {
 </script>
 <template>
     <nav class="sidebar" ref="sidebar">
-        <Button
-            :icon="'iconoir-cancel'"
-            :variant="'clear'"
-            :class="'sidebar__close'"
-            @click="toggleSidebar"
-        />
+        <Button :icon="'iconoir-cancel'" :variant="'clear'" :class="'sidebar__close'" @click="toggleSidebar" />
         <div class="brand">
-            <img
-                src="/assets/images/logo.svg"
-                alt="brand icon"
-                class="brand__icon"
-            />
+            <img src="/assets/images/logo.svg" alt="brand icon" class="brand__icon" />
             <span class="brand__name">TOKOANA</span>
         </div>
 
@@ -86,13 +77,7 @@ const toggleSidebar = () => {
                 :type="'normal'"
             />
 
-            <SidebarLink
-                :name="'Products'"
-                :icon="'iconoir-box-iso'"
-                :type="'accordion'"
-                :routes="productRoutes"
-                :url="'/product'"
-            />
+            <SidebarLink :name="'Products'" :icon="'iconoir-box-iso'" :type="'accordion'" :routes="productRoutes" :url="'/product'" />
 
             <SidebarLink
                 :name="'Transactions'"
@@ -111,9 +96,9 @@ const toggleSidebar = () => {
             />
 
             <SidebarLink
-                :class="{ 'link--active': $page.url === '/employee' }"
+                :class="{ 'link--active': $page.url.startsWith('/employee') }"
                 :name="'Employee'"
-                :href="'/'"
+                :href="'/employee'"
                 :icon="'iconoir-group'"
                 :type="'normal'"
             />
