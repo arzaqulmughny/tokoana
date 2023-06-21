@@ -60,6 +60,8 @@ class EmployeeController extends Controller
             'password' => 'required|min:8',
         ]);
 
+        $validated['password'] = bcrypt($validated['password']);
+
         User::create($validated);
         return redirect()->back()->with('add-employee-success', "New employee has been added");
     }
