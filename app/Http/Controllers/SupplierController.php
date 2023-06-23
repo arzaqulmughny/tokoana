@@ -13,6 +13,7 @@ class SupplierController extends Controller
     /**
      * Display a listing of the resource.
      */
+  
     public function index(Request $request)
     {
         $data = DB::table('suppliers')
@@ -58,6 +59,7 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         $this->authorize('create', Supplier::class);
+
        $validated = $request->validate([
             'name' => 'required',
             'phone' => 'required',
@@ -90,6 +92,7 @@ class SupplierController extends Controller
     public function update(Request $request, Supplier $supplier)
     {
         $this->authorize('update', Supplier::class);
+
         $validated = $request->validate([
             'name' => 'required',
             'phone' => 'required',
