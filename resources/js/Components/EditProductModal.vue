@@ -5,56 +5,53 @@ import { watch, ref } from "vue";
 import { router } from "@inertiajs/vue3";
 
 const props = defineProps({
-    show: Boolean,
     data: Object,
     product_categories: Array,
-    product_units: Array,
+    product_units: Array
 });
 
-const emit = defineEmits(["close"]);
+defineEmits(["update:data"]);
 
-const close = () => {
-    emit("close");
-};
-
-const formData = ref({
+const form = ref({
     name: "",
     unit_id: "",
     category_id: "",
     barcode: "",
-    price: "",
+    price: ""
 });
 
 watch(
     () => props.data,
     () => {
-        formData.value.name = props.data.name;
-        formData.value.unit_id = props.data.unit_id;
-        formData.value.category_id = props.data.category_id;
-        formData.value.barcode = props.data.barcode;
-        formData.value.price = props.data.price;
+        if (props.data !== null) {
+            form.value.name = props.data.name;
+            form.value.unit_id = props.data.unit_id;
+            form.value.category_id = props.data.category_id;
+            form.value.barcode = props.data.barcode;
+            form.value.price = props.data.price;
+        }
     }
 );
-const submit = () => {
+const submit = close => {
     if (confirm("Save changes?")) {
-        router.put(`/product/list/${props.data.id}`, formData.value, {
+        router.put(`/product/list/${props.data.id}`, form.value, {
             onSuccess: () => {
                 close();
-                formData.value = {
+                form.value = {
                     name: "",
                     unit_id: "",
                     category_id: "",
                     barcode: "",
-                    price: "",
+                    price: ""
                 };
-            },
+            }
         });
     }
 };
 </script>
 <template>
     <Teleport to="#modals">
-        <div class="overlay" v-if="props.show === true">
+        <div class="overlay" v-if="props.data !== null">
             <div class="modal">
                 <div class="modal__header">
                     <div class="modal__head-left">
@@ -63,26 +60,19 @@ const submit = () => {
                     <div class="modal__head-right">
                         <div class="modal__head-text">
                             <h1 class="modal__title">Edit product</h1>
-                            <h2 class="modal__subtitle">
-                                Edit this product information
-                            </h2>
+                            <h2 class="modal__subtitle">Edit this product information</h2>
                         </div>
-                        <Button
-                            class="modal__close"
-                            :icon="'iconoir-cancel'"
-                            :variant="'secondary'"
-                            @click="close"
-                        />
+                        <Button class="modal__close" :icon="'iconoir-cancel'" :variant="'secondary'" @click="$emit('update:data', null)" />
                     </div>
                 </div>
 
-                <form class="form" @submit.prevent="submit">
+                <form class="form" @submit.prevent="submit(() => $emit('update:data', null))">
                     <Input
                         :displayName="'Product name'"
                         :icon="'iconoir-box-iso'"
                         :type="'text'"
-                        :value="formData.name"
-                        @update="(newValue) => (formData.name = newValue)"
+                        :value="form.name"
+                        @update="newValue => (form.name = newValue)"
                         :error="$page.props.errors.name"
                     />
 
@@ -90,19 +80,8 @@ const submit = () => {
                         <div class="select">
                             <label for="unit" class="select__label">Unit</label>
                             <div class="select__body">
-                                <select
-                                    name="unit_id"
-                                    id="unit"
-                                    class="select__main"
-                                    v-model="formData.unit_id"
-                                >
-                                    <option
-                                        class="select__option"
-                                        disabled
-                                        value=""
-                                    >
-                                        Select unit
-                                    </option>
+                                <select name="unit_id" id="unit" class="select__main" v-model="form.unit_id">
+                                    <option class="select__option" disabled value="">Select unit</option>
                                     <option
                                         class="select__option"
                                         v-for="item in props.product_units"
@@ -111,35 +90,16 @@ const submit = () => {
                                     />
                                 </select>
 
-                                <i
-                                    class="iconoir-nav-arrow-down select__icon"
-                                ></i>
+                                <i class="iconoir-nav-arrow-down select__icon"></i>
                             </div>
-                            <small
-                                class="select__invalid"
-                                v-if="$page.props.errors.unit_id"
-                                v-html="'Unit is required.'"
-                            />
+                            <small class="select__invalid" v-if="$page.props.errors.unit_id" v-html="'Unit is required.'" />
                         </div>
 
                         <div class="select">
-                            <label for="category" class="select__label"
-                                >Category</label
-                            >
+                            <label for="category" class="select__label">Category</label>
                             <div class="select__body">
-                                <select
-                                    name="category_id"
-                                    id="category"
-                                    class="select__main"
-                                    v-model="formData.category_id"
-                                >
-                                    <option
-                                        class="select__option"
-                                        disabled
-                                        value=""
-                                    >
-                                        Select category
-                                    </option>
+                                <select name="category_id" id="category" class="select__main" v-model="form.category_id">
+                                    <option class="select__option" disabled value="">Select category</option>
                                     <option
                                         class="select__option"
                                         v-for="item in props.product_categories"
@@ -147,15 +107,9 @@ const submit = () => {
                                         v-html="item.name"
                                     />
                                 </select>
-                                <i
-                                    class="iconoir-nav-arrow-down select__icon"
-                                ></i>
+                                <i class="iconoir-nav-arrow-down select__icon"></i>
                             </div>
-                            <small
-                                class="select__invalid"
-                                v-if="$page.props.errors.category_id"
-                                v-html="'Category is required.'"
-                            />
+                            <small class="select__invalid" v-if="$page.props.errors.category_id" v-html="'Category is required.'" />
                         </div>
                     </div>
 
@@ -163,8 +117,8 @@ const submit = () => {
                         :displayName="'Barcode'"
                         :icon="'iconoir-barcode'"
                         :type="'text'"
-                        :value="formData.barcode"
-                        @update="(newValue) => (formData.barcode = newValue)"
+                        :value="form.barcode"
+                        @update="newValue => (form.barcode = newValue)"
                         :error="$page.props.errors.barcode"
                     />
 
@@ -172,22 +126,14 @@ const submit = () => {
                         :displayName="'Price'"
                         :icon="'iconoir-money-square'"
                         :type="'text'"
-                        :value="formData.price"
-                        @update="(newValue) => (formData.price = newValue)"
+                        :value="form.price"
+                        @update="newValue => (form.price = newValue)"
                         :error="$page.props.errors.price"
                     />
 
                     <div class="form__action">
-                        <Button
-                            :text="'Close'"
-                            :variant="'secondary'"
-                            @click="close"
-                        />
-                        <Button
-                            :text="'Save changes'"
-                            :variant="'primary'"
-                            :type="'submit'"
-                        />
+                        <Button :text="'Close'" :variant="'secondary'" @click="$emit('update:data', null)" />
+                        <Button :text="'Save changes'" :variant="'primary'" :type="'submit'" />
                     </div>
                 </form>
             </div>
@@ -219,6 +165,7 @@ const submit = () => {
         column-gap: 1rem;
         padding: 1.5rem;
         border-bottom: 1px solid var(--color-4);
+        justify-content: space-between;
     }
 
     &__icon {

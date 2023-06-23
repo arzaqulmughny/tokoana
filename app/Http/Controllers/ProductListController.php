@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProductCategory;
+use App\Models\User;
 use Inertia\Inertia;
 use App\Models\ProductList;
 use App\Models\ProductUnit;
 use Illuminate\Http\Request;
+use App\Models\ProductCategory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,8 +16,11 @@ class ProductListController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index(Request $request)
     {
+        $this->authorize('viewAny', ProductList::class);
+
         $data = ProductList::with('category', 'unit')->when($request->search, function ($query, string $searchQuery) {
             $query->where('name', 'LIKE', '%' . $searchQuery . '%');
         })
@@ -60,6 +64,7 @@ class ProductListController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', ProductList::class);
         $validated = $request->validate([
             'name' => 'required|unique:product_lists',
             'unit_id' => 'required',
@@ -75,9 +80,8 @@ class ProductListController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(string $id)
     {
-
         $data = ProductList::all()->find($id)->load('category', 'unit');
         return response()->json($data);
     }
@@ -95,6 +99,7 @@ class ProductListController extends Controller
      */
     public function update($id, Request $request)
     {
+        $this->authorize('update', ProductList::class);
         ProductList::find($id)->update($request->all());
     }
 
@@ -103,6 +108,7 @@ class ProductListController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('delete', ProductList::class);
         ProductList::destroy($id);
     }
 }

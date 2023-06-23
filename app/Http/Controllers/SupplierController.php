@@ -13,6 +13,12 @@ class SupplierController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+     public function __construct()
+     {
+        $this->authorizeResource(Supplier::class, 'supplier');
+     }
+
     public function index(Request $request)
     {
         $data = DB::table('suppliers')

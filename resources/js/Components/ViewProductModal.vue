@@ -2,20 +2,12 @@
 import Button from "@/Components/Button.vue";
 import Input from "./Input.vue";
 
-const props = defineProps({
-    show: Boolean,
-    data: Object,
-});
-
-const emit = defineEmits(["close"]);
-
-const close = () => {
-    emit("close");
-};
+defineProps(["data"]);
+defineEmits(["update:data"]);
 </script>
 <template>
     <Teleport to="#modals">
-        <div class="overlay" v-if="props.show === true">
+        <div class="overlay" v-if="data !== null">
             <div class="modal">
                 <div class="modal__header">
                     <div class="modal__head-left">
@@ -24,66 +16,27 @@ const close = () => {
                     <div class="modal__head-right">
                         <div class="modal__head-text">
                             <h1 class="modal__title">Product detail</h1>
-                            <h2 class="modal__subtitle">
-                                Detail information about this product
-                            </h2>
+                            <h2 class="modal__subtitle">Detail information about this product</h2>
                         </div>
-                        <Button
-                            class="modal__close"
-                            :icon="'iconoir-cancel'"
-                            :variant="'secondary'"
-                            @click="close"
-                        />
+                        <Button class="modal__close" :icon="'iconoir-cancel'" :variant="'secondary'" @click="$emit('update:data', null)" />
                     </div>
                 </div>
 
                 <div class="form">
-                    <Input
-                        :displayName="'Product name'"
-                        :icon="'iconoir-box-iso'"
-                        :type="'text'"
-                        :value="props.data.name"
-                        :disabled="true"
-                    />
+                    <Input :displayName="'Product name'" :icon="'iconoir-box-iso'" :type="'text'" :value="data.name" :disabled="true" />
 
                     <div class="form__between">
-                        <Input
-                            :displayName="'Unit'"
-                            :type="'text'"
-                            :value="props.data.unit.name"
-                            :disabled="true"
-                        />
+                        <Input :displayName="'Unit'" :type="'text'" :value="data.unit.name" :disabled="true" />
 
-                        <Input
-                            :displayName="'Category'"
-                            :type="'text'"
-                            :value="props.data.category.name"
-                            :disabled="true"
-                        />
+                        <Input :displayName="'Category'" :type="'text'" :value="data.category.name" :disabled="true" />
                     </div>
 
-                    <Input
-                        :displayName="'Barcode'"
-                        :icon="'iconoir-barcode'"
-                        :type="'text'"
-                        :value="props.data.barcode"
-                        :disabled="true"
-                    />
+                    <Input :displayName="'Barcode'" :icon="'iconoir-barcode'" :type="'text'" :value="data.barcode" :disabled="true" />
 
-                    <Input
-                        :displayName="'Price'"
-                        :icon="'iconoir-money-square'"
-                        :type="'text'"
-                        :value="props.data.price"
-                        :disabled="true"
-                    />
+                    <Input :displayName="'Price'" :icon="'iconoir-money-square'" :type="'text'" :value="data.price" :disabled="true" />
 
                     <div class="form__action">
-                        <Button
-                            :text="'Close'"
-                            :variant="'secondary'"
-                            @click="close"
-                        />
+                        <Button :text="'Close'" :variant="'secondary'" @click="$emit('update:data', null)" />
                     </div>
                 </div>
             </div>

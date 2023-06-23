@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\ProductCategory;
@@ -13,6 +14,7 @@ class ProductCategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index(Request $request)
     {
         $data = DB::table('product_categories')
@@ -57,6 +59,8 @@ class ProductCategoryController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', ProductCategory::class);
+
         $validated = $request->validate([
             'name' => 'required|unique:product_categories'
         ]);
@@ -87,7 +91,7 @@ class ProductCategoryController extends Controller
      */
     public function update($id, Request $request)
     {
-
+        $this->authorize('update', Auth::user());
         $validated = $request->validate([
             'name' => 'required'
         ]);
@@ -100,6 +104,7 @@ class ProductCategoryController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('delete', Auth::user());
         ProductCategory::destroy($id);
     }
 }
