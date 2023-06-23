@@ -69,6 +69,8 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
+        $this->authorize('view', User::class);
+      
         $data = User::all()->find($id);
         return response()->json($data);
     }
