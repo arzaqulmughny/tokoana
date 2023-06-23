@@ -9,7 +9,6 @@ use App\Http\Controllers\SaleItemController;
 use App\Http\Controllers\StockOutController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProductListController;
 use App\Http\Controllers\ProductUnitController;
 use App\Http\Controllers\SaleHistoryController;
@@ -18,6 +17,7 @@ use App\Http\Controllers\StockOutItemController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\StockInHistoryController;
 use App\Http\Controllers\StockOutHistoryController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,5 +62,5 @@ Route::resource('/history/in', StockInHistoryController::class)->middleware('aut
 Route::resource('/history/out', StockOutHistoryController::class)->middleware('auth');
 
 // User
-Route::put('/employee/password/{id}', [EmployeeController::class, 'updatePassword'])->middleware('auth');
-Route::resource('/employee', EmployeeController::class)->middleware('auth');
+Route::put('/employee/password/{id}', [UserController::class, 'updatePassword'])->middleware('auth');
+Route::resource('/employee', UserController::class)->middleware('auth');

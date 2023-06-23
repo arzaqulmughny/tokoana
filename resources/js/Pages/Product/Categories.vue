@@ -18,45 +18,41 @@ export default {
         Link,
         EditProductCategoryModal,
         Head,
-        Table,
+        Table
     },
     data() {
         return {
             params: {
                 page: 1,
                 search: "",
-                sortBy: "name",
+                sortBy: "name"
             },
             modal: {
                 addNewProductCategoryModal: false,
                 viewProductCategoryModal: {
                     show: false,
                     id: null,
-                    data: {},
+                    data: {}
                 },
                 editProductCategoryModal: {
                     show: false,
                     id: null,
-                    data: {},
-                },
+                    data: {}
+                }
             },
             selectAll: false,
-            selected: [],
+            selected: []
         };
     },
     methods: {
         toggleItemAction(event) {
-            Array.from(
-                document.getElementsByClassName("item-action__list--active")
-            ).forEach((element) => {
+            Array.from(document.getElementsByClassName("item-action__list--active")).forEach(element => {
                 if (event.target.nextElementSibling != element) {
                     element.classList.toggle("item-action__list--active");
                 }
             });
 
-            event.target.nextElementSibling.classList.toggle(
-                "item-action__list--active"
-            );
+            event.target.nextElementSibling.classList.toggle("item-action__list--active");
         },
         removeItem(event, id) {
             event.target.parentElement.parentElement.children[1].checked = false;
@@ -65,29 +61,24 @@ export default {
             }
         },
         blur(event) {
-            if (
-                event.relatedTarget === null ||
-                !event.relatedTarget.className.includes("item-action__link")
-            ) {
+            if (event.relatedTarget === null || !event.relatedTarget.className.includes("item-action__link")) {
                 event.target.checked = false;
             }
         },
         deleteSelected() {
             if (confirm("Delete selected item?")) {
-                this.selected.forEach((id) => {
+                this.selected.forEach(id => {
                     router.delete(`/product/categories/${id}`);
                     this.selected = [];
                     this.selectAll = false;
                 });
             }
-        },
+        }
     },
     watch: {
         "modal.viewProductCategoryModal.id": async function () {
             if (this.modal.viewProductCategoryModal.id !== null) {
-                const { data } = await axios.get(
-                    `/product/categories/${this.modal.viewProductCategoryModal.id}`
-                );
+                const { data } = await axios.get(`/product/categories/${this.modal.viewProductCategoryModal.id}`);
                 this.modal.viewProductCategoryModal.data = data;
                 this.modal.viewProductCategoryModal.show = true;
             } else {
@@ -96,9 +87,7 @@ export default {
         },
         "modal.editProductCategoryModal.id": async function () {
             if (this.modal.editProductCategoryModal.id !== null) {
-                const { data } = await axios.get(
-                    `/product/categories/${this.modal.editProductCategoryModal.id}`
-                );
+                const { data } = await axios.get(`/product/categories/${this.modal.editProductCategoryModal.id}`);
                 this.modal.editProductCategoryModal.data = data;
                 this.modal.editProductCategoryModal.show = true;
             } else {
@@ -111,21 +100,18 @@ export default {
                     clearTimeout(this.timer);
                 }
                 this.timer = setTimeout(() => {
-                    router.visit(
-                        `/product/categories?page=${this.params.page}&search=${this.params.search}&sort=${this.params.sortBy}`,
-                        {
-                            only: ["data"],
-                            preserveState: true,
-                            preserveScroll: true,
-                        }
-                    );
+                    router.visit(`/product/categories?page=${this.params.page}&search=${this.params.search}&sort=${this.params.sortBy}`, {
+                        only: ["data"],
+                        preserveState: true,
+                        preserveScroll: true
+                    });
                 }, 1000);
             },
-            deep: true,
+            deep: true
         },
         selectAll() {
             if (this.selectAll) {
-                this.$page.props.data.data.forEach((item) => {
+                this.$page.props.data.data.forEach(item => {
                     this.selected.push(item.id);
                 });
             } else {
@@ -134,28 +120,28 @@ export default {
         },
         searchAndSort() {
             this.params.page = 1;
-        },
+        }
     },
     computed: {
         searchAndSort() {
             return `${this.params.search}|${this.params.sortBy}`;
-        },
+        }
     },
     created() {
         let url = window.location.href;
         url = new URL(url);
 
-        url.searchParams.get("page")
-            ? (this.params.page = url.searchParams.get("page"))
-            : null;
-        url.searchParams.get("search")
-            ? (this.params.search = url.searchParams.get("search"))
-            : null;
-        url.searchParams.get("sort")
-            ? (this.params.sortBy = url.searchParams.get("sort"))
-            : null;
-    },
+        url.searchParams.get("page") ? (this.params.page = url.searchParams.get("page")) : null;
+        url.searchParams.get("search") ? (this.params.search = url.searchParams.get("search")) : null;
+        url.searchParams.get("sort") ? (this.params.sortBy = url.searchParams.get("sort")) : null;
+    }
 };
+</script>
+
+<script setup>
+import RowMenu from "@/Components/RowMenu.vue";
+import SearchBar from "@/Components/SearchBar.vue";
+import SelectCustom from "@/Components/SelectCustom.vue";
 </script>
 
 <template>
@@ -166,44 +152,21 @@ export default {
         <div class="content">
             <div class="content__header">
                 <h1 class="content__title">Product Categories</h1>
-                <form class="search" @submit.prevent="search">
-                    <div class="search__main">
-                        <input
-                            type="text"
-                            class="search__input"
-                            name="search"
-                            placeholder="Search..."
-                            autocomplete="off"
-                            v-model="this.params.search"
-                        />
-                        <button
-                            class="search__clear"
-                            v-if="this.params.search"
-                            @click="this.params.search = ''"
-                        >
-                            <i class="iconoir-cancel search__clear-icon"></i>
-                        </button>
-                    </div>
-                    <Button
-                        :type="'submit'"
-                        :icon="'iconoir-search'"
-                        :variant="'primary'"
-                    />
-                </form>
+                <Button
+                    :text="'Add new product unit'"
+                    :icon="'iconoir-plus'"
+                    :variant="'primary'"
+                    @click="this.modal.addNewProductCategoryModal = true"
+                    v-if="$page.props.user.user_level === 1"
+                />
             </div>
             <div class="actions">
                 <div class="actions__left">
-                    <div class="select">
-                        <i class="iconoir-sort select__icon"></i>
-                        <select
-                            class="select__menu"
-                            v-model="this.params.sortBy"
-                        >
-                            <option value="name">Name</option>
-                            <option value="latest">Latest</option>
-                            <option value="oldest">Oldest</option>
-                        </select>
-                    </div>
+                    <SelectCustom :text="'Sort'" :icon="'iconoir-sort'" :variant="'secondary'">
+                        <span class="select-custom__option" @click="this.params.sort = 'name'">Name</span>
+                        <span class="select-custom__option" @click="this.params.sort = 'latest'">Latest</span>
+                        <span class="select-custom__option" @click="this.params.sort = 'oldest'">Oldest</span>
+                    </SelectCustom>
                     <Button
                         :text="'Remove selected (' + this.selected.length + ')'"
                         v-if="this.selected.length !== 0"
@@ -219,11 +182,11 @@ export default {
                     />
                 </div>
                 <div class="actions__right">
-                    <Button
-                        :text="'Add new product unit'"
-                        :icon="'iconoir-plus'"
-                        :variant="'primary'"
-                        @click="this.modal.addNewProductCategoryModal = true"
+                    <SearchBar
+                        :name="'search'"
+                        :placeholder="'Search supplier...'"
+                        v-model:value="this.params.search"
+                        @submit="this.params = this.params"
                     />
                 </div>
             </div>
@@ -231,151 +194,87 @@ export default {
                 <template #head>
                     <tr>
                         <td>
-                            <input
-                                type="checkbox"
-                                v-model="this.selectAll"
-                                class="table__select"
-                            />
+                            <input type="checkbox" v-model="this.selectAll" class="table__select" />
                         </td>
                         <td>NAME</td>
                         <td>ACTIONS</td>
                     </tr>
                 </template>
                 <template #body>
-                    <tr
-                        data-empty="true"
-                        v-if="$page.props.data.data.length == 0"
-                    >
+                    <tr data-empty="true" v-if="$page.props.data.data.length == 0">
                         <td colspan="5">No items available</td>
                     </tr>
                     <tr v-for="item in $page.props.data.data">
                         <td :key="item.id">
-                            <input
-                                type="checkbox"
-                                :value="item.id"
-                                v-model="this.selected"
-                            />
+                            <input type="checkbox" :value="item.id" v-model="this.selected" />
                         </td>
                         <td>{{ item.name }}</td>
                         <td>
-                            <div class="item-action">
-                                <Button :icon="'iconoir-nav-arrow-down'" />
-                                <input
-                                    type="checkbox"
-                                    class="item-action__checkbox"
-                                    @blur="blur"
+                            <RowMenu>
+                                <Button
+                                    :text="'View'"
+                                    :variant="'clear'"
+                                    class="item-action__link"
+                                    @click="this.modal.viewProductCategoryModal.id = item.id"
                                 />
-                                <div class="item-action__list">
-                                    <Button
-                                        :text="'View'"
-                                        :variant="'clear'"
-                                        class="item-action__link"
-                                        @click="
-                                            this.modal.viewProductCategoryModal.id =
-                                                item.id
-                                        "
-                                    />
-                                    <Button
-                                        :text="'Edit'"
-                                        :variant="'clear'"
-                                        class="item-action__link"
-                                        @click="
-                                            this.modal.editProductCategoryModal.id =
-                                                item.id
-                                        "
-                                    />
-                                    <Button
-                                        :text="'Remove'"
-                                        :variant="'clear'"
-                                        class="item-action__link"
-                                        @click="
-                                            (event) =>
-                                                removeItem(event, item.id)
-                                        "
-                                    />
-                                </div>
-                            </div>
+                                <Button
+                                    :text="'Edit'"
+                                    :variant="'clear'"
+                                    class="item-action__link"
+                                    @click="this.modal.editProductCategoryModal.id = item.id"
+                                    v-if="$page.props.user.user_level === 1"
+                                />
+                                <Button
+                                    :text="'Remove'"
+                                    :variant="'clear'"
+                                    class="item-action__link"
+                                    @click="event => removeItem(event, item.id)"
+                                    v-if="$page.props.user.user_level === 1"
+                                />
+                            </RowMenu>
                         </td>
                     </tr>
                 </template>
             </Table>
-            <span class="total"
-                >{{ $page.props.data.total }} total items available</span
-            >
+            <span class="total">{{ $page.props.data.total }} total items available</span>
             <div class="pagination">
                 <Button
                     :icon="'iconoir-nav-arrow-left'"
                     :variant="'secondary'"
-                    @click="
-                        this.params.page > 1
-                            ? (this.params.page = this.params.page - 1)
-                            : null
-                    "
+                    @click="this.params.page > 1 ? (this.params.page = this.params.page - 1) : null"
                 />
 
                 <div class="pagination__number">
-                    <Button
-                        :text="1"
-                        :variant="
-                            1 == $page.props.data.current_page
-                                ? 'primary'
-                                : 'clear'
-                        "
-                        @click="this.params.page = 1"
-                    />
-                    <Button
-                        v-if="$page.props.data.current_page != 1"
-                        :text="$page.props.data.current_page"
-                        :variant="'primary'"
-                    />
+                    <Button :text="1" :variant="1 == $page.props.data.current_page ? 'primary' : 'clear'" @click="this.params.page = 1" />
+                    <Button v-if="$page.props.data.current_page != 1" :text="$page.props.data.current_page" :variant="'primary'" />
                     <Button
                         :text="$page.props.data.current_page + 1"
-                        @click="
-                            this.params.page = $page.props.data.current_page + 1
-                        "
-                        v-if="
-                            $page.props.data.last_page >=
-                            $page.props.data.current_page + 1
-                        "
+                        @click="this.params.page = $page.props.data.current_page + 1"
+                        v-if="$page.props.data.last_page >= $page.props.data.current_page + 1"
                         :variant="'clear'"
                     />
                     <Button
                         :text="$page.props.data.current_page + 2"
-                        @click="
-                            this.params.page = $page.props.data.current_page + 2
-                        "
-                        v-if="
-                            $page.props.data.last_page >=
-                            $page.props.data.current_page + 2
-                        "
+                        @click="this.params.page = $page.props.data.current_page + 2"
+                        v-if="$page.props.data.last_page >= $page.props.data.current_page + 2"
                         :variant="'clear'"
                     />
                     <Button
                         :text="$page.props.data.last_page"
                         @click="this.params.page = $page.props.data.last_page"
-                        v-if="
-                            $page.props.data.last_page >=
-                            $page.props.data.current_page + 2
-                        "
+                        v-if="$page.props.data.last_page >= $page.props.data.current_page + 2"
                         :variant="'clear'"
                     />
                 </div>
                 <Button
                     :icon="'iconoir-nav-arrow-right'"
                     :variant="'primary'"
-                    @click="
-                        this.params.page < $page.props.data.last_page
-                            ? (this.params.page = this.params.page + 1)
-                            : null
-                    "
+                    @click="this.params.page < $page.props.data.last_page ? (this.params.page = this.params.page + 1) : null"
                 />
             </div>
         </div>
     </MainLayout>
-    <AddNewProductCategoryModal
-        :show="this.modal.addNewProductCategoryModal"
-        @close="this.modal.addNewProductCategoryModal = false"
-    />
+    <AddNewProductCategoryModal :show="this.modal.addNewProductCategoryModal" @close="this.modal.addNewProductCategoryModal = false" />
     <ViewProductCategoryModal
         :show="this.modal.viewProductCategoryModal.show"
         :data="this.modal.viewProductCategoryModal.data"
@@ -423,45 +322,6 @@ export default {
         column-gap: 1rem;
     }
 }
-.item-action {
-    display: flex;
-    visibility: hidden;
-    position: relative;
-    width: fit-content;
-
-    &__checkbox {
-        all: unset;
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-    }
-
-    &__checkbox:checked {
-        ~ .item-action__list {
-            display: flex;
-        }
-    }
-
-    &__list {
-        border-radius: 4px;
-        position: absolute;
-        display: none;
-        top: calc(100% + 1rem);
-        right: 0;
-        background-color: var(--color-5);
-        z-index: 9;
-        border: 1px solid var(--color-4);
-        flex-direction: column;
-
-        &--active {
-            display: flex;
-        }
-    }
-}
-
 .search {
     display: flex;
     align-items: stretch;

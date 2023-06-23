@@ -101,6 +101,7 @@ const toggleSidebar = () => {
                 :href="'/employee'"
                 :icon="'iconoir-group'"
                 :type="'normal'"
+                v-if="$page.props.user.user_level === 1"
             />
         </div>
     </nav>

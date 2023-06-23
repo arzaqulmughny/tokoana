@@ -104,7 +104,13 @@ import EditEmployeePasswordModal from "@/Components/EditEmployeePasswordModal.vu
     <div class="main">
         <div class="main__header">
             <h1 class="main__title">Employee</h1>
-            <Button :variant="'primary'" :text="'Add new employee'" :icon="'iconoir-plus'" @click="this.modal.addNewEmployee = true" />
+            <Button
+                :variant="'primary'"
+                :text="'Add new employee'"
+                :icon="'iconoir-plus'"
+                @click="this.modal.addNewEmployee = true"
+                v-if="$page.props.user.user_level === 1"
+            />
         </div>
         <div class="main__actions">
             <div class="main__actions-left">
@@ -146,14 +152,22 @@ import EditEmployeePasswordModal from "@/Components/EditEmployeePasswordModal.vu
                                     class="item-action__link"
                                     :variant="'clear'"
                                     @click="async () => (this.modal.editEmployee = await this.getDetailData(item.id))"
+                                    v-if="$page.props.user.user_level === 1"
                                 />
                                 <Button
                                     :text="'Update password'"
                                     class="item-action__link"
                                     :variant="'clear'"
                                     @click="async () => (this.modal.editEmployeePassword = await this.getDetailData(item.id))"
+                                    v-if="$page.props.user.user_level === 1"
                                 />
-                                <Button :text="'Remove'" class="item-action__link" :variant="'clear'" @click="this.removeData(item.id)" />
+                                <Button
+                                    :text="'Remove'"
+                                    class="item-action__link"
+                                    :variant="'clear'"
+                                    @click="this.removeData(item.id)"
+                                    v-if="$page.props.user.user_level === 1"
+                                />
                             </RowMenu>
                         </td>
                     </tr>

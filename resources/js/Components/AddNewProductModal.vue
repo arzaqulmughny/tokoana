@@ -7,34 +7,30 @@ import { router } from "@inertiajs/vue3";
 const props = defineProps({
     show: Boolean,
     product_categories: Array,
-    product_units: Array,
+    product_units: Array
 });
 
-const emit = defineEmits(["close"]);
-const formData = ref({
+const emit = defineEmits(["update:show"]);
+const form = ref({
     name: "",
     unit_id: "",
     category_id: "",
     barcode: "",
-    price: "",
+    price: ""
 });
 
-const close = () => {
-    emit("close");
-};
-
-const submit = () => {
-    router.post("/product/list", formData.value, {
+const submit = close => {
+    router.post("/product/list", form.value, {
         onSuccess: () => {
             close();
-            formData.value = {
+            form.value = {
                 name: "",
                 unit_id: 1,
                 category_id: 1,
                 barcode: "",
-                price: "",
+                price: ""
             };
-        },
+        }
     });
 };
 </script>
@@ -49,28 +45,21 @@ const submit = () => {
                     <div class="modal__head-right">
                         <div class="modal__head-text">
                             <h1 class="modal__title">Add new product</h1>
-                            <h2 class="modal__subtitle">
-                                Fill the data below to add new product
-                            </h2>
+                            <h2 class="modal__subtitle">Fill the data below to add new product</h2>
                         </div>
-                        <Button
-                            class="modal__close"
-                            :icon="'iconoir-cancel'"
-                            :variant="'secondary'"
-                            @click="close"
-                        />
+                        <Button class="modal__close" :icon="'iconoir-cancel'" :variant="'secondary'" @click="$emit('update:show', false)" />
                     </div>
                 </div>
 
-                <form class="form" @submit.prevent="submit">
+                <form class="form" @submit.prevent="submit(() => $emit('update:show', false))">
                     <Input
                         :name="'name'"
                         :displayName="'Product name'"
                         :icon="'iconoir-box-iso'"
                         :type="'text'"
                         :placeholder="'Product name'"
-                        :value="formData.name"
-                        @update="(newValue) => (formData.name = newValue)"
+                        :value="form.name"
+                        @update="newValue => (form.name = newValue)"
                         :error="$page.props.errors.name"
                     />
 
@@ -78,19 +67,8 @@ const submit = () => {
                         <div class="select">
                             <label for="unit" class="select__label">Unit</label>
                             <div class="select__body">
-                                <select
-                                    name="unit_id"
-                                    id="unit"
-                                    class="select__main"
-                                    v-model="formData.unit_id"
-                                >
-                                    <option
-                                        class="select__option"
-                                        disabled
-                                        value=""
-                                    >
-                                        Select unit
-                                    </option>
+                                <select name="unit_id" id="unit" class="select__main" v-model="form.unit_id">
+                                    <option class="select__option" disabled value="">Select unit</option>
                                     <option
                                         class="select__option"
                                         v-for="item in props.product_units"
@@ -99,35 +77,16 @@ const submit = () => {
                                     />
                                 </select>
 
-                                <i
-                                    class="iconoir-nav-arrow-down select__icon"
-                                ></i>
+                                <i class="iconoir-nav-arrow-down select__icon"></i>
                             </div>
-                            <small
-                                class="select__invalid"
-                                v-if="$page.props.errors.unit_id"
-                                v-html="'Unit is required.'"
-                            />
+                            <small class="select__invalid" v-if="$page.props.errors.unit_id" v-html="'Unit is required.'" />
                         </div>
 
                         <div class="select">
-                            <label for="category" class="select__label"
-                                >Category</label
-                            >
+                            <label for="category" class="select__label">Category</label>
                             <div class="select__body">
-                                <select
-                                    name="category_id"
-                                    id="category"
-                                    class="select__main"
-                                    v-model="formData.category_id"
-                                >
-                                    <option
-                                        class="select__option"
-                                        disabled
-                                        value=""
-                                    >
-                                        Select category
-                                    </option>
+                                <select name="category_id" id="category" class="select__main" v-model="form.category_id">
+                                    <option class="select__option" disabled value="">Select category</option>
                                     <option
                                         class="select__option"
                                         v-for="item in props.product_categories"
@@ -135,15 +94,9 @@ const submit = () => {
                                         v-html="item.name"
                                     />
                                 </select>
-                                <i
-                                    class="iconoir-nav-arrow-down select__icon"
-                                ></i>
+                                <i class="iconoir-nav-arrow-down select__icon"></i>
                             </div>
-                            <small
-                                class="select__invalid"
-                                v-if="$page.props.errors.category_id"
-                                v-html="'Category is required.'"
-                            />
+                            <small class="select__invalid" v-if="$page.props.errors.category_id" v-html="'Category is required.'" />
                         </div>
                     </div>
 
@@ -153,8 +106,8 @@ const submit = () => {
                         :icon="'iconoir-barcode'"
                         :type="'text'"
                         :placeholder="'Barcode'"
-                        :value="formData.barcode"
-                        @update="(newValue) => (formData.barcode = newValue)"
+                        :value="form.barcode"
+                        @update="newValue => (form.barcode = newValue)"
                         :error="$page.props.errors.barcode"
                     />
 
@@ -164,23 +117,14 @@ const submit = () => {
                         :icon="'iconoir-money-square'"
                         :type="'text'"
                         :placeholder="'Price'"
-                        :value="formData.price"
-                        @update="(newValue) => (formData.price = newValue)"
+                        :value="form.price"
+                        @update="newValue => (form.price = newValue)"
                         :error="$page.props.errors.price"
                     />
 
                     <div class="form__action">
-                        <Button
-                            :text="'Cancel'"
-                            :variant="'secondary'"
-                            @click="close"
-                        />
-                        <Button
-                            :text="'Add'"
-                            :variant="'primary'"
-                            :icon="'iconoir-plus'"
-                            :type="'submit'"
-                        />
+                        <Button :text="'Cancel'" :variant="'secondary'" @click="$emit('update:show', false)" />
+                        <Button :text="'Add'" :variant="'primary'" :icon="'iconoir-plus'" :type="'submit'" />
                     </div>
                 </form>
             </div>

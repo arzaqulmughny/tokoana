@@ -118,6 +118,7 @@ const submit = close => {
         column-gap: 1rem;
         padding: 1.5rem;
         border-bottom: 1px solid var(--color-4);
+        justify-content: space-between;
     }
 
     &__icon {

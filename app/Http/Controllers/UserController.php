@@ -4,18 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Inertia\Inertia;
-use App\Models\StockOut;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-class EmployeeController extends Controller
+class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', User::class);
         $data = User::latest()
             ->when($request->search, function ($query, string $searchQuery) {
                 $query->where('name', 'LIKE', '%'. $searchQuery .'%')->orWhere('username', 'LIKE', '%'. $searchQuery .'%');
@@ -54,6 +51,7 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', User::class);
         $validated = $request->validate([
             'username' => 'required|unique:users',
             'name' => 'required',
@@ -88,6 +86,7 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $this->authorize('update', User::class);
         $rules = [];
 
         if ($request->name !== DB::table('users')->where('id', $id)->first()->name) {
@@ -102,6 +101,7 @@ class EmployeeController extends Controller
     }
 
     public function updatePassword(Request $request, string $id) {
+        $this->authorize('update', User::class);
         $validated = $request->validate([
             'password' => 'required|min:8'
         ]);
@@ -116,6 +116,6 @@ class EmployeeController extends Controller
      */
     public function destroy(string $id)
     {
+        $this->authorize('delete', User::class);
         User::destroy($id);
-    }
-}
+    }}

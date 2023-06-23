@@ -123,11 +123,12 @@ import RowMenu from "@/Components/RowMenu.vue";
                     :icon="'iconoir-plus'"
                     :variant="'primary'"
                     @click="this.modal.addNewSupplierModal = true"
+                    v-if="$page.props.user.user_level === 1"
                 />
             </div>
             <div class="actions">
                 <div class="actions__left">
-                    <SelectCustom :text="'Sort'" :icon="'iconoir-sort'" :variant="'secondary'">
+                    <SelectCustom :text="'Sort'" :icon="'iconoir-sort'" :variant="'secondary'" :menuPosition="'right'">
                         <span class="select-custom__option" @click="this.params.sort = 'name'">Name</span>
                         <span class="select-custom__option" @click="this.params.sort = 'latest'">Latest</span>
                         <span class="select-custom__option" @click="this.params.sort = 'oldest'">Oldest</span>
@@ -190,8 +191,14 @@ import RowMenu from "@/Components/RowMenu.vue";
                                     :text="'Edit'"
                                     :variant="'clear'"
                                     @click="async () => (this.modal.editSupplierModal = await this.getDetailSupplier(item.id))"
+                                    v-if="$page.props.user.user_level === 1"
                                 />
-                                <Button :text="'Remove'" :variant="'clear'" @click="event => removeItem(event, item.id)" />
+                                <Button
+                                    :text="'Remove'"
+                                    :variant="'clear'"
+                                    @click="event => removeItem(event, item.id)"
+                                    v-if="$page.props.user.user_level === 1"
+                                />
                             </RowMenu>
                         </td>
                     </tr>

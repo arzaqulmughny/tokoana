@@ -57,6 +57,7 @@ class ProductUnitController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', ProductUnit::class);
         $validated = $request->validate([
             'name' => 'required|unique:product_units'
         ]);
@@ -87,7 +88,7 @@ class ProductUnitController extends Controller
      */
     public function update($id, Request $request)
     {
-
+        $this->authorize('update', ProductUnit::class);
         $validated = $request->validate([
             'name' => 'required'
         ]);
@@ -100,6 +101,7 @@ class ProductUnitController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('delete', ProductUnit::class);
         ProductUnit::destroy($id);
     }
 }
