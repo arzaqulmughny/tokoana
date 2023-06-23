@@ -18,36 +18,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
+        // Create a main account, this account is allowed to do all actions
+        // Username and password used for authentication
         User::create([
-            'name' => "Bos Dermawan",
-            'username' => "admin",
-            'password' => bcrypt('admin123'),
+            'name' => "Owner Name",
+            'username' => "owner",
+            'password' => bcrypt('12345678'),
             'user_level' => '1',
         ]);
-
-        Supplier::factory(10)->create();
-
-        $units = ['3kg', 'L', 'pcs', 'g', 'ons', 'cm', 'kg'];
-        foreach ($units as $unit) {
-            ProductUnit::create([
-                'name' => $unit
-            ]);
-        };
-
-        $categories = ['drink', 'food', 'tool', 'stationery', 'grocery'];
-        foreach ($categories as $category) {
-            ProductCategory::create([
-                'name' => $category
-            ]);
-        };
-
-        ProductList::factory(20)->create();
     }
 }
