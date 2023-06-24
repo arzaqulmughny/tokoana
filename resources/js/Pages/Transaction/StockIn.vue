@@ -450,7 +450,7 @@ import SearchBar from "@/Components/SearchBar.vue";
         width: 100%;
 
         @include app.screen(lg) {
-            max-width: fit-content;
+            max-width: 55%;
         }
     }
 
@@ -462,6 +462,7 @@ import SearchBar from "@/Components/SearchBar.vue";
 
         @include app.screen(lg) {
             max-width: fit-content;
+            min-width: fit-content;
         }
     }
 }
