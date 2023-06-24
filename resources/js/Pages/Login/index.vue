@@ -1,12 +1,12 @@
 <script setup>
-import { ref } from "vue";
+import { nextTick, onMounted, ref } from "vue";
 import { Head, router } from "@inertiajs/vue3";
 import Input from "../../Components/Input.vue";
 import Button from "../../Components/Button.vue";
 
 const loginFormData = ref({
     username: "",
-    password: "",
+    password: ""
 });
 
 defineProps({ errors: Object });
@@ -38,10 +38,9 @@ const authenticate = () => {
                         :type="'text'"
                         :placeholder="'Username'"
                         :value="loginFormData.username"
-                        @update="
-                            (newValue) => (loginFormData.username = newValue)
-                        "
+                        @update="newValue => (loginFormData.username = newValue)"
                         :error="errors.username"
+                        :autofocus="true"
                     />
 
                     <Input
@@ -51,22 +50,12 @@ const authenticate = () => {
                         :type="'password'"
                         :placeholder="'Password'"
                         :value="loginFormData.password"
-                        @update="
-                            (newValue) => (loginFormData.password = newValue)
-                        "
+                        @update="newValue => (loginFormData.password = newValue)"
                         :error="errors.password"
                     />
 
-                    <small
-                        class="form__invalid"
-                        v-if="$page.props.flash.login_invalid"
-                        >{{ $page.props.flash.login_invalid }}</small
-                    >
-                    <Button
-                        :text="'Login'"
-                        :type="'submit'"
-                        :variant="'primary'"
-                    />
+                    <small class="form__invalid" v-if="$page.props.flash.login_invalid">{{ $page.props.flash.login_invalid }}</small>
+                    <Button :text="'Login'" :type="'submit'" :variant="'primary'" />
                 </div>
             </form>
         </div>
