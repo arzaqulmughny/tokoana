@@ -1,18 +1,6 @@
 <script>
-import { router } from "@inertiajs/vue3";
-import Mainlayout from "@/Layouts/MainLayout.vue";
-import Button from "@/Components/Button.vue";
-import Table from "@/Components/Table.vue";
-import axios from "axios";
-import { Head } from "@inertiajs/vue3";
-
 export default {
     layout: Mainlayout,
-    components: {
-        Button,
-        Table,
-        Head
-    },
     data() {
         return {
             params: {
@@ -220,6 +208,17 @@ export default {
 };
 </script>
 
+<script setup>
+import { router } from "@inertiajs/vue3";
+import Mainlayout from "@/Layouts/MainLayout.vue";
+import Button from "@/Components/Button.vue";
+import Table from "@/Components/Table.vue";
+import axios from "axios";
+import { Head } from "@inertiajs/vue3";
+import SearchBar from "@/Components/SearchBar.vue";
+import SelectCustom from "@/Components/SelectCustom.vue";
+</script>
+
 <template>
     <Head>
         <title>Stock Out</title>
@@ -230,23 +229,7 @@ export default {
                 <div class="content">
                     <h1 class="content__title">Available products</h1>
                     <div class="content__actions">
-                        <form class="search">
-                            <div class="search__main">
-                                <input
-                                    type="text"
-                                    class="search__input"
-                                    name="search"
-                                    placeholder="Search..."
-                                    autocomplete="off"
-                                    v-model="this.params.search"
-                                />
-                                <button class="search__clear" v-if="this.params.search" @click="this.params.search = ''">
-                                    <i class="iconoir-cancel search__clear-icon"></i>
-                                </button>
-                            </div>
-                            <Button :type="'submit'" :icon="'iconoir-search'" :variant="'primary'" />
-                        </form>
-                        <Button :text="'Show all'" :variant="'secondary'" @click="this.params.search = ''" />
+                        <SearchBar :placeholder="'Search product...'" v-model:value="this.params.search" :name="'search'" />
                     </div>
                     <Table>
                         <template #head>
@@ -318,14 +301,11 @@ export default {
                 <div class="content">
                     <h1 class="content__title">Selected products</h1>
                     <div class="content__actions">
-                        <div class="select">
-                            <i class="iconoir-sort select__icon"></i>
-                            <select class="select__menu" v-model="this.addedProduct.sortBy">
-                                <option value="name">Name</option>
-                                <option value="latest">Last Added</option>
-                                <option value="oldest">Added first</option>
-                            </select>
-                        </div>
+                        <SelectCustom :text="'Sort'" :variant="'secondary'" :icon="'iconoir-sort'" :menuPosition="'right'">
+                            <span class="select-custom__option" @click="this.addedProduct.sortBy = 'name'" v-text="'Name'" />
+                            <span class="select-custom__option" @click="this.addedProduct.sortBy = 'latest'" v-text="'Last added'" />
+                            <span class="select-custom__option" @click="this.addedProduct.sortBy = 'oldest'" v-text="'Added first'" />
+                        </SelectCustom>
                         <Button
                             :text="`Remove selected (${this.selected.length})`"
                             :icon="'iconoir-cancel'"
@@ -435,14 +415,22 @@ export default {
         display: flex;
         flex-direction: column;
         row-gap: 2rem;
-        max-width: 45rem;
+        width: 100%;
+
+        @include app.screen(lg) {
+            max-width: fit-content;
+        }
     }
 
     &__right {
         display: flex;
         flex-direction: column;
         row-gap: 2rem;
-        max-width: 25rem;
+        width: 100%;
+
+        @include app.screen(lg) {
+            max-width: fit-content;
+        }
     }
 }
 
@@ -461,76 +449,6 @@ export default {
         display: flex;
         gap: 1rem;
         flex-wrap: wrap;
-    }
-}
-
-.search {
-    display: flex;
-    align-items: stretch;
-    column-gap: 1rem;
-    color: var(--color-1);
-    width: 100%;
-
-    @include app.screen(sm) {
-        width: fit-content;
-    }
-
-    &__main {
-        border: 1px solid var(--color-4);
-        border-radius: 4px;
-        background-color: var(--color-5);
-        width: 100%;
-        padding: 1rem 1.5rem;
-        position: relative;
-
-        @include app.screen(sm) {
-            max-width: 20rem;
-        }
-    }
-
-    &__input {
-        all: unset;
-    }
-
-    &__clear {
-        all: unset;
-        cursor: pointer;
-        top: 0;
-        right: 0;
-        position: absolute;
-        height: 100%;
-        padding-inline: 1rem;
-        display: flex;
-        align-items: center;
-    }
-
-    &__clear-icon {
-        font-size: 1.2rem;
-    }
-}
-
-.select {
-    border-radius: 4px;
-    border: 1px solid var(--color-4);
-    background-color: var(--color-5);
-    cursor: pointer;
-    color: var(--color-1);
-    position: relative;
-    display: flex;
-    align-items: center;
-    height: 100%;
-
-    &__icon {
-        padding: 1rem;
-        position: absolute;
-        pointer-events: none;
-        font-size: 1.2rem;
-    }
-
-    &__menu {
-        all: unset;
-        padding: 1rem;
-        padding-left: 3rem;
     }
 }
 
@@ -594,48 +512,6 @@ export default {
     flex-direction: column;
 }
 
-.select-supplier {
-    display: flex;
-    flex-direction: column;
-    row-gap: 1rem;
-
-    &__label {
-        color: var(--color-1);
-    }
-
-    &__container {
-        width: 100%;
-        position: relative;
-        padding-block: 1.2rem;
-        display: flex;
-        padding-inline: 2rem;
-        justify-content: space-between;
-    }
-
-    &__main {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        padding-left: 5rem;
-        left: 0;
-        top: 0;
-        -webkit-appearance: none;
-        background-color: var(--color-5);
-        cursor: pointer;
-        outline: none;
-        border: 1px solid var(--color-4);
-        border-radius: 4px;
-        color: var(--color-1);
-    }
-
-    &__icon {
-        font-size: 1.2rem;
-        z-index: 9;
-        pointer-events: none;
-        color: var(--color-1);
-    }
-}
-
 .note {
     display: flex;
     flex-direction: column;
@@ -662,11 +538,12 @@ export default {
 
 .actions {
     display: flex;
-    flex-direction: column;
-    row-gap: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
 
     & > button {
         justify-content: center;
+        width: 100%;
     }
 }
 

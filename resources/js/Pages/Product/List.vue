@@ -55,7 +55,7 @@ export default {
                     clearTimeout(this.timer);
                 }
                 this.timer = setTimeout(() => {
-                    router.visit(`/product/list?page=${this.params.page}&search=${this.params.search}&sort=${this.params.sortBy}`, {
+                    router.visit(this.getUrlWithParams, {
                         only: ["data"],
                         preserveState: true,
                         preserveScroll: true
@@ -78,8 +78,17 @@ export default {
         }
     },
     computed: {
-        searchAndSort() {
-            return `${this.params.search}|${this.params.sortBy}`;
+        getUrlWithParams() {
+            let URL = `${window.location.pathname}?`;
+            const params = Object.keys(this.params);
+
+            params.forEach(param => {
+                if (this.params[param].length != 0) {
+                    URL += `&${param}=${this.params[param]}`;
+                }
+            });
+
+            return URL;
         }
     },
     created() {

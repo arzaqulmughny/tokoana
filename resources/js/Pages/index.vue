@@ -115,8 +115,6 @@ const getTodayRevenueTotal = computed(() => {
 });
 </script>
 
-<script setup></script>
-
 <template>
     <Head>
         <title>Dashboard</title>
@@ -130,7 +128,7 @@ const getTodayRevenueTotal = computed(() => {
                 <apexchart width="500" type="bar" :options="chartOptions" :series="series" />
             </div>
 
-            <div class="container__right">
+            <div class="container__widget">
                 <div class="container-small">
                     <i class="iconoir-data-transfer-both container-small__icon" />
                     <h2 class="container-small__title">Today sales</h2>
@@ -158,6 +156,9 @@ const getTodayRevenueTotal = computed(() => {
                         </tr>
                     </template>
                     <template #body>
+                        <tr data-empty="true" v-if="item in weeklyData == 0">
+                            <td colspan="100">No items available</td>
+                        </tr>
                         <tr v-for="item in weeklyData">
                             <td v-text="item.id" />
                             <td v-text="item.items.length" />
@@ -173,6 +174,7 @@ const getTodayRevenueTotal = computed(() => {
 </template>
 
 <style lang="scss" scoped>
+@use "./../../css/app.scss";
 .chart {
     background-color: var(--color-5);
     border-radius: 4px;
@@ -203,14 +205,23 @@ const getTodayRevenueTotal = computed(() => {
 
     &__row {
         display: flex;
-        gap: 2rem;
+        gap: 1rem;
         flex-wrap: wrap;
+    }
+
+    &__widget {
+        display: flex;
+        gap: 1rem;
+
+        @include app.screen(lg) {
+            flex-direction: column;
+        }
     }
 
     &__right {
         display: flex;
         flex-direction: column;
-        gap: 2rem;
+        gap: 1rem;
     }
 }
 

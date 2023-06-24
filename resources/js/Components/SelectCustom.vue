@@ -46,6 +46,7 @@ onUnmounted(() => {
     padding: 1rem !important;
     column-gap: 1rem;
     cursor: pointer;
+    justify-content: space-between;
 
     &__icon {
         pointer-events: none;

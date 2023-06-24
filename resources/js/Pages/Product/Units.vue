@@ -100,7 +100,7 @@ export default {
                     clearTimeout(this.timer);
                 }
                 this.timer = setTimeout(() => {
-                    router.visit(`/product/units?page=${this.params.page}&search=${this.params.search}&sort=${this.params.sortBy}`, {
+                    router.visit(this.getUrlWithParams, {
                         only: ["data"],
                         preserveState: true,
                         preserveScroll: true
@@ -123,8 +123,17 @@ export default {
         }
     },
     computed: {
-        searchAndSort() {
-            return `${this.params.search}|${this.params.sortBy}`;
+        getUrlWithParams() {
+            let URL = `${window.location.pathname}?`;
+            const params = Object.keys(this.params);
+
+            params.forEach(param => {
+                if (this.params[param].length != 0) {
+                    URL += `&${param}=${this.params[param]}`;
+                }
+            });
+
+            return URL;
         }
     },
     created() {
@@ -162,7 +171,7 @@ import SelectCustom from "@/Components/SelectCustom.vue";
             </div>
             <div class="actions">
                 <div class="actions__left">
-                    <SelectCustom :text="'Sort'" :icon="'iconoir-sort'" :variant="'secondary'">
+                    <SelectCustom :text="'Sort'" :icon="'iconoir-sort'" :variant="'secondary'" :menuPosition="'right'">
                         <span class="select-custom__option" @click="this.params.sort = 'name'">Name</span>
                         <span class="select-custom__option" @click="this.params.sort = 'latest'">Latest</span>
                         <span class="select-custom__option" @click="this.params.sort = 'oldest'">Oldest</span>
