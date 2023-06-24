@@ -5,7 +5,7 @@ export default {
         return {
             params: {
                 search: "",
-                page: 1
+                page: ""
             },
             addedProduct: {
                 data: [],
@@ -177,6 +177,18 @@ export default {
                 total = total + item.quantity;
             });
             return total;
+        },
+        getUrlWithParams() {
+            let URL = `${window.location.pathname}?`;
+            const params = Object.keys(this.params);
+
+            params.forEach(param => {
+                if (this.params[param].length != 0) {
+                    URL += `&${param}=${this.params[param]}`;
+                }
+            });
+
+            return URL;
         }
     },
     watch: {
@@ -186,7 +198,7 @@ export default {
                     clearTimeout(this.timer);
                 }
                 this.timer = setTimeout(() => {
-                    router.visit(`/transaction/out?page=${this.params.page}&search=${this.params.search}`, {
+                    router.visit(this.getUrlWithParams, {
                         only: ["data"],
                         preserveState: true,
                         preserveScroll: true

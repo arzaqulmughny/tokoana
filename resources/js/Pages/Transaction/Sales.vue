@@ -5,7 +5,7 @@ export default {
         return {
             params: {
                 search: "",
-                page: 1
+                page: ""
             },
             addedProduct: {
                 data: [],

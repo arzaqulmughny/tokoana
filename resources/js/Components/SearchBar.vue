@@ -6,7 +6,7 @@ defineEmits(["search", "update:value"]);
 </script>
 
 <template>
-    <form class="search" @submit.prevent="$emit('update:value', value)">
+    <div class="search">
         <div class="search__main">
             <input
                 type="text"
@@ -21,8 +21,8 @@ defineEmits(["search", "update:value"]);
                 <i class="iconoir-cancel search__clear-icon"></i>
             </button>
         </div>
-        <Button :type="'submit'" :icon="'iconoir-search'" :variant="'primary'" />
-    </form>
+        <Button :icon="'iconoir-search'" :variant="'primary'" @click="$emit('update:value', value)" />
+    </div>
 </template>
 
 <style lang="scss" scoped>
