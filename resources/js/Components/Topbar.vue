@@ -1,17 +1,30 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
-import { ref } from "vue";
-
-const loggedMenu = ref(null);
-const sidebar = ref(null);
-
-const showLoggedMenu = () => {
-    loggedMenu.value.classList.toggle("logged__menu--active");
-};
+import { ref, onMounted, onUnmounted } from "vue";
 
 const toggleSidebar = () => {
     document.querySelector(".sidebar").classList.toggle("sidebar--active");
 };
+
+const show = ref(false);
+const main = ref(null);
+const menu = ref(null);
+
+let handler = event => {
+    if (event.target === main.value) {
+        show.value = !show.value;
+    } else {
+        show.value = false;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener("click", handler);
+});
+
+onUnmounted(() => {
+    document.removeEventListener("click", handler);
+});
 </script>
 
 <template>
@@ -19,13 +32,13 @@ const toggleSidebar = () => {
         <button class="topbar__toggle" @click="toggleSidebar">
             <i class="iconoir-menu"></i>
         </button>
-        <button class="logged" @click="showLoggedMenu">
+        <button class="logged" ref="main">
             <div class="avatar">
                 <i class="iconoir-user avatar__icon"></i>
             </div>
             <span class="logged__name">{{ $page.props.user.name }}</span>
-            <i class="iconoir-nav-arrow-down"></i>
-            <div class="logged__menu" ref="loggedMenu">
+            <i class="iconoir-nav-arrow-down logged__arrow"></i>
+            <div class="logged__menu" :class="{ 'logged__menu--active': show }" ref="menu">
                 <Link class="logged__link" as="a" href="/logout">Logout</Link>
             </div>
         </button>
@@ -61,6 +74,14 @@ const toggleSidebar = () => {
     column-gap: 1rem;
     position: relative;
 
+    &__name {
+        pointer-events: none;
+    }
+
+    &__arrow {
+        pointer-events: none;
+    }
+
     &__menu {
         background-color: white;
         border-radius: 4px;
@@ -93,6 +114,7 @@ const toggleSidebar = () => {
     display: flex;
     justify-content: center;
     align-items: center;
+    pointer-events: none;
 
     &__icon {
         color: var(--color-3);

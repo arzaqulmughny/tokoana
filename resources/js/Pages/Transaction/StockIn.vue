@@ -272,7 +272,7 @@ export default {
                                 <td v-html="item.category.name" />
                                 <td v-html="item.unit.name" />
                                 <td>
-                                    <Button @click="this.addProduct(item)" :text="'+ Add'" :size="'small'" :variant="'primary'" />
+                                    <Button @click="this.addProduct(item)" :text="'+ Add'" :variant="'primary'" :size="'small'" />
                                 </td>
                             </tr>
                         </template>

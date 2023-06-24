@@ -480,6 +480,7 @@ import getPreviousTime from "@/Utils/getPreviousTime";
 .total {
     color: var(--color-3);
 }
+
 .main {
     padding: 0;
     &__header {

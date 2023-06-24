@@ -31,6 +31,10 @@ const props = defineProps({
     padding: 1rem;
     width: fit-content;
 
+    &:active {
+        transform: translateY(-1px);
+    }
+
     &__icon {
         pointer-events: none;
         font-size: 1.2rem;
@@ -47,17 +51,23 @@ const props = defineProps({
     &--primary {
         background-color: var(--color-2);
         color: var(--color-5);
+
+        &:hover {
+            background-color: var(--color-2-hover);
+        }
     }
 
     &--secondary {
         background-color: var(--color-5);
         color: var(--color-1);
+
+        &:hover {
+            background-color: var(--color-5-hover);
+        }
     }
 
     &--small {
-        border: none;
-        padding: 0;
-        color: var(--color-1);
+        padding: 2px 4px;
     }
 }
 </style>

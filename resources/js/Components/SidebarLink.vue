@@ -1,6 +1,6 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
-import { onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 const props = defineProps({
     name: String,
@@ -9,35 +9,32 @@ const props = defineProps({
     type: String,
     routes: Array,
     class: String,
-    url: String,
+    url: String
 });
 const active = ref(false);
+
+onMounted(() => {
+    window.location.pathname.startsWith(props.url) ? (active.value = true) : null;
+});
 </script>
 
 <template>
-    <Link
-        class="link"
-        :class="props.class"
-        :href="props.href"
-        as="a"
-        v-if="props.type === 'normal'"
-    >
+    <Link class="link" :class="props.class" :href="props.href" as="a" v-if="props.type === 'normal'">
         <div class="link__label">
             <i :class="props.icon"></i>
             <span class="link__name">{{ props.name }}</span>
         </div>
     </Link>
 
-    <button
-        class="link"
-        @click="active = !active"
-        v-if="props.type === 'accordion'"
-    >
+    <button class="link" @click="active = !active" v-if="props.type === 'accordion'">
         <div class="link__label">
             <i :class="props.icon"></i>
             <span class="link__name">{{ props.name }}</span>
             <svg
                 class="link__arrow"
+                :class="{
+                    'link__arrow--active': active
+                }"
                 width="24px"
                 height="24px"
                 stroke-width="1.5"
@@ -62,7 +59,7 @@ const active = ref(false);
         <div
             class="children"
             :class="{
-                'children--active': $page.url.startsWith(props.url) || active,
+                'children--active': active
             }"
         >
             <Link
@@ -97,6 +94,10 @@ const active = ref(false);
         align-items: center;
         column-gap: 2rem;
         padding: 1rem 2rem;
+
+        &:hover {
+            background-color: var(--color-5-hover);
+        }
     }
 
     &__icon {
@@ -111,6 +112,14 @@ const active = ref(false);
     &--active {
         background-color: var(--color-2-light);
         position: relative;
+
+        .link {
+            border: 1px solid red;
+        }
+
+        &:hover {
+            background-color: var(--color-2-light-hover);
+        }
 
         &::before {
             content: "";
@@ -129,19 +138,29 @@ const active = ref(false);
         position: absolute;
         right: 0;
         margin-right: 2rem;
+        transform: rotate(0deg);
+        transition: 0.3s;
 
         path {
             stroke: var(--color-1);
+        }
+
+        &--active {
+            transform: rotate(180deg);
+            transition: 0.3s;
         }
     }
 }
 
 .children {
-    height: 0;
-    overflow: hidden;
+    background-color: var(--color-5);
+    max-height: 0px;
+    overflow-y: hidden;
+    transition: max-height 0.1s;
 
     &--active {
-        height: inherit;
+        transition: max-height 0.3s;
+        max-height: 500px;
     }
 }
 </style>

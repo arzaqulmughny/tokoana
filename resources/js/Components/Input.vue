@@ -1,22 +1,11 @@
 <script setup>
-const props = defineProps([
-    "name",
-    "displayName",
-    "icon",
-    "type",
-    "placeholder",
-    "value",
-    "error",
-    "disabled",
-]);
+const props = defineProps(["name", "displayName", "icon", "type", "placeholder", "value", "error", "disabled", "tabindex", "autofocus"]);
 
 const emits = defineEmits(["update"]);
 </script>
 <template>
     <div class="form__item">
-        <label class="form__label" for="props.name">{{
-            props.displayName
-        }}</label>
+        <label class="form__label" for="props.name">{{ props.displayName }}</label>
 
         <div class="input">
             <i class="input__icon" :class="props.icon" v-if="props.icon"></i>
@@ -30,11 +19,10 @@ const emits = defineEmits(["update"]);
                 @input="emits('update', $event.target.value)"
                 autocomplete="off"
                 :disabled="props.disabled || false"
+                :autofocus="props.autofocus === true"
             />
         </div>
-        <small class="input__invalid" v-if="props.error">{{
-            props.error
-        }}</small>
+        <small class="input__invalid" v-if="props.error">{{ props.error }}</small>
     </div>
 </template>
 

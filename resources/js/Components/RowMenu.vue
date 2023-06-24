@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
-import Button from "@/Components/Button.vue";
 
 const show = ref(false);
 const main = ref(null);
