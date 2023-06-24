@@ -8,9 +8,9 @@ export default {
     data() {
         return {
             params: {
-                page: 1,
+                page: "",
                 search: "",
-                sort: "name"
+                sort: ""
             },
             modal: {
                 addNewSupplierModal: false,
