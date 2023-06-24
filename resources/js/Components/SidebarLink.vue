@@ -94,10 +94,6 @@ onMounted(() => {
         align-items: center;
         column-gap: 2rem;
         padding: 1rem 2rem;
-
-        &:hover {
-            background-color: var(--color-5-hover);
-        }
     }
 
     &__icon {

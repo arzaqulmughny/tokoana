@@ -76,31 +76,13 @@ export default {
         }
     },
     watch: {
-        "modal.viewProductCategoryModal.id": async function () {
-            if (this.modal.viewProductCategoryModal.id !== null) {
-                const { data } = await axios.get(`/product/categories/${this.modal.viewProductCategoryModal.id}`);
-                this.modal.viewProductCategoryModal.data = data;
-                this.modal.viewProductCategoryModal.show = true;
-            } else {
-                this.modal.viewProductCategoryModal.show = false;
-            }
-        },
-        "modal.editProductCategoryModal.id": async function () {
-            if (this.modal.editProductCategoryModal.id !== null) {
-                const { data } = await axios.get(`/product/categories/${this.modal.editProductCategoryModal.id}`);
-                this.modal.editProductCategoryModal.data = data;
-                this.modal.editProductCategoryModal.show = true;
-            } else {
-                this.modal.editProductCategoryModal.show = false;
-            }
-        },
         params: {
             handler() {
                 if (this.timer) {
                     clearTimeout(this.timer);
                 }
                 this.timer = setTimeout(() => {
-                    router.visit(`/product/categories?page=${this.params.page}&search=${this.params.search}&sort=${this.params.sortBy}`, {
+                    router.visit(this.getUrlWithParams, {
                         only: ["data"],
                         preserveState: true,
                         preserveScroll: true
@@ -123,8 +105,17 @@ export default {
         }
     },
     computed: {
-        searchAndSort() {
-            return `${this.params.search}|${this.params.sortBy}`;
+        getUrlWithParams() {
+            let URL = `${window.location.pathname}?`;
+            const params = Object.keys(this.params);
+
+            params.forEach(param => {
+                if (this.params[param].length != 0) {
+                    URL += `&${param}=${this.params[param]}`;
+                }
+            });
+
+            return URL;
         }
     },
     created() {
