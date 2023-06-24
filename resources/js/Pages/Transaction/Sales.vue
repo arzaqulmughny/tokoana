@@ -25,7 +25,7 @@ export default {
         addProduct(item) {
             const index = this.addedProduct.data.findIndex(itemInArray => itemInArray.id == item.id);
             if (index > -1) {
-                this.addedProduct.data[index].quantity += 1;
+                this.addedProduct.data[index].quantity < item.stock ? (this.addedProduct.data[index].quantity += 1) : null;
             } else {
                 item.quantity = 1;
                 item.addedAt = Date.now();
@@ -257,6 +257,7 @@ export default {
                                 <td>BARCODE</td>
                                 <td>NAME</td>
                                 <td>PRICE</td>
+                                <td>STOCK</td>
                                 <td>UNIT</td>
                                 <td>ACTIONS</td>
                             </tr>
@@ -269,6 +270,7 @@ export default {
                                 <td v-html="item.barcode" />
                                 <td v-html="item.name" />
                                 <td v-html="item.price" />
+                                <td v-html="item.stock" />
                                 <td v-html="item.unit.name" />
                                 <td>
                                     <Button @click="this.addProduct(item)" :text="'+ Add'" :size="'small'" :variant="'primary'" />
@@ -458,7 +460,7 @@ import SelectCustom from "@/Components/SelectCustom.vue";
         width: 100%;
 
         @include app.screen(lg) {
-            max-width: fit-content;
+            max-width: 55%;
         }
     }
 
@@ -470,6 +472,7 @@ import SelectCustom from "@/Components/SelectCustom.vue";
 
         @include app.screen(lg) {
             max-width: fit-content;
+            min-width: fit-content;
         }
     }
 }
