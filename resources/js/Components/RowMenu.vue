@@ -25,7 +25,7 @@ onUnmounted(() => {
 <template>
     <div class="item-action" ref="main">
         <i class="iconoir-nav-arrow-down item-action__arrow" />
-        <div class="item-action__list" v-if="show" ref="menu">
+        <div class="item-action__list" ref="menu">
             <slot />
         </div>
     </div>

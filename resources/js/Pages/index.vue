@@ -119,7 +119,7 @@ const getTodayRevenueTotal = computed(() => {
     <Head>
         <title>Dashboard</title>
     </Head>
-    <h1 class="main__title">Dashboard</h1>
+    <h1 class="title">Dashboard</h1>
 
     <div class="container">
         <div class="container__row">
@@ -156,7 +156,7 @@ const getTodayRevenueTotal = computed(() => {
                         </tr>
                     </template>
                     <template #body>
-                        <tr data-empty="true" v-if="item in weeklyData == 0">
+                        <tr data-empty="true" v-if="weeklyData.length === 0">
                             <td colspan="100">No items available</td>
                         </tr>
                         <tr v-for="item in weeklyData">
@@ -175,6 +175,12 @@ const getTodayRevenueTotal = computed(() => {
 
 <style lang="scss" scoped>
 @use "./../../css/app.scss";
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--color-1);
+}
 .chart {
     background-color: var(--color-5);
     border-radius: 4px;

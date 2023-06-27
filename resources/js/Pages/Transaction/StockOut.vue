@@ -99,6 +99,7 @@ export default {
                     }
                 };
                 main(postStockOutHistoryResponse.id);
+                printStockOutHistoryById(postStockOutHistoryResponse.id, this.$page.props.user.name);
                 alert("Update stock product success!");
                 this.clearData();
             } catch (error) {
@@ -229,6 +230,7 @@ import axios from "axios";
 import { Head } from "@inertiajs/vue3";
 import SearchBar from "@/Components/SearchBar.vue";
 import SelectCustom from "@/Components/SelectCustom.vue";
+import printStockOutHistoryById from "@/Utils/printStockOutHistoryById";
 </script>
 
 <template>
