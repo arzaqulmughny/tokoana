@@ -1,4 +1,8 @@
 <script>
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
 export default {
     layout: Mainlayout,
     data() {
@@ -103,10 +107,11 @@ export default {
                     }
                 };
                 main(postSaleHistoryResponse.id);
+                printReceiptById(postSaleHistoryResponse.id);
                 alert("Transaction success!");
+
                 this.clearData();
             } catch (error) {
-                console.log("ERROR: " + error);
                 alert("Failed to update product stock!");
             }
         },
@@ -432,6 +437,7 @@ export default {
 </template>
 
 <script setup>
+import printReceiptById from "@/Utils/printReceiptById";
 import { router } from "@inertiajs/vue3";
 import Mainlayout from "@/Layouts/MainLayout.vue";
 import Button from "@/Components/Button.vue";

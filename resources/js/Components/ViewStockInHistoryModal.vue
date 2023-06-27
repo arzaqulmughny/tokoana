@@ -75,7 +75,7 @@ const printAndClose = id => {
 
                     <div class="content__action">
                         <Button :text="'Close'" :variant="'secondary'" @click="$emit('update:data', null)" />
-                        <Button :text="'Print receipt'" :variant="'primary'" @click="printAndClose(data.id)" />
+                        <Button :text="'Print'" :variant="'primary'" @click="printAndClose(data.id)" />
                     </div>
                 </div>
             </div>

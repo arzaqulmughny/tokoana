@@ -3,12 +3,12 @@ import Button from "@/Components/Button.vue";
 import Table from "@/Components/Table.vue";
 import dateFormatter from "@/Utils/dateFormatter";
 
-defineProps(["data"]);
+const props = defineProps(["data", "user"]);
 const emits = defineEmits(["update:data", "print"]);
 
 const printAndClose = id => {
     emits("update:data", null);
-    emits("print", id);
+    emits("print", id, props.user.name);
 };
 </script>
 <template>
@@ -32,19 +32,19 @@ const printAndClose = id => {
                     <table class="table-vertical">
                         <tr class="table-vertical__row">
                             <th class="table-vertical__head">USER</th>
-                            <td class="table-vertical__data" v-html="data.user.name" />
+                            <td class="table-vertical__data" v-html="props.data.user.name" />
                         </tr>
                         <tr class="table-vertical__row">
                             <th class="table-vertical__head">TOTAL ITEMS</th>
-                            <td class="table-vertical__data" v-html="data.items.length" />
+                            <td class="table-vertical__data" v-html="props.data.items.length" />
                         </tr>
                         <tr class="table-vertical__row">
                             <th class="table-vertical__head">NOTE</th>
-                            <td class="table-vertical__data" v-html="data.note" />
+                            <td class="table-vertical__data" v-html="props.data.note" />
                         </tr>
                         <tr class="table-vertical__row">
                             <th class="table-vertical__head">DATE & TIME</th>
-                            <td class="table-vertical__data" v-html="dateFormatter(data.created_at)" />
+                            <td class="table-vertical__data" v-html="dateFormatter(props.data.created_at)" />
                         </tr>
                     </table>
 
@@ -59,7 +59,7 @@ const printAndClose = id => {
                             </tr>
                         </template>
                         <template #body>
-                            <tr v-for="item in data.items">
+                            <tr v-for="item in props.data.items">
                                 <td v-html="item.details.barcode" />
                                 <td v-html="item.details.name" />
                                 <td v-html="item.quantity" />
@@ -71,7 +71,7 @@ const printAndClose = id => {
 
                     <div class="content__action">
                         <Button :text="'Close'" :variant="'secondary'" @click="$emit('update:data', null)" />
-                        <Button :text="'Print receipt'" :variant="'primary'" @click="printAndClose(data.id)" />
+                        <Button :text="'Print'" :variant="'primary'" @click="printAndClose(props.data.id)" />
                     </div>
                 </div>
             </div>

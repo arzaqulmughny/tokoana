@@ -32,92 +32,6 @@ export default {
             const { data } = await axios.get(`/history/sales/${id}`);
             this.modal.viewSaleHistory = data;
         },
-        async printReceipt(id) {
-            const { data } = await axios.get(`/history/sales/${id}`);
-            const items = data.items.map((item, index) => {
-                return {
-                    layout: "noBorders",
-                    table: {
-                        headerRows: 1,
-                        widths: ["auto", "auto"],
-                        body: [
-                            [`[${index + 1}]`, item.detail.name],
-                            ["", `${item.quantity} X ${item.current_price} = ${item.amount}`]
-                        ]
-                    }
-                };
-            });
-            const docDefinition = {
-                pageSize: { width: 283.46, height: "auto" },
-                content: [
-                    { text: "TOKOANA", bold: true, fontSize: 14 },
-                    { text: "POINT OF SALES APP" },
-                    {
-                        text: "-------------------------------------------------------------------------"
-                    },
-                    { text: `#${data.id}` },
-                    { text: dateFormatter(data.created_at) },
-                    {
-                        columns: [{ text: "CASHIER" }, { text: data.user.name, alignment: "right" }]
-                    },
-                    {
-                        text: "-------------------------------------------------------------------------"
-                    },
-                    ...items,
-                    {
-                        text: "-------------------------------------------------------------------------"
-                    },
-                    {
-                        columns: [
-                            { text: "SUBTOTAL", bold: true },
-                            {
-                                text: data.amount,
-                                alignment: "right",
-                                bold: true
-                            }
-                        ]
-                    },
-                    {
-                        columns: [
-                            { text: "TOTAL", bold: true },
-                            {
-                                text: data.amount,
-                                alignment: "right",
-                                bold: true
-                            }
-                        ]
-                    },
-                    {
-                        columns: [
-                            { text: "CASH", bold: true },
-                            { text: data.cash, alignment: "right", bold: true }
-                        ]
-                    },
-                    {
-                        columns: [
-                            { text: "CHANGE", bold: true },
-                            {
-                                text: data.change,
-                                alignment: "right",
-                                bold: true
-                            }
-                        ]
-                    },
-                    {
-                        text: "-------------------------------------------------------------------------"
-                    },
-                    {
-                        text: "THANK YOU FOR PURCHASING!",
-                        alignment: "center"
-                    }
-                ],
-                defaultStyle: {
-                    fontSise: 12
-                },
-                pageMargins: [20, 20, 20, 20]
-            };
-            pdfMake.createPdf(docDefinition, null).open();
-        },
         async printRangedData(from, to = Date.now()) {
             const { data } = await axios.get(`/history/sales?from=${Math.floor(from / 1000)}&to=${Math.floor(to / 1000)}&mode=print`);
             if (data.length === 0) {
@@ -327,6 +241,7 @@ import dateFormatter from "@/Utils/dateFormatter";
 import SelectCustom from "@/Components/SelectCustom.vue";
 import RowMenu from "@/Components/RowMenu.vue";
 import getPreviousTime from "@/Utils/getPreviousTime";
+import printReceiptById from "@/Utils/printReceiptById";
 </script>
 
 <template>
@@ -412,7 +327,7 @@ import getPreviousTime from "@/Utils/getPreviousTime";
                                     :text="'Print Receipt'"
                                     class="item-action__link"
                                     :variant="'clear'"
-                                    @click="this.printReceipt(item.id)"
+                                    @click="printReceiptById(item.id)"
                                 />
                             </RowMenu>
                         </td>
@@ -459,7 +374,7 @@ import getPreviousTime from "@/Utils/getPreviousTime";
     <ViewSaleHistoryModal
         :data="this.modal.viewSaleHistory"
         @close="this.modal.viewSaleHistory = null"
-        @print="this.printReceipt(this.modal.viewSaleHistory.id)"
+        @print="printReceiptById(this.modal.viewSaleHistory.id)"
     />
 </template>
 

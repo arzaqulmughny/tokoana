@@ -103,6 +103,7 @@ export default {
                     }
                 };
                 main(postStockInHistoryResponse.id);
+                printStockInHistoryById(postStockInHistoryResponse.id, this.$page.props.user.name);
             } catch (error) {
                 alert("Failed to add data!");
             }
@@ -122,6 +123,7 @@ export default {
             this.selectAll = false;
             this.formData = {
                 supplier_id: "",
+                supplier: "",
                 note: ""
             };
             this.addedProduct = {
@@ -234,6 +236,7 @@ import axios from "axios";
 import { Head } from "@inertiajs/vue3";
 import SelectCustom from "@/Components/SelectCustom.vue";
 import SearchBar from "@/Components/SearchBar.vue";
+import printStockInHistoryById from "@/Utils/printStockInHistoryById";
 </script>
 
 <template>
@@ -466,7 +469,6 @@ import SearchBar from "@/Components/SearchBar.vue";
         }
     }
 }
-
 .content {
     display: flex;
     flex-direction: column;
