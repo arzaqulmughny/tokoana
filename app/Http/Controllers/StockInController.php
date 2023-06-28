@@ -40,7 +40,6 @@ class StockInController extends Controller
      */
     public function store(Request $request)
     {
-
         $rules = [
             'user_id' => 'required',
             'supplier_id' => 'nullable',
