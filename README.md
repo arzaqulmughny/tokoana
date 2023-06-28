@@ -1,16 +1,25 @@
 # Tokoana - Point of Sales App
 
+![1](./screenshots//1.png)
+
 ## About Tokoana
 
-### Tokoana adalah sebuah aplikasi point of sales, digunakan untuk membantu kasir atau pemilik toko untuk me-manage produk-produk yang dijual.
+### Tokoana is a point of sales application, used to help cashiers or shop owners to manage the products being sold.
 
 ## Features
 
 -   CRUD Product category, list & unit
 -   Create transactions sales, stock in & stock out
--   Print sale receipt, detail history & daftar riwayat transaksi berdasarkan tanggal
+-   Print transaction detail
 -   History transaction
 -   Multi role user admin & cashier
+
+## Screenshots
+
+![2](./screenshots/2.png)
+![3](./screenshots/3.png)
+![4](./screenshots/4.png)
+![5](./screenshots/5.png)
 
 ## Library / Framework used
 
@@ -19,44 +28,4 @@
 -   [Laravel](laravel.com)
 -   [pdfMake](pdfmake.github.io)
 -   [ApexCharts](https://apexcharts.com/)
--   [SASS](sass.com)
-
-## Install Instructions
-
-### Requirements
-
--   [Composer]()
--   [NPM]()
-
-1. Clone this repository
-
-    ```sh
-    git clone https://github.com/zaarza/point-of-sales-app
-    ```
-
-2. Download required packages
-
-    ```sh
-    cd point-of-sales-app/
-
-    composer install
-    npm install
-    ```
-
-3. Copy configuration example, then change the APP and DB configuration
-
-    ```sh
-    cp .env.example .env
-    nano .env
-    ```
-
-4. Run application
-
-    in development mode
-
-    ```sh
-    npm run dev
-    php artisan serve
-    ```
-
-    or,
+-   [SASS](sass-lang.com)
