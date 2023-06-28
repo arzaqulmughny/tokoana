@@ -37,7 +37,7 @@ class ProductListPolicy
      */
     public function update(User $user): bool
     {
-        return $user->user_level === 1;
+        return true;
     }
 
     /**

@@ -21,9 +21,9 @@ class DatabaseSeeder extends Seeder
         // Create a main account, this account is allowed to do all actions
         // Username and password used for authentication
         User::create([
-            'name' => "Owner Name",
-            'username' => "owner",
-            'password' => bcrypt('12345678'),
+            'name' => "Admin",
+            'username' => "admin",
+            'password' => bcrypt('admin1234'),
             'user_level' => '1',
         ]);
     }
