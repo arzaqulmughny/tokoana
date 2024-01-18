@@ -29,3 +29,42 @@
 -   [pdfMake](pdfmake.github.io)
 -   [ApexCharts](https://apexcharts.com/)
 -   [SASS](sass-lang.com)
+
+## Installation
+
+1. Duplicate .env-example as .env
+
+```
+  cp .env-example .env
+```
+
+2. Generate key
+
+```
+  php artisan key:generate
+```
+
+3. Create and configure database in .env
+
+```
+  DB_CONNECTION=mysql
+  DB_HOST=127.0.0.1
+  DB_PORT=3306
+  DB_DATABASE=point_of_sales_app
+  DB_USERNAME=root
+  DB_PASSWORD=root
+```
+
+4. Run migrate and seed
+
+```
+  php artisan migrate:fresh --seed
+```
+
+5. Run project
+
+-   Development mode
+    ```
+      npm run dev
+      php artisan serve
+    ```
